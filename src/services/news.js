@@ -96,3 +96,7 @@ export function fetchRecentNews(limit = 5) {
     .order('created_at', { ascending: false })
     .limit(limit)
 }
+
+export function createNews(payload) {
+  return supabase.from('news').insert(payload).select().single()
+}
