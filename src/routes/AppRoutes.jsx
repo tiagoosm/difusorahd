@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom'
 import { ROUTES } from './paths'
 import ProtectedRoute from './ProtectedRoute'
+import PublicLayout from '../components/layout/PublicLayout'
+import AdminLayout from '../components/layout/AdminLayout'
 
 import Home from '../pages/Home'
 import NewsDetail from '../pages/NewsDetail'
@@ -20,61 +22,31 @@ function AppRoutes() {
   return (
     <Routes>
       {/* Área pública */}
-      <Route path={ROUTES.home} element={<Home />} />
-      <Route path={ROUTES.newsDetail} element={<NewsDetail />} />
-      <Route path={ROUTES.category} element={<Category />} />
-      <Route path={ROUTES.search} element={<Search />} />
+      <Route element={<PublicLayout />}>
+        <Route path={ROUTES.home} element={<Home />} />
+        <Route path={ROUTES.newsDetail} element={<NewsDetail />} />
+        <Route path={ROUTES.category} element={<Category />} />
+        <Route path={ROUTES.search} element={<Search />} />
+      </Route>
 
-      {/* Área administrativa */}
+      {/* Login (fora do layout protegido) */}
       <Route path={ROUTES.adminLogin} element={<Login />} />
+
+      {/* Área administrativa protegida */}
       <Route
-        path={ROUTES.adminDashboard}
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <AdminLayout />
           </ProtectedRoute>
         }
-      />
-      <Route
-        path={ROUTES.adminNews}
-        element={
-          <ProtectedRoute>
-            <ManageNews />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={ROUTES.adminNewsNew}
-        element={
-          <ProtectedRoute>
-            <NewNews />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={ROUTES.adminNewsEdit}
-        element={
-          <ProtectedRoute>
-            <EditNews />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={ROUTES.adminCategories}
-        element={
-          <ProtectedRoute>
-            <ManageCategories />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={ROUTES.adminProfile}
-        element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
+      >
+        <Route path={ROUTES.adminDashboard} element={<Dashboard />} />
+        <Route path={ROUTES.adminNews} element={<ManageNews />} />
+        <Route path={ROUTES.adminNewsNew} element={<NewNews />} />
+        <Route path={ROUTES.adminNewsEdit} element={<EditNews />} />
+        <Route path={ROUTES.adminCategories} element={<ManageCategories />} />
+        <Route path={ROUTES.adminProfile} element={<Profile />} />
+      </Route>
 
       {/* Fallback */}
       <Route path="*" element={<NotFound />} />
