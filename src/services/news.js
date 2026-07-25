@@ -123,3 +123,15 @@ export function fetchAllNewsAdmin({ status, categoryId, page = 1, pageSize = 10 
 export function deleteNews(id) {
   return supabase.from('news').delete().eq('id', id)
 }
+
+export function fetchNewsById(id) {
+  return supabase
+    .from('news')
+    .select('id, title, slug, excerpt, content, cover_image_url, category_id, status, is_featured')
+    .eq('id', id)
+    .maybeSingle()
+}
+
+export function updateNews(id, payload) {
+  return supabase.from('news').update(payload).eq('id', id).select().single()
+}
