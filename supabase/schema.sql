@@ -136,10 +136,12 @@ returns boolean as $$
 $$ language sql security definer stable set search_path = public;
 
 -- Impede que o próprio usuário se promova a admin via update no profile.
+-- auth.uid() is null quando o comando roda fora do PostgREST (ex: SQL Editor do
+-- Supabase) — nesse caso confiamos no acesso direto ao banco e permitimos a troca.
 create or replace function public.prevent_role_escalation()
 returns trigger as $$
 begin
-  if new.role <> old.role and not public.is_admin() then
+  if new.role <> old.role and auth.uid() is not null and not public.is_admin() then
     new.role = old.role;
   end if;
   return new;
