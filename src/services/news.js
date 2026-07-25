@@ -100,3 +100,26 @@ export function fetchRecentNews(limit = 5) {
 export function createNews(payload) {
   return supabase.from('news').insert(payload).select().single()
 }
+
+export function fetchAllNewsAdmin({ status, categoryId, page = 1, pageSize = 10 } = {}) {
+  const from = (page - 1) * pageSize
+  const to = from + pageSize - 1
+
+  let query = supabase
+    .from('news')
+    .select(
+      'id, title, slug, status, views_count, published_at, created_at, category:categories(id, name)',
+      { count: 'exact' },
+    )
+    .order('created_at', { ascending: false })
+    .range(from, to)
+
+  if (status) query = query.eq('status', status)
+  if (categoryId) query = query.eq('category_id', categoryId)
+
+  return query
+}
+
+export function deleteNews(id) {
+  return supabase.from('news').delete().eq('id', id)
+}
