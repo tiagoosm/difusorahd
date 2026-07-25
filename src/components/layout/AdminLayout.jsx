@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Menu } from 'lucide-react'
+import { useSEO } from '../../hooks/useSEO'
 import AdminSidebar from './AdminSidebar'
 
 function AdminLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+  useSEO({ title: 'Painel Administrativo', noindex: true })
 
   return (
     <div className="flex min-h-screen">

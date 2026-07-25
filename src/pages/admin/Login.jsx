@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { signIn, signOut, fetchProfile } from '../../services/auth'
 import { useAuth } from '../../hooks/useAuth'
+import { useSEO } from '../../hooks/useSEO'
 import { ROUTES } from '../../routes/paths'
 import Input from '../../components/ui/Input'
 import Button from '../../components/ui/Button'
@@ -16,6 +17,8 @@ function Login() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm()
+
+  useSEO({ title: 'Login Administrativo', noindex: true })
 
   useEffect(() => {
     if (!loading && user && isAdmin) {

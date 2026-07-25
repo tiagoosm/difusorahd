@@ -1,5 +1,7 @@
 import { Newspaper } from 'lucide-react'
 import { useHomeNews } from '../hooks/useHomeNews'
+import { useSEO } from '../hooks/useSEO'
+import { SITE_NAME, SITE_DESCRIPTION } from '../utils/seo'
 import FeaturedNews from '../components/news/FeaturedNews'
 import CategorySection from '../components/news/CategorySection'
 import EmptyState from '../components/ui/EmptyState'
@@ -7,6 +9,8 @@ import Spinner from '../components/ui/Spinner'
 
 function Home() {
   const { featured, latest, loading } = useHomeNews()
+
+  useSEO({ title: SITE_NAME, description: SITE_DESCRIPTION })
 
   if (loading) {
     return (

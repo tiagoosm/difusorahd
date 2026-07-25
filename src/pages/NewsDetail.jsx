@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Eye, Headphones } from 'lucide-react'
 import { useNewsDetail } from '../hooks/useNewsDetail'
+import { useSEO } from '../hooks/useSEO'
 import { formatDate } from '../utils/formatDate'
 import { ROUTES } from '../routes/paths'
 import Badge from '../components/ui/Badge'
@@ -14,9 +14,11 @@ function NewsDetail() {
   const { slug } = useParams()
   const { news, related, loading, notFound } = useNewsDetail(slug)
 
-  useEffect(() => {
-    if (news) document.title = `${news.title} — Portal de Notícias`
-  }, [news])
+  useSEO({
+    title: news ? `${news.title} — Portal de Notícias` : undefined,
+    description: news?.excerpt,
+    image: news?.cover_image_url,
+  })
 
   if (loading) {
     return (

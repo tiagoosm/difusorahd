@@ -1,6 +1,8 @@
 import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { Newspaper } from 'lucide-react'
 import { useCategoryNews } from '../hooks/useCategoryNews'
+import { useSEO } from '../hooks/useSEO'
+import { SITE_NAME } from '../utils/seo'
 import { ROUTES } from '../routes/paths'
 import NewsCard from '../components/news/NewsCard'
 import Pagination from '../components/ui/Pagination'
@@ -14,6 +16,11 @@ function Category() {
 
   const { category, news, totalCount, pageSize, loading, notFound } = useCategoryNews(slug, page)
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
+
+  useSEO({
+    title: category ? `${category.name} — ${SITE_NAME}` : undefined,
+    description: category?.description || `Notícias sobre ${category?.name}.`,
+  })
 
   function handlePageChange(nextPage) {
     setSearchParams(nextPage === 1 ? {} : { page: String(nextPage) })

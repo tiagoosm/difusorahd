@@ -1,6 +1,8 @@
 import { useSearchParams } from 'react-router-dom'
 import { Search as SearchIcon, SearchX } from 'lucide-react'
 import { useSearchNews } from '../hooks/useSearchNews'
+import { useSEO } from '../hooks/useSEO'
+import { SITE_NAME } from '../utils/seo'
 import SearchBar from '../components/ui/SearchBar'
 import NewsCard from '../components/news/NewsCard'
 import Pagination from '../components/ui/Pagination'
@@ -14,6 +16,11 @@ function Search() {
 
   const { news, totalCount, pageSize, loading } = useSearchNews(query, page)
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
+
+  useSEO({
+    title: query ? `Busca: ${query} — ${SITE_NAME}` : `Pesquisar — ${SITE_NAME}`,
+    noindex: true,
+  })
 
   function handleSearch(nextQuery) {
     setSearchParams(nextQuery ? { q: nextQuery } : {})
