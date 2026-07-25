@@ -15,7 +15,7 @@ function Dashboard() {
   const { stats, recentNews, loading } = useDashboardStats()
 
   return (
-    <div className="flex flex-col gap-6 p-8">
+    <div className="flex flex-col gap-6 p-4 sm:p-8">
       <div>
         <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
         <p className="mt-1 text-gray-500">Bem-vindo, {profile?.full_name || 'Administrador'}.</p>

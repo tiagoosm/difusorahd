@@ -61,7 +61,7 @@ function EditNews() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       <h1 className="text-2xl font-semibold text-gray-900">Editar Notícia</h1>
       <p className="mt-1 text-gray-500">Atualize os dados da notícia abaixo.</p>
 
