@@ -27,3 +27,12 @@
 body {
   margin: 0;
 }
+
+/* Placeholder do editor Tiptap: exige seletor CSS custom, não expressável em utilitários Tailwind. */
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: #9ca3af;
+  pointer-events: none;
+}
