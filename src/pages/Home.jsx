@@ -1,26 +1,37 @@
-import { Link } from 'react-router-dom'
-import { buildPath, ROUTES } from '../routes/paths'
+import { Newspaper } from 'lucide-react'
+import { useHomeNews } from '../hooks/useHomeNews'
+import FeaturedNews from '../components/news/FeaturedNews'
+import CategorySection from '../components/news/CategorySection'
+import EmptyState from '../components/ui/EmptyState'
+import Spinner from '../components/ui/Spinner'
 
 function Home() {
-  return (
-    <div className="p-8">
-      <h1 className="text-2xl font-semibold text-gray-900">Home</h1>
-      <p className="mt-2 text-gray-500">Construída na Etapa 8.</p>
+  const { featured, latest, loading } = useHomeNews()
 
-      <nav className="mt-6 flex flex-wrap gap-3 text-sm">
-        <Link className="text-brand-600 hover:underline" to={buildPath.news('exemplo-de-noticia')}>
-          Ver notícia
-        </Link>
-        <Link className="text-brand-600 hover:underline" to={buildPath.category('tecnologia')}>
-          Ver categoria
-        </Link>
-        <Link className="text-brand-600 hover:underline" to={ROUTES.search}>
-          Pesquisar
-        </Link>
-        <Link className="text-brand-600 hover:underline" to={ROUTES.adminLogin}>
-          Login admin
-        </Link>
-      </nav>
+  if (loading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Spinner />
+      </div>
+    )
+  }
+
+  if (!featured.length && !latest.length) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-16">
+        <EmptyState
+          icon={Newspaper}
+          title="Nenhuma notícia publicada ainda"
+          description="Assim que novas notícias forem publicadas, elas aparecem aqui."
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-8">
+      <FeaturedNews items={featured} />
+      <CategorySection title="Últimas notícias" items={latest} />
     </div>
   )
 }
