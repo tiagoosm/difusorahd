@@ -4,6 +4,7 @@ const VARIANTS = {
   primary: 'bg-brand-600 text-white hover:bg-brand-700 disabled:bg-brand-300',
   secondary:
     'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 disabled:text-gray-400',
+  danger: 'bg-red-600 text-white hover:bg-red-700 disabled:bg-red-300',
 }
 
 function Button({
