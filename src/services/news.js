@@ -46,3 +46,16 @@ export function fetchRelatedNews({ categoryId, excludeId, limit = 3 }) {
 export function incrementNewsViews(slug) {
   return supabase.rpc('increment_news_views', { news_slug: slug })
 }
+
+export function fetchNewsByCategory({ categoryId, page = 1, pageSize = 9 }) {
+  const from = (page - 1) * pageSize
+  const to = from + pageSize - 1
+
+  return supabase
+    .from('news')
+    .select(CARD_FIELDS, { count: 'exact' })
+    .eq('status', 'published')
+    .eq('category_id', categoryId)
+    .order('published_at', { ascending: false })
+    .range(from, to)
+}
