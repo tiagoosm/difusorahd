@@ -59,3 +59,23 @@ export function fetchNewsByCategory({ categoryId, page = 1, pageSize = 9 }) {
     .order('published_at', { ascending: false })
     .range(from, to)
 }
+
+// Remove caracteres com significado especial na sintaxe de filtro do PostgREST (.or()),
+// evitando que a busca do usuário quebre ou altere a query.
+function sanitizeSearchTerm(term) {
+  return term.replace(/[,()]/g, ' ').trim()
+}
+
+export function searchNews({ query, page = 1, pageSize = 9 }) {
+  const from = (page - 1) * pageSize
+  const to = from + pageSize - 1
+  const term = sanitizeSearchTerm(query)
+
+  return supabase
+    .from('news')
+    .select(CARD_FIELDS, { count: 'exact' })
+    .eq('status', 'published')
+    .or(`title.ilike.%${term}%,excerpt.ilike.%${term}%,content.ilike.%${term}%`)
+    .order('published_at', { ascending: false })
+    .range(from, to)
+}
