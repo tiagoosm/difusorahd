@@ -175,9 +175,10 @@ alter table public.news enable row level security;
 alter table public.news_tags enable row level security;
 alter table public.comments enable row level security;
 
--- profiles
-create policy "profiles_select_own_or_admin" on public.profiles
-  for select using (auth.uid() = id or public.is_admin());
+-- profiles: leitura pública (nome/avatar aparecem como autor nas notícias);
+-- e-mail e senha nunca são expostos aqui, continuam só em auth.users.
+create policy "profiles_select_all" on public.profiles
+  for select using (true);
 
 create policy "profiles_update_own" on public.profiles
   for update using (auth.uid() = id) with check (auth.uid() = id);
