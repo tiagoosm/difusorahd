@@ -7,3 +7,7 @@ export function fetchCategories() {
 export function fetchCategoryBySlug(slug) {
   return supabase.from('categories').select('id, name, slug, description').eq('slug', slug).maybeSingle()
 }
+
+export function fetchCategoriesCount() {
+  return supabase.from('categories').select('id', { count: 'exact', head: true })
+}

@@ -11,3 +11,7 @@ export function signOut() {
 export function fetchProfile(userId) {
   return supabase.from('profiles').select('*').eq('id', userId).single()
 }
+
+export function updateProfile(userId, updates) {
+  return supabase.from('profiles').update(updates).eq('id', userId).select().single()
+}

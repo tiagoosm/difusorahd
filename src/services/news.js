@@ -79,3 +79,20 @@ export function searchNews({ query, page = 1, pageSize = 9 }) {
     .order('published_at', { ascending: false })
     .range(from, to)
 }
+
+export function fetchNewsCountByStatus(status) {
+  return supabase.from('news').select('id', { count: 'exact', head: true }).eq('status', status)
+}
+
+export async function fetchPublishedViewsSum() {
+  const { data } = await supabase.from('news').select('views_count').eq('status', 'published')
+  return (data ?? []).reduce((sum, row) => sum + (row.views_count ?? 0), 0)
+}
+
+export function fetchRecentNews(limit = 5) {
+  return supabase
+    .from('news')
+    .select('id, title, status, created_at, category:categories(name)')
+    .order('created_at', { ascending: false })
+    .limit(limit)
+}
