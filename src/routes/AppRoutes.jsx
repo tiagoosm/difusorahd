@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { ROUTES } from './paths'
+import ProtectedRoute from './ProtectedRoute'
 
 import Home from '../pages/Home'
 import NewsDetail from '../pages/NewsDetail'
@@ -26,12 +27,54 @@ function AppRoutes() {
 
       {/* Área administrativa */}
       <Route path={ROUTES.adminLogin} element={<Login />} />
-      <Route path={ROUTES.adminDashboard} element={<Dashboard />} />
-      <Route path={ROUTES.adminNews} element={<ManageNews />} />
-      <Route path={ROUTES.adminNewsNew} element={<NewNews />} />
-      <Route path={ROUTES.adminNewsEdit} element={<EditNews />} />
-      <Route path={ROUTES.adminCategories} element={<ManageCategories />} />
-      <Route path={ROUTES.adminProfile} element={<Profile />} />
+      <Route
+        path={ROUTES.adminDashboard}
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.adminNews}
+        element={
+          <ProtectedRoute>
+            <ManageNews />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.adminNewsNew}
+        element={
+          <ProtectedRoute>
+            <NewNews />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.adminNewsEdit}
+        element={
+          <ProtectedRoute>
+            <EditNews />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.adminCategories}
+        element={
+          <ProtectedRoute>
+            <ManageCategories />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.adminProfile}
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Fallback */}
       <Route path="*" element={<NotFound />} />
