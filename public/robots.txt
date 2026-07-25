@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://SEU_DOMINIO_AQUI/sitemap.xml
+Sitemap: https://difusorahd.vercel.app/sitemap.xml
