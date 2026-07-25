@@ -6,6 +6,7 @@ import Input from '../ui/Input'
 import Select from '../ui/Select'
 import Editor from '../ui/Editor'
 import Button from '../ui/Button'
+import FileUpload from '../ui/FileUpload'
 
 const EMPTY_VALUES = {
   title: '',
@@ -13,6 +14,7 @@ const EMPTY_VALUES = {
   excerpt: '',
   content: '',
   cover_image_url: '',
+  audio_url: '',
   category_id: '',
   status: 'draft',
   is_featured: false,
@@ -65,12 +67,38 @@ function NewsForm({ defaultValues, onSubmit, submitLabel = 'Salvar' }) {
         {...register('excerpt', { required: 'Informe o resumo' })}
       />
 
-      <Input
-        id="cover_image_url"
-        label="URL da imagem de capa"
-        placeholder="https://..."
-        error={errors.cover_image_url?.message}
-        {...register('cover_image_url', { required: 'Informe a imagem de capa' })}
+      <Controller
+        name="cover_image_url"
+        control={control}
+        rules={{ required: 'Envie a imagem de capa' }}
+        render={({ field }) => (
+          <FileUpload
+            label="Imagem de capa"
+            kind="image"
+            accept="image/*"
+            folder="covers"
+            value={field.value}
+            onChange={field.onChange}
+          />
+        )}
+      />
+      {errors.cover_image_url && (
+        <span className="-mt-3 text-xs text-red-500">{errors.cover_image_url.message}</span>
+      )}
+
+      <Controller
+        name="audio_url"
+        control={control}
+        render={({ field }) => (
+          <FileUpload
+            label="Áudio da notícia (opcional — ex: versão narrada)"
+            kind="audio"
+            accept="audio/*"
+            folder="audio"
+            value={field.value}
+            onChange={field.onChange}
+          />
+        )}
       />
 
       <Select

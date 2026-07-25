@@ -4,7 +4,7 @@ export const CARD_FIELDS =
   'id, title, slug, excerpt, cover_image_url, published_at, category:categories(id, name, slug)'
 
 const DETAIL_FIELDS = `
-  id, title, slug, excerpt, content, cover_image_url, published_at, views_count,
+  id, title, slug, excerpt, content, cover_image_url, audio_url, published_at, views_count,
   category:categories(id, name, slug),
   author:profiles(full_name)
 `
@@ -127,7 +127,9 @@ export function deleteNews(id) {
 export function fetchNewsById(id) {
   return supabase
     .from('news')
-    .select('id, title, slug, excerpt, content, cover_image_url, category_id, status, is_featured')
+    .select(
+      'id, title, slug, excerpt, content, cover_image_url, audio_url, category_id, status, is_featured',
+    )
     .eq('id', id)
     .maybeSingle()
 }

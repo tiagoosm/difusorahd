@@ -54,6 +54,7 @@ create table public.news (
   excerpt text,
   content text not null,
   cover_image_url text,
+  audio_url text,
   category_id uuid not null references public.categories (id) on delete restrict,
   author_id uuid not null references public.profiles (id) on delete restrict,
   status public.news_status not null default 'draft',
@@ -255,6 +256,36 @@ create policy "comments_update_admin" on public.comments
 
 create policy "comments_delete_own_or_admin" on public.comments
   for delete using (user_id = auth.uid() or public.is_admin());
+
+-- ----------------------------------------------------------------------------
+-- STORAGE: bucket único para imagem de capa e áudio das notícias
+-- ----------------------------------------------------------------------------
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'news-media',
+  'news-media',
+  true,
+  20971520, -- 20 MB
+  array[
+    'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+    'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/webm'
+  ]
+)
+on conflict (id) do update set
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+create policy "news_media_select_all" on storage.objects
+  for select using (bucket_id = 'news-media');
+
+create policy "news_media_insert_admin" on storage.objects
+  for insert with check (bucket_id = 'news-media' and public.is_admin());
+
+create policy "news_media_update_admin" on storage.objects
+  for update using (bucket_id = 'news-media' and public.is_admin());
+
+create policy "news_media_delete_admin" on storage.objects
+  for delete using (bucket_id = 'news-media' and public.is_admin());
 
 -- ----------------------------------------------------------------------------
 -- SEED: categorias iniciais (opcional, ajuda a testar as próximas etapas)

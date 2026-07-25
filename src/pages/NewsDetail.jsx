@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Eye } from 'lucide-react'
+import { Eye, Headphones } from 'lucide-react'
 import { useNewsDetail } from '../hooks/useNewsDetail'
 import { formatDate } from '../utils/formatDate'
 import { ROUTES } from '../routes/paths'
@@ -64,6 +64,16 @@ function NewsDetail() {
       {news.cover_image_url && (
         <div className="mt-6 overflow-hidden rounded-xl bg-gray-100">
           <img src={news.cover_image_url} alt={news.title} className="w-full object-cover" />
+        </div>
+      )}
+
+      {news.audio_url && (
+        <div className="mt-6 flex flex-col gap-2 rounded-xl border border-gray-200 bg-white p-4 shadow-card">
+          <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <Headphones className="h-4 w-4" />
+            Ouça esta notícia
+          </span>
+          <audio src={news.audio_url} controls className="w-full" />
         </div>
       )}
 
