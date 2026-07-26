@@ -4,6 +4,7 @@ import { useSEO } from '../hooks/useSEO'
 import { SITE_NAME, SITE_DESCRIPTION } from '../utils/seo'
 import FeaturedNews from '../components/news/FeaturedNews'
 import CategorySection from '../components/news/CategorySection'
+import AdBanner from '../components/ads/AdBanner'
 import EmptyState from '../components/ui/EmptyState'
 import Spinner from '../components/ui/Spinner'
 
@@ -12,30 +13,27 @@ function Home() {
 
   useSEO({ title: SITE_NAME, description: SITE_DESCRIPTION })
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <Spinner />
-      </div>
-    )
-  }
+  return (
+    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8">
+      <AdBanner position="TOP_HOME" />
 
-  if (!featured.length && !latest.length) {
-    return (
-      <div className="mx-auto max-w-6xl px-4 py-16">
+      {loading ? (
+        <div className="flex min-h-[50vh] items-center justify-center">
+          <Spinner />
+        </div>
+      ) : !featured.length && !latest.length ? (
         <EmptyState
           icon={Newspaper}
           title="Nenhuma notícia publicada ainda"
           description="Assim que novas notícias forem publicadas, elas aparecem aqui."
         />
-      </div>
-    )
-  }
-
-  return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-8">
-      <FeaturedNews items={featured} />
-      <CategorySection title="Últimas notícias" items={latest} />
+      ) : (
+        <div className="flex flex-col gap-12">
+          <FeaturedNews items={featured} />
+          <AdBanner position="HOME_MIDDLE" />
+          <CategorySection title="Últimas notícias" items={latest} />
+        </div>
+      )}
     </div>
   )
 }

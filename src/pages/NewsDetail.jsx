@@ -3,12 +3,14 @@ import { Eye, Headphones } from 'lucide-react'
 import { useNewsDetail } from '../hooks/useNewsDetail'
 import { useSEO } from '../hooks/useSEO'
 import { formatDate } from '../utils/formatDate'
+import { splitContentAtMiddle } from '../utils/splitContent'
 import { ROUTES } from '../routes/paths'
 import Badge from '../components/ui/Badge'
 import Spinner from '../components/ui/Spinner'
 import EmptyState from '../components/ui/EmptyState'
 import ShareButtons from '../components/news/ShareButtons'
 import CategorySection from '../components/news/CategorySection'
+import AdBanner from '../components/ads/AdBanner'
 
 function NewsDetail() {
   const { slug } = useParams()
@@ -44,6 +46,9 @@ function NewsDetail() {
     )
   }
 
+  const { first: contentFirstHalf, second: contentSecondHalf } = splitContentAtMiddle(news.content)
+  const proseClassName = 'prose prose-gray max-w-none prose-headings:font-semibold prose-a:text-brand-600'
+
   return (
     <article className="mx-auto max-w-3xl px-4 py-8">
       <header className="flex flex-col gap-3">
@@ -63,6 +68,8 @@ function NewsDetail() {
         <ShareButtons title={news.title} url={window.location.href} />
       </header>
 
+      <AdBanner position="ARTICLE_TOP" className="mt-6" />
+
       {news.cover_image_url && (
         <div className="mt-6 overflow-hidden rounded-xl bg-gray-100">
           <img src={news.cover_image_url} alt={news.title} className="w-full object-cover" />
@@ -79,10 +86,16 @@ function NewsDetail() {
         </div>
       )}
 
-      <div
-        className="prose prose-gray mt-8 max-w-none prose-headings:font-semibold prose-a:text-brand-600"
-        dangerouslySetInnerHTML={{ __html: news.content }}
-      />
+      <div className={`${proseClassName} mt-8`} dangerouslySetInnerHTML={{ __html: contentFirstHalf }} />
+
+      {contentSecondHalf && (
+        <>
+          <AdBanner position="ARTICLE_MIDDLE" className="my-8" />
+          <div className={proseClassName} dangerouslySetInnerHTML={{ __html: contentSecondHalf }} />
+        </>
+      )}
+
+      <AdBanner position="ARTICLE_BOTTOM" className="mt-8" />
 
       {related.length > 0 && (
         <div className="mt-16 border-t border-gray-200 pt-10">
