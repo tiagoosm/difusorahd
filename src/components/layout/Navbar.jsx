@@ -19,7 +19,7 @@ function Navbar() {
     <header className="bg-[#E81736]">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Link to={ROUTES.home} className="flex items-center">
-          <img src={logo} alt="Difusora HD" className="h-9 w-auto" />
+          <img src={logo} alt="Difusora HD" className="-my-1 h-11 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">

@@ -15,7 +15,7 @@ function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-white">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <Link to={ROUTES.home} className="flex items-center">
-            <img src={logo} alt="Difusora HD" className="h-9 w-auto" />
+            <img src={logo} alt="Difusora HD" className="-my-1 h-11 w-auto" />
           </Link>
           <p>&copy; {year} Difusora HD. Todos os direitos reservados.</p>
         </div>
