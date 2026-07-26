@@ -5,7 +5,7 @@ import { uploadFile } from '../../services/storage'
 
 const MAX_SIZE_MB = { image: 5, audio: 20 }
 
-function FileUpload({ value, onChange, folder, accept, kind = 'image', label }) {
+function FileUpload({ value, onChange, bucket, folder, accept, kind = 'image', label }) {
   const inputRef = useRef(null)
   const [uploading, setUploading] = useState(false)
 
@@ -21,7 +21,7 @@ function FileUpload({ value, onChange, folder, accept, kind = 'image', label }) 
     }
 
     setUploading(true)
-    const { data: url, error } = await uploadFile(file, folder)
+    const { data: url, error } = await uploadFile(bucket, folder, file)
     setUploading(false)
 
     if (error) {
