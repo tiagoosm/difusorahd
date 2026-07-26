@@ -1,5 +1,5 @@
 -- ============================================================================
--- Portal de Notícias — Schema inicial
+-- Difusora HD — Schema inicial
 -- Execute este arquivo inteiro no SQL Editor do Supabase (Dashboard > SQL Editor).
 -- ============================================================================
 

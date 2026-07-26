@@ -1,4 +1,4 @@
-export const SITE_NAME = 'Portal de Notícias'
+export const SITE_NAME = 'Difusora HD'
 export const SITE_DESCRIPTION =
   'Acompanhe as principais notícias de política, economia, tecnologia, esportes e cultura.'
 

@@ -16,7 +16,7 @@ function NewsDetail() {
   const { news, related, loading, notFound } = useNewsDetail(slug)
 
   useSEO({
-    title: news ? `${news.title} — Portal de Notícias` : undefined,
+    title: news ? `${news.title} — Difusora HD` : undefined,
     description: news?.excerpt,
     image: news?.cover_image_url,
   })
