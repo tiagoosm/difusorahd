@@ -89,22 +89,13 @@ function extractStoragePath(publicUrl, bucket) {
 // realmente veio: é a única forma de diferenciar "excluiu" de "não achou
 // nada para excluir".
 export async function deleteAd(ad) {
-  console.log('[deleteAd] iniciando exclusão', { id: ad.id, title: ad.title })
-
   const { data, error } = await supabase.from('ads').delete().eq('id', ad.id).select()
 
-  console.log('[deleteAd] resposta do Supabase:', { data, error })
-
   if (error) {
-    console.error('[deleteAd] erro retornado pelo Supabase:', error)
     return { deleted: false, error }
   }
 
   if (!data || data.length === 0) {
-    console.error(
-      '[deleteAd] nenhuma linha foi afetada pelo DELETE — provavelmente a política de RLS ' +
-        '"ads_delete_admin" não reconheceu a sessão atual como admin, ou o registro já não existia.',
-    )
     return {
       deleted: false,
       error: { message: 'Nenhum anúncio foi excluído. Confirme se sua sessão ainda está autenticada como administrador.' },
@@ -113,14 +104,9 @@ export async function deleteAd(ad) {
 
   const path = extractStoragePath(ad.image_url, 'ads-images')
   if (path) {
-    const { error: storageError } = await supabase.storage.from('ads-images').remove([path])
-    if (storageError) {
-      // Não falha a operação inteira por isso: o registro já foi excluído
-      // com sucesso, só a limpeza do arquivo não pôde ser confirmada.
-      console.error('[deleteAd] anúncio excluído, mas falhou ao remover a imagem do Storage:', storageError)
-    } else {
-      console.log('[deleteAd] imagem removida do Storage:', path)
-    }
+    // Não falha a operação inteira por isso: o registro já foi excluído com
+    // sucesso, só a limpeza do arquivo não pôde ser confirmada.
+    await supabase.storage.from('ads-images').remove([path])
   }
 
   return { deleted: true, error: null }

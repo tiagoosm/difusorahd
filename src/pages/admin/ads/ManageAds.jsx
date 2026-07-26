@@ -57,12 +57,9 @@ function ManageAds() {
   }
 
   async function handleDelete() {
-    console.log('[ManageAds] confirmando exclusão de', deleteTarget)
-
     const { deleted, error } = await deleteAd(deleteTarget)
 
     if (!deleted) {
-      console.error('[ManageAds] exclusão falhou:', error)
       toast.error(error?.message || 'Não foi possível excluir o anúncio.')
       setDeleteTarget(null)
       return
