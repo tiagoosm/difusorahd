@@ -10,6 +10,9 @@ export const ROUTES = {
   adminNewsNew: '/admin/noticias/nova',
   adminNewsEdit: '/admin/noticias/:id/editar',
   adminCategories: '/admin/categorias',
+  adminAds: '/admin/anuncios',
+  adminAdsNew: '/admin/anuncios/novo',
+  adminAdsEdit: '/admin/anuncios/:id/editar',
   adminProfile: '/admin/perfil',
 }
 
@@ -18,4 +21,5 @@ export const buildPath = {
   news: (slug) => `/noticia/${slug}`,
   category: (slug) => `/categoria/${slug}`,
   adminNewsEdit: (id) => `/admin/noticias/${id}/editar`,
+  adminAdsEdit: (id) => `/admin/anuncios/${id}/editar`,
 }
