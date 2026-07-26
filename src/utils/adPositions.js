@@ -5,12 +5,7 @@ export const AD_POSITIONS = [
     label: 'Meio da Home',
     description: 'Banner entre Notícias em Destaque e Últimas Notícias.',
   },
-  { value: 'ARTICLE_TOP', label: 'Topo da notícia', description: 'Banner logo abaixo do título da notícia.' },
-  {
-    value: 'ARTICLE_MIDDLE',
-    label: 'Meio da notícia',
-    description: 'Banner aproximadamente na metade do conteúdo.',
-  },
+  { value: 'ARTICLE_TOP', label: 'Topo da notícia', description: 'Banner no topo da página da notícia.' },
   { value: 'ARTICLE_BOTTOM', label: 'Final da notícia', description: 'Banner no final da notícia.' },
   { value: 'SIDEBAR', label: 'Barra lateral', description: 'Banner lateral (para quando existir sidebar).' },
   { value: 'FOOTER', label: 'Rodapé', description: 'Banner antes do rodapé.' },

@@ -3,7 +3,6 @@ import { Eye, Headphones } from 'lucide-react'
 import { useNewsDetail } from '../hooks/useNewsDetail'
 import { useSEO } from '../hooks/useSEO'
 import { formatDate } from '../utils/formatDate'
-import { splitContentAtMiddle } from '../utils/splitContent'
 import { ROUTES } from '../routes/paths'
 import Badge from '../components/ui/Badge'
 import Spinner from '../components/ui/Spinner'
@@ -46,63 +45,59 @@ function NewsDetail() {
     )
   }
 
-  const { first: contentFirstHalf, second: contentSecondHalf } = splitContentAtMiddle(news.content)
-  const proseClassName = 'prose prose-gray max-w-none prose-headings:font-semibold prose-a:text-brand-600'
-
   return (
-    <article className="mx-auto max-w-3xl px-4 py-8">
-      <header className="flex flex-col gap-3">
-        {news.category?.name && <Badge>{news.category.name}</Badge>}
-        <h1 className="text-3xl font-semibold leading-tight text-gray-900">{news.title}</h1>
-        {news.excerpt && <p className="text-lg text-gray-500">{news.excerpt}</p>}
+    <div className="mx-auto max-w-3xl px-4 py-8">
+      {/* Acima de tudo, inclusive da categoria e do título. */}
+      <AdBanner position="ARTICLE_TOP" className="mb-6" />
 
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-gray-200 py-3 text-sm text-gray-500">
-          {news.author?.full_name && <span>Por {news.author.full_name}</span>}
-          <span>{formatDate(news.published_at)}</span>
-          <span className="flex items-center gap-1">
-            <Eye className="h-4 w-4" />
-            {news.views_count} visualizações
-          </span>
-        </div>
+      <article>
+        <header className="flex flex-col gap-3">
+          {news.category?.name && <Badge>{news.category.name}</Badge>}
+          <h1 className="text-3xl font-semibold leading-tight text-gray-900">{news.title}</h1>
+          {news.excerpt && <p className="text-lg text-gray-500">{news.excerpt}</p>}
 
-        <ShareButtons title={news.title} url={window.location.href} />
-      </header>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-gray-200 py-3 text-sm text-gray-500">
+            {news.author?.full_name && <span>Por {news.author.full_name}</span>}
+            <span>{formatDate(news.published_at)}</span>
+            <span className="flex items-center gap-1">
+              <Eye className="h-4 w-4" />
+              {news.views_count} visualizações
+            </span>
+          </div>
 
-      <AdBanner position="ARTICLE_TOP" className="mt-6" />
+          <ShareButtons title={news.title} url={window.location.href} />
+        </header>
 
-      {news.cover_image_url && (
-        <div className="mt-6 overflow-hidden rounded-xl bg-gray-100">
-          <img src={news.cover_image_url} alt={news.title} className="w-full object-cover" />
-        </div>
-      )}
+        {news.cover_image_url && (
+          <div className="mt-6 overflow-hidden rounded-xl bg-gray-100">
+            <img src={news.cover_image_url} alt={news.title} className="w-full object-cover" />
+          </div>
+        )}
 
-      {news.audio_url && (
-        <div className="mt-6 flex flex-col gap-2 rounded-xl border border-gray-200 bg-white p-4 shadow-card">
-          <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
-            <Headphones className="h-4 w-4" />
-            Ouça esta notícia
-          </span>
-          <audio src={news.audio_url} controls className="w-full" />
-        </div>
-      )}
+        {news.audio_url && (
+          <div className="mt-6 flex flex-col gap-2 rounded-xl border border-gray-200 bg-white p-4 shadow-card">
+            <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Headphones className="h-4 w-4" />
+              Ouça esta notícia
+            </span>
+            <audio src={news.audio_url} controls className="w-full" />
+          </div>
+        )}
 
-      <div className={`${proseClassName} mt-8`} dangerouslySetInnerHTML={{ __html: contentFirstHalf }} />
+        <div
+          className="prose prose-gray mt-8 max-w-none prose-headings:font-semibold prose-a:text-brand-600"
+          dangerouslySetInnerHTML={{ __html: news.content }}
+        />
 
-      {contentSecondHalf && (
-        <>
-          <AdBanner position="ARTICLE_MIDDLE" className="my-8" />
-          <div className={proseClassName} dangerouslySetInnerHTML={{ __html: contentSecondHalf }} />
-        </>
-      )}
+        <AdBanner position="ARTICLE_BOTTOM" className="mt-8" />
 
-      <AdBanner position="ARTICLE_BOTTOM" className="mt-8" />
-
-      {related.length > 0 && (
-        <div className="mt-16 border-t border-gray-200 pt-10">
-          <CategorySection title="Notícias relacionadas" items={related} />
-        </div>
-      )}
-    </article>
+        {related.length > 0 && (
+          <div className="mt-16 border-t border-gray-200 pt-10">
+            <CategorySection title="Notícias relacionadas" items={related} />
+          </div>
+        )}
+      </article>
+    </div>
   )
 }
 

@@ -36,16 +36,6 @@ insert into public.ads (title, image_url, link_url, position, active, start_date
   10
 ),
 (
-  'Exemplo — Meio da notícia',
-  'https://picsum.photos/seed/ad-article-middle/1200/200',
-  'https://exemplo.com/anunciante-4',
-  'ARTICLE_MIDDLE',
-  true,
-  now() - interval '1 day',
-  now() + interval '30 day',
-  10
-),
-(
   'Exemplo — Final da notícia',
   'https://picsum.photos/seed/ad-article-bottom/1200/200',
   'https://exemplo.com/anunciante-5',

@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
-import { fetchActiveAd } from '../services/ads'
+import { fetchAdsForPosition } from '../services/ads'
 
-export function useActiveAd(position) {
-  const [ad, setAd] = useState(null)
+export function useAdsForPosition(position) {
+  const [ads, setAds] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let isMounted = true
     setLoading(true)
 
-    fetchActiveAd(position).then(({ data, error }) => {
+    fetchAdsForPosition(position).then(({ data, error }) => {
       if (!isMounted) return
-      setAd(error ? null : (data ?? null))
+      setAds(error ? [] : (data ?? []))
       setLoading(false)
     })
 
@@ -20,5 +20,5 @@ export function useActiveAd(position) {
     }
   }, [position])
 
-  return { ad, loading }
+  return { ads, loading }
 }

@@ -3,28 +3,51 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { Plus } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useAds } from '../../../hooks/useAds'
+import { useAdCounts } from '../../../hooks/useAdCounts'
 import { deleteAd } from '../../../services/ads'
 import { ROUTES } from '../../../routes/paths'
+import { AD_POSITIONS } from '../../../utils/adPositions'
 import AdList from '../../../components/ads/AdList'
 import AdPositionSelector from '../../../components/ads/AdPositionSelector'
+import SearchBar from '../../../components/ui/SearchBar'
+import Select from '../../../components/ui/Select'
 import Button from '../../../components/ui/Button'
 import Modal from '../../../components/ui/Modal'
 import Spinner from '../../../components/ui/Spinner'
 import Pagination from '../../../components/ui/Pagination'
 
+const STATUS_OPTIONS = [
+  { value: '', label: 'Todos os status' },
+  { value: 'active', label: 'Ativo' },
+  { value: 'scheduled', label: 'Agendado' },
+  { value: 'expired', label: 'Expirado' },
+  { value: 'inactive', label: 'Inativo' },
+]
+
+const SORT_OPTIONS = [
+  { value: 'priority', label: 'Maior prioridade' },
+  { value: 'recent', label: 'Mais recentes' },
+]
+
 function ManageAds() {
   const [searchParams, setSearchParams] = useSearchParams()
   const position = searchParams.get('position') ?? ''
+  const status = searchParams.get('status') ?? ''
+  const search = searchParams.get('q') ?? ''
+  const sort = searchParams.get('sort') || 'priority'
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
 
-  const { ads, totalCount, pageSize, loading, reload } = useAds({ position, page })
+  const { ads, totalCount, pageSize, loading, reload } = useAds({ position, status, search, sort, page })
+  const { counts, reload: reloadCounts } = useAdCounts()
   const [deleteTarget, setDeleteTarget] = useState(null)
 
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
 
   function updateParams(next) {
-    const params = { position, page: String(page), ...next }
-    const cleaned = Object.fromEntries(Object.entries(params).filter(([, value]) => value))
+    const params = { position, status, q: search, sort, page: String(page), ...next }
+    const cleaned = Object.fromEntries(
+      Object.entries(params).filter(([key, value]) => value && !(key === 'sort' && value === 'priority')),
+    )
     setSearchParams(cleaned)
   }
 
@@ -45,6 +68,7 @@ function ManageAds() {
     toast.success('Anúncio excluído com sucesso!')
     setDeleteTarget(null)
     reload()
+    reloadCounts()
   }
 
   return (
@@ -59,11 +83,57 @@ function ManageAds() {
         </Link>
       </div>
 
-      <AdPositionSelector
-        value={position}
-        onChange={(event) => updateParams({ position: event.target.value || undefined, page: undefined })}
-        className="w-64"
-      />
+      <div className="flex flex-wrap gap-2">
+        {AD_POSITIONS.map((item) => (
+          <span
+            key={item.value}
+            className="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs text-gray-500"
+          >
+            {item.label}: <strong className="text-gray-700">{counts[item.value] ?? 0}</strong>
+          </span>
+        ))}
+      </div>
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <div className="w-full sm:w-72">
+          <SearchBar
+            defaultValue={search}
+            placeholder="Buscar por título..."
+            onSearch={(value) => updateParams({ q: value || undefined, page: undefined })}
+          />
+        </div>
+
+        <AdPositionSelector
+          label=""
+          value={position}
+          onChange={(event) => updateParams({ position: event.target.value || undefined, page: undefined })}
+          className="w-48"
+        />
+
+        <Select
+          value={status}
+          onChange={(event) => updateParams({ status: event.target.value || undefined, page: undefined })}
+          className="w-44"
+        >
+          {STATUS_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+
+        <Select
+          value={sort}
+          onChange={(event) => updateParams({ sort: event.target.value, page: undefined })}
+          className="w-44"
+        >
+          {SORT_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+      </div>
 
       {loading ? (
         <div className="flex min-h-[30vh] items-center justify-center">
