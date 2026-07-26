@@ -5,6 +5,7 @@ import {
   Newspaper,
   FilePlus,
   FolderKanban,
+  Megaphone,
   UserCircle,
   LogOut,
   X,
@@ -17,6 +18,7 @@ const NAV_ITEMS = [
   { to: ROUTES.adminNews, label: 'Notícias', icon: Newspaper },
   { to: ROUTES.adminNewsNew, label: 'Nova Notícia', icon: FilePlus },
   { to: ROUTES.adminCategories, label: 'Categorias', icon: FolderKanban },
+  { to: ROUTES.adminAds, label: 'Anúncios', icon: Megaphone },
   { to: ROUTES.adminProfile, label: 'Perfil', icon: UserCircle },
 ]
 

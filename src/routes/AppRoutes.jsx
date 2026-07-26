@@ -16,6 +16,7 @@ import ManageNews from '../pages/admin/ManageNews'
 import NewNews from '../pages/admin/NewNews'
 import EditNews from '../pages/admin/EditNews'
 import ManageCategories from '../pages/admin/ManageCategories'
+import ManageAds from '../pages/admin/ads/ManageAds'
 import Profile from '../pages/admin/Profile'
 
 function AppRoutes() {
@@ -45,6 +46,7 @@ function AppRoutes() {
         <Route path={ROUTES.adminNewsNew} element={<NewNews />} />
         <Route path={ROUTES.adminNewsEdit} element={<EditNews />} />
         <Route path={ROUTES.adminCategories} element={<ManageCategories />} />
+        <Route path={ROUTES.adminAds} element={<ManageAds />} />
         <Route path={ROUTES.adminProfile} element={<Profile />} />
       </Route>
 
