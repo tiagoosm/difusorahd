@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Menu, X, Search } from 'lucide-react'
 import { useCategories } from '../../hooks/useCategories'
 import { ROUTES, buildPath } from '../../routes/paths'
+import logo from '../../assets/logo-difusora-hd.png'
 
 function Navbar() {
   const { categories } = useCategories()
@@ -17,8 +18,8 @@ function Navbar() {
   return (
     <header className="bg-[#E81736]">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <Link to={ROUTES.home} className="text-lg font-semibold tracking-tight text-white">
-          Difusora HD
+        <Link to={ROUTES.home} className="flex items-center">
+          <img src={logo} alt="Difusora HD" className="h-9 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
