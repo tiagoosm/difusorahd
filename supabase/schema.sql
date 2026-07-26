@@ -16,7 +16,6 @@ create type public.ad_position as enum (
   'HOME_MIDDLE',
   'ARTICLE_TOP',
   'ARTICLE_BOTTOM',
-  'SIDEBAR',
   'FOOTER'
 );
 
@@ -116,7 +115,7 @@ create table public.ads (
   constraint ads_date_range_check check (end_date >= start_date)
 );
 comment on table public.ads is 'Anúncios exibidos em posições fixas do site (banners de imagem + link).';
-comment on column public.ads.position is 'Onde o anúncio aparece: TOP_HOME, HOME_MIDDLE, ARTICLE_TOP, ARTICLE_BOTTOM, SIDEBAR, FOOTER.';
+comment on column public.ads.position is 'Onde o anúncio aparece: TOP_HOME, HOME_MIDDLE, ARTICLE_TOP, ARTICLE_BOTTOM, FOOTER.';
 comment on column public.ads.priority is 'Entre vários anúncios ativos na mesma posição, o de maior prioridade é exibido.';
 comment on column public.ads.active is 'Chave geral liga/desliga, independente do período de exibição.';
 

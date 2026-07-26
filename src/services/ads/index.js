@@ -70,6 +70,58 @@ export function updateAd(id, payload) {
   return supabase.from('ads').update(payload).eq('id', id).select().single()
 }
 
-export function deleteAd(id) {
-  return supabase.from('ads').delete().eq('id', id)
+// Extrai o caminho interno do arquivo (ex: "banners/abc.png") a partir da
+// URL pública que o Storage retorna, para poder chamar .remove() nele.
+function extractStoragePath(publicUrl, bucket) {
+  if (!publicUrl) return null
+  const marker = `/object/public/${bucket}/`
+  const index = publicUrl.indexOf(marker)
+  return index === -1 ? null : publicUrl.slice(index + marker.length)
+}
+
+// Recebe o anúncio inteiro (não só o id) porque precisa da image_url para
+// também limpar o arquivo no Storage.
+//
+// IMPORTANTE: o Supabase/PostgREST retorna sucesso (204, sem "error") mesmo
+// quando um DELETE não afeta nenhuma linha — seja porque o id não existe,
+// seja porque a política de RLS excluiu silenciosamente a linha do escopo do
+// comando. Por isso pedimos a linha de volta (.select()) e conferimos se ela
+// realmente veio: é a única forma de diferenciar "excluiu" de "não achou
+// nada para excluir".
+export async function deleteAd(ad) {
+  console.log('[deleteAd] iniciando exclusão', { id: ad.id, title: ad.title })
+
+  const { data, error } = await supabase.from('ads').delete().eq('id', ad.id).select()
+
+  console.log('[deleteAd] resposta do Supabase:', { data, error })
+
+  if (error) {
+    console.error('[deleteAd] erro retornado pelo Supabase:', error)
+    return { deleted: false, error }
+  }
+
+  if (!data || data.length === 0) {
+    console.error(
+      '[deleteAd] nenhuma linha foi afetada pelo DELETE — provavelmente a política de RLS ' +
+        '"ads_delete_admin" não reconheceu a sessão atual como admin, ou o registro já não existia.',
+    )
+    return {
+      deleted: false,
+      error: { message: 'Nenhum anúncio foi excluído. Confirme se sua sessão ainda está autenticada como administrador.' },
+    }
+  }
+
+  const path = extractStoragePath(ad.image_url, 'ads-images')
+  if (path) {
+    const { error: storageError } = await supabase.storage.from('ads-images').remove([path])
+    if (storageError) {
+      // Não falha a operação inteira por isso: o registro já foi excluído
+      // com sucesso, só a limpeza do arquivo não pôde ser confirmada.
+      console.error('[deleteAd] anúncio excluído, mas falhou ao remover a imagem do Storage:', storageError)
+    } else {
+      console.log('[deleteAd] imagem removida do Storage:', path)
+    }
+  }
+
+  return { deleted: true, error: null }
 }

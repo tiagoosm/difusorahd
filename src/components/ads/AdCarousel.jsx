@@ -1,7 +1,10 @@
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
+import { AD_POSITION_LABELS } from '../../utils/adPositions'
 
-function AdCarousel({ ads, className = '' }) {
+function AdCarousel({ ads, position, className = '' }) {
+  const height = AD_POSITION_LABELS[position]?.height ?? 'h-[180px]'
+
   const [emblaRef] = useEmblaCarousel({ loop: true, align: 'start' }, [
     Autoplay({ delay: 5000, stopOnMouseEnter: true, stopOnInteraction: false }),
   ])
@@ -18,7 +21,7 @@ function AdCarousel({ ads, className = '' }) {
             aria-label={ad.title}
             className="relative min-w-0 flex-[0_0_100%] transition-opacity hover:opacity-90"
           >
-            <img src={ad.image_url} alt={ad.title} loading="lazy" className="h-auto w-full object-cover" />
+            <img src={ad.image_url} alt={ad.title} loading="lazy" className={`w-full object-cover ${height}`} />
           </a>
         ))}
       </div>

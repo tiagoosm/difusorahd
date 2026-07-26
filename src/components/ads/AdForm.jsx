@@ -30,6 +30,7 @@ function AdForm({ defaultValues, onSubmit, submitLabel = 'Salvar' }) {
   const title = watch('title')
   const linkUrl = watch('link_url')
   const startDate = watch('start_date')
+  const position = watch('position')
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
@@ -49,7 +50,7 @@ function AdForm({ defaultValues, onSubmit, submitLabel = 'Salvar' }) {
       />
       {errors.image_url && <span className="-mt-3 text-xs text-red-500">{errors.image_url.message}</span>}
 
-      <AdPreview title={title} imageUrl={imageUrl} linkUrl={linkUrl} />
+      <AdPreview title={title} imageUrl={imageUrl} linkUrl={linkUrl} position={position} />
 
       <Input
         id="link_url"
