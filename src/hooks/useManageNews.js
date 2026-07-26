@@ -1,24 +1,40 @@
 import { useCallback, useEffect, useState } from 'react'
 import { fetchAllNewsAdmin } from '../services/news'
 
-const PAGE_SIZE = 10
-
-export function useManageNews({ status, categoryId, page }) {
+export function useManageNews({
+  status,
+  categoryId,
+  search,
+  sort,
+  publishedFrom,
+  publishedTo,
+  page,
+  pageSize,
+}) {
   const [news, setNews] = useState([])
   const [totalCount, setTotalCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
   const reload = useCallback(async () => {
     setLoading(true)
-    const { data, count } = await fetchAllNewsAdmin({ status, categoryId, page, pageSize: PAGE_SIZE })
+    const { data, count } = await fetchAllNewsAdmin({
+      status,
+      categoryId,
+      search,
+      sort,
+      publishedFrom,
+      publishedTo,
+      page,
+      pageSize,
+    })
     setNews(data ?? [])
     setTotalCount(count ?? 0)
     setLoading(false)
-  }, [status, categoryId, page])
+  }, [status, categoryId, search, sort, publishedFrom, publishedTo, page, pageSize])
 
   useEffect(() => {
     reload()
   }, [reload])
 
-  return { news, totalCount, pageSize: PAGE_SIZE, loading, reload }
+  return { news, totalCount, loading, reload }
 }

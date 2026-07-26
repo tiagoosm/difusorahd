@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { Eye, Headphones } from 'lucide-react'
+import { Headphones } from 'lucide-react'
 import { useNewsDetail } from '../hooks/useNewsDetail'
 import { useSEO } from '../hooks/useSEO'
 import { formatDate } from '../utils/formatDate'
@@ -59,10 +59,6 @@ function NewsDetail() {
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-gray-200 py-3 text-sm text-gray-500">
             {news.author?.full_name && <span>Por {news.author.full_name}</span>}
             <span>{formatDate(news.published_at)}</span>
-            <span className="flex items-center gap-1">
-              <Eye className="h-4 w-4" />
-              {news.views_count} visualizações
-            </span>
           </div>
 
           <ShareButtons title={news.title} url={window.location.href} />

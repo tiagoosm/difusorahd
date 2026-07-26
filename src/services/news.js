@@ -4,7 +4,7 @@ export const CARD_FIELDS =
   'id, title, slug, excerpt, cover_image_url, published_at, category:categories(id, name, slug)'
 
 const DETAIL_FIELDS = `
-  id, title, slug, excerpt, content, cover_image_url, audio_url, published_at, views_count,
+  id, title, slug, excerpt, content, cover_image_url, audio_url, published_at,
   category:categories(id, name, slug),
   author:profiles(full_name)
 `
@@ -101,23 +101,71 @@ export function createNews(payload) {
   return supabase.from('news').insert(payload).select().single()
 }
 
-export function fetchAllNewsAdmin({ status, categoryId, page = 1, pageSize = 10 } = {}) {
+const ADMIN_LIST_FIELDS =
+  'id, title, slug, status, views_count, cover_image_url, published_at, created_at, category:categories(id, name)'
+
+export function fetchAllNewsAdmin({
+  status,
+  categoryId,
+  search,
+  sort = 'recent',
+  publishedFrom,
+  publishedTo,
+  page = 1,
+  pageSize = 10,
+} = {}) {
   const from = (page - 1) * pageSize
   const to = from + pageSize - 1
 
-  let query = supabase
-    .from('news')
-    .select(
-      'id, title, slug, status, views_count, published_at, created_at, category:categories(id, name)',
-      { count: 'exact' },
-    )
-    .order('created_at', { ascending: false })
-    .range(from, to)
+  let query = supabase.from('news').select(ADMIN_LIST_FIELDS, { count: 'exact' }).range(from, to)
 
   if (status) query = query.eq('status', status)
   if (categoryId) query = query.eq('category_id', categoryId)
+  if (publishedFrom) query = query.gte('published_at', publishedFrom)
+  // Datas vêm de <input type="date"> (sem horário) — sem isso, "até 2026-07-26"
+  // excluiria notícias publicadas naquele próprio dia depois da meia-noite.
+  if (publishedTo) query = query.lte('published_at', `${publishedTo}T23:59:59`)
 
-  return query
+  if (search) {
+    const term = sanitizeSearchTerm(search)
+    query = query.or(`title.ilike.%${term}%,content.ilike.%${term}%`)
+  }
+
+  if (sort === 'oldest') {
+    query = query.order('published_at', { ascending: true, nullsFirst: false })
+  } else if (sort === 'views') {
+    query = query.order('views_count', { ascending: false })
+  } else {
+    query = query.order('published_at', { ascending: false, nullsFirst: false })
+  }
+
+  return query.order('created_at', { ascending: false })
+}
+
+// Estatísticas para os cards do painel "Gerenciar Notícias". Feito em
+// paralelo com queries head-only (sem baixar linhas) para manter leve.
+export async function fetchNewsStats() {
+  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
+
+  const [total, published, drafts, publishedThisMonth, viewsResult] = await Promise.all([
+    supabase.from('news').select('id', { count: 'exact', head: true }),
+    supabase.from('news').select('id', { count: 'exact', head: true }).eq('status', 'published'),
+    supabase.from('news').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
+    supabase
+      .from('news')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'published')
+      .gte('published_at', monthStart),
+    supabase.from('news').select('views_count'),
+  ])
+
+  return {
+    total: total.count ?? 0,
+    published: published.count ?? 0,
+    drafts: drafts.count ?? 0,
+    publishedThisMonth: publishedThisMonth.count ?? 0,
+    totalViews: (viewsResult.data ?? []).reduce((sum, row) => sum + (row.views_count ?? 0), 0),
+  }
 }
 
 export function deleteNews(id) {
