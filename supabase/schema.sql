@@ -11,6 +11,15 @@ create extension if not exists pgcrypto;
 create type public.user_role as enum ('admin', 'reader');
 create type public.news_status as enum ('draft', 'published');
 create type public.comment_status as enum ('pending', 'approved', 'rejected');
+create type public.ad_position as enum (
+  'TOP_HOME',
+  'HOME_MIDDLE',
+  'ARTICLE_TOP',
+  'ARTICLE_MIDDLE',
+  'ARTICLE_BOTTOM',
+  'SIDEBAR',
+  'FOOTER'
+);
 
 -- ----------------------------------------------------------------------------
 -- TABLES
@@ -92,6 +101,28 @@ comment on table public.comments is 'Comentários de leitores em notícias, mode
 
 create index comments_news_id_idx on public.comments (news_id);
 
+-- ads: banners de imagem + link exibidos em posições fixas do site.
+create table public.ads (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  image_url text not null,
+  link_url text not null,
+  position public.ad_position not null,
+  active boolean not null default true,
+  start_date timestamptz not null,
+  end_date timestamptz not null,
+  priority integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint ads_date_range_check check (end_date >= start_date)
+);
+comment on table public.ads is 'Anúncios exibidos em posições fixas do site (banners de imagem + link).';
+comment on column public.ads.position is 'Onde o anúncio aparece: TOP_HOME, HOME_MIDDLE, ARTICLE_TOP, ARTICLE_MIDDLE, ARTICLE_BOTTOM, SIDEBAR, FOOTER.';
+comment on column public.ads.priority is 'Entre vários anúncios ativos na mesma posição, o de maior prioridade é exibido.';
+comment on column public.ads.active is 'Chave geral liga/desliga, independente do período de exibição.';
+
+create index ads_position_active_priority_idx on public.ads (position, active, priority desc);
+
 -- ----------------------------------------------------------------------------
 -- FUNCTIONS & TRIGGERS
 -- ----------------------------------------------------------------------------
@@ -111,6 +142,10 @@ create trigger set_profiles_updated_at
 
 create trigger set_news_updated_at
   before update on public.news
+  for each row execute function public.set_updated_at();
+
+create trigger set_ads_updated_at
+  before update on public.ads
   for each row execute function public.set_updated_at();
 
 -- Cria automaticamente um profile (role='reader') quando um usuário se cadastra no Supabase Auth.
@@ -257,6 +292,27 @@ create policy "comments_update_admin" on public.comments
 create policy "comments_delete_own_or_admin" on public.comments
   for delete using (user_id = auth.uid() or public.is_admin());
 
+-- ads: público só vê os "no ar" agora (regra de ativo + período aplicada no banco);
+-- admin vê e gerencia tudo.
+alter table public.ads enable row level security;
+
+create policy "ads_select_public_valid" on public.ads
+  for select using (
+    active = true and now() >= start_date and now() <= end_date
+  );
+
+create policy "ads_select_admin" on public.ads
+  for select using (public.is_admin());
+
+create policy "ads_insert_admin" on public.ads
+  for insert with check (public.is_admin());
+
+create policy "ads_update_admin" on public.ads
+  for update using (public.is_admin()) with check (public.is_admin());
+
+create policy "ads_delete_admin" on public.ads
+  for delete using (public.is_admin());
+
 -- ----------------------------------------------------------------------------
 -- STORAGE: bucket único para imagem de capa e áudio das notícias
 -- ----------------------------------------------------------------------------
@@ -286,6 +342,33 @@ create policy "news_media_update_admin" on storage.objects
 
 create policy "news_media_delete_admin" on storage.objects
   for delete using (bucket_id = 'news-media' and public.is_admin());
+
+-- ----------------------------------------------------------------------------
+-- STORAGE: bucket para imagens dos anúncios
+-- ----------------------------------------------------------------------------
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'ads-images',
+  'ads-images',
+  true,
+  5242880, -- 5 MB
+  array['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+)
+on conflict (id) do update set
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+create policy "ads_images_select_all" on storage.objects
+  for select using (bucket_id = 'ads-images');
+
+create policy "ads_images_insert_admin" on storage.objects
+  for insert with check (bucket_id = 'ads-images' and public.is_admin());
+
+create policy "ads_images_update_admin" on storage.objects
+  for update using (bucket_id = 'ads-images' and public.is_admin());
+
+create policy "ads_images_delete_admin" on storage.objects
+  for delete using (bucket_id = 'ads-images' and public.is_admin());
 
 -- ----------------------------------------------------------------------------
 -- SEED: categorias iniciais (opcional, ajuda a testar as próximas etapas)
