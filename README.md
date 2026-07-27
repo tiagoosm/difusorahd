@@ -43,9 +43,9 @@ The platform allows administrators to create, edit, and manage news articles thr
 
 ---
 
-## 🚀 Live Demo
+## 🌐 Website
 
-👉 [**Acess**](https://difusorahd.vercel.app/)
+👉 [**Visit the website**](https://difusorahd.vercel.app/)
 
 ---
 
