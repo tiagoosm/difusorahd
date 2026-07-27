@@ -1,16 +1,95 @@
-# React + Vite
+# 📻 Difusora HD
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A modern news portal developed for Rádio Difusora HD, providing an intuitive platform for publishing and managing news, advertisements, and multimedia content.
 
-Currently, two official plugins are available:
+Built with React and Tailwind CSS, the project delivers a responsive experience for readers while offering an administration panel for efficient content management.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🎯 About
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Difusora HD is a news website designed to simplify the publication and organization of journalistic content.
 
-## Expanding the Oxlint configuration
+The platform allows administrators to create, edit, and manage news articles through a dedicated dashboard, making daily updates fast and efficient.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+---
+
+## ✨ Features
+
+### 📰 News Portal
+
+- Featured news section
+- Latest news feed
+- News categories
+- Search functionality
+- Responsive layout
+- Individual news pages
+
+### 📢 Advertisement Management
+
+- Advertisement registration
+- Multiple advertisement positions
+- Image upload
+- Fixed advertisement dimensions
+- Easy management through the admin panel
+
+### 🔒 Administration Panel
+
+- Dashboard for managing news
+- Advertisement management
+- Publish and edit articles
+- Image support
+- Visibility controls for administrative information
+
+---
+
+## 🚀 Live Demo
+
+👉 [**Acess**](https://difusorahd.vercel.app/)
+
+---
+
+## 🛠️ Technologies Used
+
+- React
+- Tailwind CSS
+- JavaScript
+- Vite
+- Supabase
+- Vercel
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── components/
+├── pages/
+├── services/
+├── hooks/
+├── assets/
+├── layouts/
+└── styles/
+```
+
+---
+
+## 🎨 Design Goals
+
+The project was designed with emphasis on:
+
+- Clean interface
+- Fast navigation
+- Mobile responsiveness
+- Easy content management
+- Accessibility
+- Modern user experience
+
+---
+
+## 👨‍💻 Author
+
+**Tiago Machado**
+
+- GitHub: https://github.com/tiagoosm
