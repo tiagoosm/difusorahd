@@ -3,7 +3,6 @@ import { Newspaper, Radio, ShieldCheck } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
 import logo from '../../../assets/logo-difusora-hd.png'
 import AdBanner from '../../ads/AdBanner'
-import NewsletterSection from './NewsletterSection'
 import FooterColumn from './FooterColumn'
 import FooterNavigation from './FooterNavigation'
 import FooterCategories from './FooterCategories'
@@ -20,8 +19,6 @@ function Footer() {
   return (
     <footer className="bg-gradient-to-b from-[#170f11] to-[#0c0808]">
       <div className="h-px bg-gradient-to-r from-transparent via-brand-600 to-transparent" />
-
-      <NewsletterSection />
 
       <div className="mx-auto max-w-6xl px-4 py-14">
         <div className="mx-auto mb-10 max-w-md">
