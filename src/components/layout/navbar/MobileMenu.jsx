@@ -74,12 +74,7 @@ function MobileMenu({ isOpen, onClose }) {
             </span>
           </div>
 
-          <CategoriesMenu
-            categories={categories}
-            loading={loading}
-            layout="list"
-            onSelect={onClose}
-          />
+          <CategoriesMenu categories={categories} loading={loading} onSelect={onClose} />
         </nav>
       </div>
     </div>
