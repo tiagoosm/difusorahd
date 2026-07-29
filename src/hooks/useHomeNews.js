@@ -17,12 +17,10 @@ export function useHomeNews() {
 
       if (!isMounted) return
 
-      const featuredItems = featuredResult.data ?? []
-      const featuredIds = new Set(featuredItems.map((item) => item.id))
-      const latestItems = (latestResult.data ?? []).filter((item) => !featuredIds.has(item.id))
-
-      setFeatured(featuredItems)
-      setLatest(latestItems)
+      // Destaques e últimas são seções independentes: uma notícia em
+      // destaque continua aparecendo normalmente aqui se for recente.
+      setFeatured(featuredResult.data ?? [])
+      setLatest(latestResult.data ?? [])
       setLoading(false)
     }
 
