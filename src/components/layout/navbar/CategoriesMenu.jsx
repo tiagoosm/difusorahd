@@ -25,7 +25,7 @@ function CategoriesMenu({ categories, loading, onSelect }) {
           key={category.id}
           to={buildPath.category(category.slug)}
           onClick={onSelect}
-          className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-brand-50 hover:text-brand-700"
+          className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-brand-50 hover:text-brand-700 focus-visible:bg-brand-50 focus-visible:text-brand-700 focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:outline-none"
         >
           {category.name}
         </Link>
