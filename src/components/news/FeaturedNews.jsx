@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { buildPath } from '../../routes/paths'
 import { formatDate } from '../../utils/formatDate'
 import Badge from '../ui/Badge'
+import SectionHeading from '../ui/SectionHeading'
 import NewsCard from './NewsCard'
 
 function FeaturedNews({ items }) {
@@ -11,6 +12,8 @@ function FeaturedNews({ items }) {
 
   return (
     <section className="flex flex-col gap-6">
+      <SectionHeading eyebrow="Difusora HD" title="Destaques" size="lg" />
+
       <Link
         to={buildPath.news(main.slug)}
         className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-card transition-shadow hover:shadow-card-hover md:flex-row"

@@ -22,7 +22,7 @@ function Footer() {
 
       <div className="mx-auto max-w-6xl px-4 py-14">
         <div className="mx-auto mb-10 max-w-md">
-          <AdBanner position="FOOTER" />
+          <AdBanner position="FOOTER" variant="dark" />
         </div>
 
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-8">
