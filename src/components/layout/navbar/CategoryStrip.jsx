@@ -6,7 +6,7 @@ import { ROUTES, buildPath } from '../../../routes/paths'
 function CategoryStrip({ categories, loading }) {
   return (
     <nav aria-label="Categorias" className="bg-brand-700">
-      <div className="mx-auto flex max-w-6xl items-center gap-6 overflow-x-auto px-4 py-2.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="mx-auto flex max-w-6xl items-center gap-6 overflow-x-auto px-4 py-2.5 [scrollbar-width:none] md:justify-center [&::-webkit-scrollbar]:hidden">
         <CategoryLink to={ROUTES.home} end>
           Início
         </CategoryLink>

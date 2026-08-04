@@ -4,9 +4,9 @@ import { Search, X } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
 
 // Única barra de pesquisa do site (sem duplicata na página de resultados).
-// Mesmo componente para desktop (pill que expande com foco, via
-// focus-within) e mobile (fullWidth=true, controlado pela Navbar).
-function NavbarSearch({ fullWidth = false, autoFocus = false, onSubmitSuccess, onCancel }) {
+// Sempre ocupa 100% do espaço do wrapper — a Navbar controla a largura
+// (centralizada e larga no desktop, full-width no toggle mobile).
+function NavbarSearch({ autoFocus = false, onSubmitSuccess, onCancel }) {
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const isOnSearchPage = location.pathname === ROUTES.search
@@ -52,12 +52,7 @@ function NavbarSearch({ fullWidth = false, autoFocus = false, onSubmitSuccess, o
   const showClear = value.length > 0 || Boolean(onCancel)
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      role="search"
-      className={`group relative ${fullWidth ? 'w-full' : 'shrink-0'}`}
-    >
-      <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/70 transition-colors group-focus-within:text-gray-400" />
+    <form onSubmit={handleSubmit} role="search" className="group relative w-full">
       <input
         ref={inputRef}
         type="search"
@@ -67,20 +62,25 @@ function NavbarSearch({ fullWidth = false, autoFocus = false, onSubmitSuccess, o
         autoFocus={autoFocus}
         placeholder="Pesquisar notícias..."
         aria-label="Pesquisar notícias"
-        className={`rounded-full border border-white/25 bg-white/10 py-2 pr-9 pl-9 text-sm text-white outline-none transition-all duration-300 ease-out placeholder:text-white/60 [&::-webkit-search-cancel-button]:appearance-none focus:border-white focus:bg-white focus:text-gray-900 focus:ring-2 focus:ring-white/40 focus:placeholder:text-gray-400 ${
-          fullWidth ? 'w-full' : 'w-72 focus:w-96'
-        }`}
+        className="w-full rounded-full border border-transparent bg-white py-2.5 pr-12 pl-4 text-sm text-gray-900 shadow-sm outline-none transition-shadow duration-200 placeholder:text-gray-400 [&::-webkit-search-cancel-button]:appearance-none focus:ring-2 focus:ring-white/70"
       />
       {showClear && (
         <button
           type="button"
           onClick={handleClear}
           aria-label="Limpar pesquisa"
-          className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-1 text-white/70 transition-colors group-focus-within:text-gray-400 hover:bg-white/20 hover:text-white group-focus-within:hover:bg-gray-200/70 group-focus-within:hover:text-gray-600 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none"
+          className="absolute top-1/2 right-11 -translate-y-1/2 rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:outline-none"
         >
           <X className="h-3.5 w-3.5" />
         </button>
       )}
+      <button
+        type="submit"
+        aria-label="Pesquisar"
+        className="absolute top-1/2 right-1.5 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-brand-600 text-white transition-colors hover:bg-brand-700 focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:outline-none"
+      >
+        <Search className="h-4 w-4" />
+      </button>
     </form>
   )
 }
