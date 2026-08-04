@@ -61,6 +61,7 @@ create table public.news (
   excerpt text,
   content text not null,
   cover_image_url text,
+  cover_image_caption text,
   audio_url text,
   category_id uuid not null references public.categories (id) on delete restrict,
   author_id uuid not null references public.profiles (id) on delete restrict,

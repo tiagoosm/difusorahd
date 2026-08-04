@@ -65,9 +65,16 @@ function NewsDetail() {
         </header>
 
         {news.cover_image_url && (
-          <div className="mt-6 overflow-hidden rounded-xl bg-gray-100">
-            <img src={news.cover_image_url} alt={news.title} className="w-full object-cover" />
-          </div>
+          <figure className="mt-6">
+            <div className="overflow-hidden rounded-xl bg-gray-100">
+              <img src={news.cover_image_url} alt={news.title} className="w-full object-cover" />
+            </div>
+            {news.cover_image_caption && (
+              <figcaption className="mt-2 text-xs text-gray-500 italic">
+                {news.cover_image_caption}
+              </figcaption>
+            )}
+          </figure>
         )}
 
         {news.audio_url && (

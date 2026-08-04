@@ -14,6 +14,7 @@ const EMPTY_VALUES = {
   excerpt: '',
   content: '',
   cover_image_url: '',
+  cover_image_caption: '',
   audio_url: '',
   category_id: '',
   status: 'draft',
@@ -86,6 +87,13 @@ function NewsForm({ defaultValues, onSubmit, submitLabel = 'Salvar' }) {
       {errors.cover_image_url && (
         <span className="-mt-3 text-xs text-red-500">{errors.cover_image_url.message}</span>
       )}
+
+      <Input
+        id="cover_image_caption"
+        label="Legenda da imagem (opcional)"
+        placeholder="Ex: Foto: Divulgação"
+        {...register('cover_image_caption')}
+      />
 
       <Controller
         name="audio_url"
