@@ -3,7 +3,6 @@ import { Search as SearchIcon, SearchX } from 'lucide-react'
 import { useSearchNews } from '../hooks/useSearchNews'
 import { useSEO } from '../hooks/useSEO'
 import { SITE_NAME } from '../utils/seo'
-import SearchBar from '../components/ui/SearchBar'
 import NewsCard from '../components/news/NewsCard'
 import Pagination from '../components/ui/Pagination'
 import Spinner from '../components/ui/Spinner'
@@ -22,10 +21,6 @@ function Search() {
     noindex: true,
   })
 
-  function handleSearch(nextQuery) {
-    setSearchParams(nextQuery ? { q: nextQuery } : {})
-  }
-
   function handlePageChange(nextPage) {
     setSearchParams(nextPage === 1 ? { q: query } : { q: query, page: String(nextPage) })
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -33,16 +28,17 @@ function Search() {
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8">
-      <header className="flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold text-gray-900">Pesquisar</h1>
-        <SearchBar defaultValue={query} onSearch={handleSearch} />
+      <header className="flex flex-col gap-1">
+        <h1 className="text-2xl font-semibold text-gray-900">
+          {query ? 'Resultados da busca' : 'Pesquisar'}
+        </h1>
       </header>
 
       {!query ? (
         <EmptyState
           icon={SearchIcon}
           title="Digite algo para pesquisar"
-          description="Busque por título ou conteúdo das notícias."
+          description="Use a barra de pesquisa no topo da página para buscar notícias."
         />
       ) : loading ? (
         <div className="flex min-h-[30vh] items-center justify-center">

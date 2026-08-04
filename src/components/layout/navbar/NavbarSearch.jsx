@@ -1,14 +1,27 @@
-import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Search, X } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
 
+// Única barra de pesquisa do site (sem duplicata na página de resultados).
 // Mesmo componente para desktop (pill que expande com foco, via
 // focus-within) e mobile (fullWidth=true, controlado pela Navbar).
 function NavbarSearch({ fullWidth = false, autoFocus = false, onSubmitSuccess, onCancel }) {
-  const [value, setValue] = useState('')
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const isOnSearchPage = location.pathname === ROUTES.search
+  const urlQuery = isOnSearchPage ? (searchParams.get('q') ?? '') : ''
+
+  const [value, setValue] = useState(urlQuery)
   const inputRef = useRef(null)
   const navigate = useNavigate()
+
+  // Mantém o campo refletindo o termo da URL: entrar direto em /busca?q=...,
+  // navegar com o botão voltar/avançar, etc. Não interfere na digitação em
+  // andamento, já que urlQuery só muda quando a navegação de fato acontece.
+  useEffect(() => {
+    setValue(urlQuery)
+  }, [urlQuery])
 
   function handleSubmit(event) {
     event.preventDefault()
