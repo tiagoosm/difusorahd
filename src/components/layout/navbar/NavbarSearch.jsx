@@ -68,7 +68,7 @@ function NavbarSearch({ fullWidth = false, autoFocus = false, onSubmitSuccess, o
         placeholder="Pesquisar notícias..."
         aria-label="Pesquisar notícias"
         className={`rounded-full border border-white/25 bg-white/10 py-2 pr-9 pl-9 text-sm text-white outline-none transition-all duration-300 ease-out placeholder:text-white/60 [&::-webkit-search-cancel-button]:appearance-none focus:border-white focus:bg-white focus:text-gray-900 focus:ring-2 focus:ring-white/40 focus:placeholder:text-gray-400 ${
-          fullWidth ? 'w-full' : 'w-56 focus:w-80'
+          fullWidth ? 'w-full' : 'w-72 focus:w-96'
         }`}
       />
       {showClear && (
