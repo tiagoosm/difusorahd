@@ -11,7 +11,7 @@ export function useHomeNews() {
 
     async function load() {
       const [featuredResult, latestResult] = await Promise.all([
-        fetchFeaturedNews(3),
+        fetchFeaturedNews(6),
         fetchLatestNews(6),
       ])
 
