@@ -107,13 +107,13 @@ function ManageAds() {
           label=""
           value={position}
           onChange={(event) => updateParams({ position: event.target.value || undefined, page: undefined })}
-          className="w-48"
+          className="w-full sm:w-48"
         />
 
         <Select
           value={status}
           onChange={(event) => updateParams({ status: event.target.value || undefined, page: undefined })}
-          className="w-44"
+          className="w-full sm:w-44"
         >
           {STATUS_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>

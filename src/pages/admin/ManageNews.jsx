@@ -144,7 +144,7 @@ function ManageNews() {
             label="Categoria"
             value={categoryId}
             onChange={(event) => updateFilters({ category: event.target.value || undefined, page: undefined })}
-            className="w-48"
+            className="w-full sm:w-48"
           >
             <option value="">Todas as categorias</option>
             {categories.map((category) => (
@@ -158,7 +158,7 @@ function ManageNews() {
             label="Status"
             value={status}
             onChange={(event) => updateFilters({ status: event.target.value || undefined, page: undefined })}
-            className="w-40"
+            className="w-full sm:w-40"
           >
             {STATUS_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
@@ -171,7 +171,7 @@ function ManageNews() {
             label="Ordenar por"
             value={sort}
             onChange={(event) => updateFilters({ sort: event.target.value, page: undefined })}
-            className="w-44"
+            className="w-full sm:w-44"
           >
             {SORT_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
@@ -180,23 +180,23 @@ function ManageNews() {
             ))}
           </Select>
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex w-full flex-col gap-1.5 sm:w-auto">
             <span className="text-sm font-medium text-gray-700">Publicada de</span>
             <input
               type="date"
               value={publishedFrom}
               onChange={(event) => updateFilters({ from: event.target.value || undefined, page: undefined })}
-              className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 sm:w-auto"
             />
           </div>
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex w-full flex-col gap-1.5 sm:w-auto">
             <span className="text-sm font-medium text-gray-700">até</span>
             <input
               type="date"
               value={publishedTo}
               onChange={(event) => updateFilters({ to: event.target.value || undefined, page: undefined })}
-              className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 sm:w-auto"
             />
           </div>
 
@@ -204,7 +204,7 @@ function ManageNews() {
             label="Por página"
             value={String(pageSize)}
             onChange={(event) => updateFilters({ pageSize: event.target.value, page: undefined })}
-            className="w-28"
+            className="w-full sm:w-28"
           >
             {PAGE_SIZE_OPTIONS.map((option) => (
               <option key={option} value={option}>
