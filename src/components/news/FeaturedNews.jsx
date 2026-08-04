@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { buildPath } from '../../routes/paths'
 import { formatDate } from '../../utils/formatDate'
 import Badge from '../ui/Badge'
-import SectionHeading from '../ui/SectionHeading'
 
 function FeaturedNews({ items }) {
   if (!items.length) return null
@@ -11,8 +10,6 @@ function FeaturedNews({ items }) {
 
   return (
     <section className="flex flex-col gap-6">
-      <SectionHeading eyebrow="Difusora HD" title="Destaques" size="lg" />
-
       <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch">
         <Link
           to={buildPath.news(main.slug)}
@@ -25,9 +22,7 @@ function FeaturedNews({ items }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
           <div className="relative flex flex-col gap-3 p-6 md:p-8 lg:p-10">
-            {main.category?.name && (
-              <Badge className="bg-white/15 text-white backdrop-blur-sm">{main.category.name}</Badge>
-            )}
+            {main.category?.name && <Badge>{main.category.name}</Badge>}
             <h2 className="text-2xl leading-tight font-semibold text-white md:text-3xl lg:text-4xl">
               {main.title}
             </h2>
