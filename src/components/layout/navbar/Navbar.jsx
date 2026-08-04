@@ -4,7 +4,7 @@ import { Menu, Search } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
 import { useScrolled } from '../../../hooks/useScrolled'
 import { useCategories } from '../../../hooks/useCategories'
-import logo from '../../../assets/logo-difusora-hd.png'
+import logo from '../../../assets/logo-difusora-hd-icon-white.png'
 import CategoriesDropdown from './CategoriesDropdown'
 import NavbarSearch from './NavbarSearch'
 import MobileMenu from './MobileMenu'
@@ -46,7 +46,7 @@ function Navbar() {
                 to={ROUTES.home}
                 className="flex shrink-0 items-center rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none"
               >
-                <img src={logo} alt="Difusora HD" className="-my-1 h-12 w-auto" />
+                <img src={logo} alt="Difusora HD" className="h-10 w-auto" />
               </Link>
 
               <nav className="hidden items-center gap-8 md:flex">
