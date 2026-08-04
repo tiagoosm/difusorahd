@@ -5,16 +5,16 @@
 @theme {
   --font-sans: "Inter Variable", system-ui, sans-serif;
 
-  --color-brand-50: #fef3f5;
-  --color-brand-100: #fce3e7;
-  --color-brand-200: #f9c3cb;
-  --color-brand-300: #f599a7;
-  --color-brand-400: #ef5d72;
-  --color-brand-500: #eb334e;
-  --color-brand-600: #e81736;
-  --color-brand-700: #c5142e;
-  --color-brand-800: #a21026;
-  --color-brand-900: #800d1e;
+  --color-brand-50: #faf4f4;
+  --color-brand-100: #f2e4e4;
+  --color-brand-200: #e4c5c6;
+  --color-brand-300: #d19c9e;
+  --color-brand-400: #b66264;
+  --color-brand-500: #a33a3d;
+  --color-brand-600: #961f22;
+  --color-brand-700: #801a1d;
+  --color-brand-800: #691618;
+  --color-brand-900: #531113;
 
   --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 1px 3px 0 rgb(0 0 0 / 0.06);
   --shadow-card-hover: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 8px 10px -2px rgb(0 0 0 / 0.06);
