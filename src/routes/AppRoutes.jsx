@@ -1,8 +1,10 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { ROUTES } from './paths'
 import ProtectedRoute from './ProtectedRoute'
 import PublicLayout from '../components/layout/PublicLayout'
 import AdminLayout from '../components/layout/AdminLayout'
+import Spinner from '../components/ui/Spinner'
 
 import Home from '../pages/Home'
 import NewsDetail from '../pages/NewsDetail'
@@ -10,17 +12,27 @@ import Category from '../pages/Category'
 import Search from '../pages/Search'
 import NotFound from '../pages/NotFound'
 
-import Login from '../pages/admin/Login'
-import Dashboard from '../pages/admin/Dashboard'
-import ManageNews from '../pages/admin/ManageNews'
-import NewNews from '../pages/admin/NewNews'
-import EditNews from '../pages/admin/EditNews'
-import ManageFeatured from '../pages/admin/ManageFeatured'
-import ManageCategories from '../pages/admin/ManageCategories'
-import ManageAds from '../pages/admin/ads/ManageAds'
-import NewAd from '../pages/admin/ads/NewAd'
-import EditAd from '../pages/admin/ads/EditAd'
-import Profile from '../pages/admin/Profile'
+// Área administrativa carregada sob demanda: leitores comuns nunca baixam esse
+// código (editor de texto rico, formulários, etc.), só quem acessa /admin.
+const Login = lazy(() => import('../pages/admin/Login'))
+const Dashboard = lazy(() => import('../pages/admin/Dashboard'))
+const ManageNews = lazy(() => import('../pages/admin/ManageNews'))
+const NewNews = lazy(() => import('../pages/admin/NewNews'))
+const EditNews = lazy(() => import('../pages/admin/EditNews'))
+const ManageFeatured = lazy(() => import('../pages/admin/ManageFeatured'))
+const ManageCategories = lazy(() => import('../pages/admin/ManageCategories'))
+const ManageAds = lazy(() => import('../pages/admin/ads/ManageAds'))
+const NewAd = lazy(() => import('../pages/admin/ads/NewAd'))
+const EditAd = lazy(() => import('../pages/admin/ads/EditAd'))
+const Profile = lazy(() => import('../pages/admin/Profile'))
+
+function AdminFallback() {
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <Spinner />
+    </div>
+  )
+}
 
 function AppRoutes() {
   return (
@@ -34,13 +46,22 @@ function AppRoutes() {
       </Route>
 
       {/* Login (fora do layout protegido) */}
-      <Route path={ROUTES.adminLogin} element={<Login />} />
+      <Route
+        path={ROUTES.adminLogin}
+        element={
+          <Suspense fallback={<AdminFallback />}>
+            <Login />
+          </Suspense>
+        }
+      />
 
       {/* Área administrativa protegida */}
       <Route
         element={
           <ProtectedRoute>
-            <AdminLayout />
+            <Suspense fallback={<AdminFallback />}>
+              <AdminLayout />
+            </Suspense>
           </ProtectedRoute>
         }
       >

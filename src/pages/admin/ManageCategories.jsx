@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { useCategoriesAdmin } from '../../hooks/useCategoriesAdmin'
 import { createCategory, updateCategory, deleteCategory } from '../../services/categories'
 import Modal from '../../components/ui/Modal'
+import ConfirmDialog from '../../components/ui/ConfirmDialog'
 import Button from '../../components/ui/Button'
 import Spinner from '../../components/ui/Spinner'
 import EmptyState from '../../components/ui/EmptyState'
@@ -132,20 +133,18 @@ function ManageCategories() {
         />
       </Modal>
 
-      <Modal isOpen={Boolean(deleteTarget)} onClose={() => setDeleteTarget(null)} title="Excluir categoria">
-        <p className="text-sm text-gray-600">
-          Tem certeza que deseja excluir a categoria <strong>{deleteTarget?.name}</strong>? Essa ação não
-          pode ser desfeita.
-        </p>
-        <div className="mt-5 flex justify-end gap-2">
-          <Button variant="secondary" onClick={() => setDeleteTarget(null)}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Excluir
-          </Button>
-        </div>
-      </Modal>
+      <ConfirmDialog
+        isOpen={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+        title="Excluir categoria"
+        description={
+          <>
+            Tem certeza que deseja excluir a categoria <strong>{deleteTarget?.name}</strong>? Essa ação
+            não pode ser desfeita.
+          </>
+        }
+      />
     </div>
   )
 }

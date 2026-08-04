@@ -22,7 +22,7 @@ import { formatDate } from '../../utils/formatDate'
 import Select from '../../components/ui/Select'
 import Button from '../../components/ui/Button'
 import Badge from '../../components/ui/Badge'
-import Modal from '../../components/ui/Modal'
+import ConfirmDialog from '../../components/ui/ConfirmDialog'
 import Spinner from '../../components/ui/Spinner'
 import EmptyState from '../../components/ui/EmptyState'
 import Pagination from '../../components/ui/Pagination'
@@ -322,20 +322,18 @@ function ManageNews() {
         </>
       )}
 
-      <Modal isOpen={Boolean(deleteTarget)} onClose={() => setDeleteTarget(null)} title="Excluir notícia">
-        <p className="text-sm text-gray-600">
-          Tem certeza que deseja excluir <strong>{deleteTarget?.title}</strong>? Essa ação não pode ser
-          desfeita.
-        </p>
-        <div className="mt-5 flex justify-end gap-2">
-          <Button variant="secondary" onClick={() => setDeleteTarget(null)}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Excluir
-          </Button>
-        </div>
-      </Modal>
+      <ConfirmDialog
+        isOpen={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+        title="Excluir notícia"
+        description={
+          <>
+            Tem certeza que deseja excluir <strong>{deleteTarget?.title}</strong>? Essa ação não pode ser
+            desfeita.
+          </>
+        }
+      />
     </div>
   )
 }

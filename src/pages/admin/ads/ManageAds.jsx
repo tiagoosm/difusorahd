@@ -12,7 +12,7 @@ import AdPositionSelector from '../../../components/ads/AdPositionSelector'
 import SearchBar from '../../../components/ui/SearchBar'
 import Select from '../../../components/ui/Select'
 import Button from '../../../components/ui/Button'
-import Modal from '../../../components/ui/Modal'
+import ConfirmDialog from '../../../components/ui/ConfirmDialog'
 import Spinner from '../../../components/ui/Spinner'
 import Pagination from '../../../components/ui/Pagination'
 
@@ -146,20 +146,18 @@ function ManageAds() {
         </>
       )}
 
-      <Modal isOpen={Boolean(deleteTarget)} onClose={() => setDeleteTarget(null)} title="Excluir anúncio">
-        <p className="text-sm text-gray-600">
-          Tem certeza que deseja excluir <strong>{deleteTarget?.title}</strong>? Essa ação não pode ser
-          desfeita.
-        </p>
-        <div className="mt-5 flex justify-end gap-2">
-          <Button variant="secondary" onClick={() => setDeleteTarget(null)}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Excluir
-          </Button>
-        </div>
-      </Modal>
+      <ConfirmDialog
+        isOpen={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+        title="Excluir anúncio"
+        description={
+          <>
+            Tem certeza que deseja excluir <strong>{deleteTarget?.title}</strong>? Essa ação não pode ser
+            desfeita.
+          </>
+        }
+      />
     </div>
   )
 }
