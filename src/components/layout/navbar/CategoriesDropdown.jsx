@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react'
-import { ChevronDown, Tag } from 'lucide-react'
 import { useOnClickOutside } from '../../../hooks/useOnClickOutside'
 import { useEscapeKey } from '../../../hooks/useEscapeKey'
 import CategoriesMenu from './CategoriesMenu'
@@ -27,13 +26,9 @@ function CategoriesDropdown({ categories, loading }) {
         onClick={() => setIsOpen((open) => !open)}
         aria-haspopup="true"
         aria-expanded={isOpen}
-        className="group relative flex items-center gap-1.5 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:outline-none"
+        className="group relative py-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:outline-none"
       >
-        <Tag className="h-4 w-4" />
         Categorias
-        <ChevronDown
-          className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-        />
         <span
           className={`absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-brand-600 transition-transform duration-200 ease-out ${
             isOpen ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'

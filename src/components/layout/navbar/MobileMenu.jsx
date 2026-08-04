@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { X, Search, Home, Tag } from 'lucide-react'
+import { X, Search, Home } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
 import { useLockBodyScroll } from '../../../hooks/useLockBodyScroll'
 import { useOnClickOutside } from '../../../hooks/useOnClickOutside'
@@ -66,8 +66,7 @@ function MobileMenu({ isOpen, onClose, categories, loading }) {
             Buscar
           </Link>
 
-          <div className="mt-5 mb-2 flex items-center gap-2 px-3">
-            <Tag className="h-3.5 w-3.5 text-gray-400" />
+          <div className="mt-5 mb-2 px-3">
             <span className="text-xs font-semibold tracking-wide text-gray-400 uppercase">
               Categorias
             </span>
