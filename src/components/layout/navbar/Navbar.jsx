@@ -4,7 +4,7 @@ import { Menu, Search } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
 import { useScrolled } from '../../../hooks/useScrolled'
 import { useCategories } from '../../../hooks/useCategories'
-import logo from '../../../assets/logo-difusora-hd-red.png'
+import logo from '../../../assets/logo-difusora-hd.png'
 import CategoriesDropdown from './CategoriesDropdown'
 import NavbarSearch from './NavbarSearch'
 import MobileMenu from './MobileMenu'
@@ -24,8 +24,8 @@ function Navbar() {
   return (
     <>
       <header
-        className={`sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur transition-shadow duration-300 ${
-          isScrolled ? 'shadow-md shadow-black/5' : ''
+        className={`sticky top-0 z-40 bg-brand-600 transition-shadow duration-300 ${
+          isScrolled ? 'shadow-lg shadow-black/20' : ''
         }`}
       >
         <div
@@ -44,7 +44,7 @@ function Navbar() {
             <>
               <Link
                 to={ROUTES.home}
-                className="flex shrink-0 items-center rounded-md focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:outline-none"
+                className="flex shrink-0 items-center rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none"
               >
                 <img src={logo} alt="Difusora HD" className="-my-1 h-12 w-auto" />
               </Link>
@@ -55,13 +55,13 @@ function Navbar() {
                     <>
                       <span
                         className={`text-sm font-medium transition-colors ${
-                          isActive ? 'text-brand-600' : 'text-gray-600 group-hover:text-gray-900'
+                          isActive ? 'text-white' : 'text-white/85 group-hover:text-white'
                         }`}
                       >
                         Início
                       </span>
                       <span
-                        className={`absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-brand-600 transition-transform duration-200 ease-out ${
+                        className={`absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-white transition-transform duration-200 ease-out ${
                           isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                         }`}
                       />
@@ -81,7 +81,7 @@ function Navbar() {
                   type="button"
                   onClick={() => setIsMobileSearchOpen(true)}
                   aria-label="Pesquisar"
-                  className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:outline-none md:hidden"
+                  className="rounded-lg p-2 text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none md:hidden"
                 >
                   <Search className="h-5 w-5" />
                 </button>
@@ -92,7 +92,7 @@ function Navbar() {
                   aria-label="Abrir menu"
                   aria-haspopup="true"
                   aria-expanded={isMobileMenuOpen}
-                  className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:outline-none md:hidden"
+                  className="rounded-lg p-2 text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none md:hidden"
                 >
                   <Menu className="h-5 w-5" />
                 </button>

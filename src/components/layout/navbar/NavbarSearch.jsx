@@ -42,9 +42,9 @@ function NavbarSearch({ fullWidth = false, autoFocus = false, onSubmitSuccess, o
     <form
       onSubmit={handleSubmit}
       role="search"
-      className={`relative ${fullWidth ? 'w-full' : 'shrink-0'}`}
+      className={`group relative ${fullWidth ? 'w-full' : 'shrink-0'}`}
     >
-      <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+      <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/70 transition-colors group-focus-within:text-gray-400" />
       <input
         ref={inputRef}
         type="search"
@@ -54,7 +54,7 @@ function NavbarSearch({ fullWidth = false, autoFocus = false, onSubmitSuccess, o
         autoFocus={autoFocus}
         placeholder="Pesquisar notícias..."
         aria-label="Pesquisar notícias"
-        className={`rounded-full border border-gray-200 bg-gray-50 py-2 pr-9 pl-9 text-sm text-gray-900 outline-none transition-all duration-300 ease-out placeholder:text-gray-400 [&::-webkit-search-cancel-button]:appearance-none focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20 ${
+        className={`rounded-full border border-white/25 bg-white/10 py-2 pr-9 pl-9 text-sm text-white outline-none transition-all duration-300 ease-out placeholder:text-white/60 [&::-webkit-search-cancel-button]:appearance-none focus:border-white focus:bg-white focus:text-gray-900 focus:ring-2 focus:ring-white/40 focus:placeholder:text-gray-400 ${
           fullWidth ? 'w-full' : 'w-56 focus:w-80'
         }`}
       />
@@ -63,7 +63,7 @@ function NavbarSearch({ fullWidth = false, autoFocus = false, onSubmitSuccess, o
           type="button"
           onClick={handleClear}
           aria-label="Limpar pesquisa"
-          className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-200/70 hover:text-gray-600 focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:outline-none"
+          className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-1 text-white/70 transition-colors group-focus-within:text-gray-400 hover:bg-white/20 hover:text-white group-focus-within:hover:bg-gray-200/70 group-focus-within:hover:text-gray-600 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none"
         >
           <X className="h-3.5 w-3.5" />
         </button>

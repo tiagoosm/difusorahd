@@ -26,11 +26,11 @@ function CategoriesDropdown({ categories, loading }) {
         onClick={() => setIsOpen((open) => !open)}
         aria-haspopup="true"
         aria-expanded={isOpen}
-        className="group relative py-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:outline-none"
+        className="group relative py-1.5 text-sm font-medium text-white/85 transition-colors hover:text-white focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none"
       >
         Categorias
         <span
-          className={`absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-brand-600 transition-transform duration-200 ease-out ${
+          className={`absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-white transition-transform duration-200 ease-out ${
             isOpen ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
           }`}
         />
