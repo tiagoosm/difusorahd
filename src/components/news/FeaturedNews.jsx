@@ -30,7 +30,11 @@ function FeaturedNews({ items }) {
           <h2 className="text-2xl leading-tight font-semibold text-gray-900 md:text-3xl">
             {main.title}
           </h2>
-          {main.excerpt && <p className="line-clamp-3 text-gray-500">{main.excerpt}</p>}
+          {main.excerpt && (
+            <p className="line-clamp-3 text-base leading-relaxed text-gray-500 sm:text-lg">
+              {main.excerpt}
+            </p>
+          )}
           <span className="text-xs text-gray-400">{formatDate(main.published_at)}</span>
         </div>
       </Link>

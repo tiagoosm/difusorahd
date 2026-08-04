@@ -29,7 +29,7 @@ function Search() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:py-10 lg:py-12">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold text-gray-900">
+        <h1 className="text-2xl leading-tight font-semibold text-gray-900 sm:text-3xl">
           {query ? 'Resultados da busca' : 'Pesquisar'}
         </h1>
       </header>

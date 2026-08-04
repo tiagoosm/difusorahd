@@ -53,8 +53,10 @@ function NewsDetail() {
       <article>
         <header className="flex flex-col gap-3">
           {news.category?.name && <Badge>{news.category.name}</Badge>}
-          <h1 className="text-3xl font-semibold leading-tight text-gray-900">{news.title}</h1>
-          {news.excerpt && <p className="text-lg text-gray-500">{news.excerpt}</p>}
+          <h1 className="text-3xl leading-tight font-semibold text-gray-900 sm:text-4xl">
+            {news.title}
+          </h1>
+          {news.excerpt && <p className="text-lg leading-relaxed text-gray-500">{news.excerpt}</p>}
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-gray-200 py-3 text-sm text-gray-500">
             {news.author?.full_name && <span>Por {news.author.full_name}</span>}
