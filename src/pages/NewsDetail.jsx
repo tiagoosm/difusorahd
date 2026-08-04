@@ -46,7 +46,7 @@ function NewsDetail() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-3xl px-4 py-8 sm:py-10 lg:py-12">
       {/* Acima de tudo, inclusive da categoria e do título. */}
       <AdBanner position="ARTICLE_TOP" className="mb-6" />
 
@@ -65,7 +65,7 @@ function NewsDetail() {
         </header>
 
         {news.cover_image_url && (
-          <figure className="mt-6">
+          <figure className="mt-8">
             <div className="overflow-hidden rounded-xl bg-gray-100">
               <img src={news.cover_image_url} alt={news.title} className="w-full object-cover" />
             </div>
@@ -78,7 +78,7 @@ function NewsDetail() {
         )}
 
         {news.audio_url && (
-          <div className="mt-6 flex flex-col gap-2 rounded-xl border border-gray-200 bg-white p-4 shadow-card">
+          <div className="mt-8 flex flex-col gap-2 rounded-xl border border-gray-200 bg-white p-4 shadow-card">
             <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
               <Headphones className="h-4 w-4" />
               Ouça esta notícia
@@ -88,11 +88,11 @@ function NewsDetail() {
         )}
 
         <div
-          className="prose prose-gray mt-8 max-w-none prose-headings:font-semibold prose-a:text-brand-600"
+          className="prose prose-gray mt-10 max-w-none prose-headings:font-semibold prose-a:text-brand-600"
           dangerouslySetInnerHTML={{ __html: news.content }}
         />
 
-        <AdBanner position="ARTICLE_BOTTOM" className="mt-8" />
+        <AdBanner position="ARTICLE_BOTTOM" className="mt-10" />
 
         {related.length > 0 && (
           <div className="mt-16 border-t border-gray-200 pt-10">

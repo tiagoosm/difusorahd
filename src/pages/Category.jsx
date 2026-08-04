@@ -52,7 +52,7 @@ function Category() {
   }
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8">
+    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:py-10 lg:py-12">
       <header>
         <h1 className="text-2xl font-semibold text-gray-900">{category.name}</h1>
         {category.description && <p className="mt-1 text-gray-500">{category.description}</p>}

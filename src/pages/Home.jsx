@@ -14,7 +14,7 @@ function Home() {
   useSEO({ title: SITE_NAME, description: SITE_DESCRIPTION })
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8">
+    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:py-10 lg:py-12">
       <AdBanner position="TOP_HOME" />
 
       {loading ? (

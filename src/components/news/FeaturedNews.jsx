@@ -25,7 +25,7 @@ function FeaturedNews({ items }) {
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
-        <div className="flex flex-1 flex-col justify-center gap-3 p-6 md:p-8">
+        <div className="flex flex-1 flex-col justify-center gap-3.5 p-6 md:p-8 lg:p-10">
           {main.category?.name && <Badge>{main.category.name}</Badge>}
           <h2 className="text-2xl leading-tight font-semibold text-gray-900 md:text-3xl">
             {main.title}

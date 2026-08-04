@@ -17,13 +17,13 @@ function NewsCard({ news }) {
           loading="lazy"
         />
       </div>
-      <div className="flex flex-1 flex-col gap-2 p-4">
+      <div className="flex flex-1 flex-col gap-2.5 p-5">
         {news.category?.name && <Badge>{news.category.name}</Badge>}
         <h3 className="line-clamp-2 text-base font-semibold leading-snug text-gray-900">
           {news.title}
         </h3>
         {news.excerpt && <p className="line-clamp-2 text-sm text-gray-500">{news.excerpt}</p>}
-        <span className="mt-auto pt-2 text-xs text-gray-400">{formatDate(news.published_at)}</span>
+        <span className="mt-auto pt-3 text-xs text-gray-400">{formatDate(news.published_at)}</span>
       </div>
     </Link>
   )
