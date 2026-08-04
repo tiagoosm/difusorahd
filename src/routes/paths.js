@@ -9,6 +9,7 @@ export const ROUTES = {
   adminNews: '/admin/noticias',
   adminNewsNew: '/admin/noticias/nova',
   adminNewsEdit: '/admin/noticias/:id/editar',
+  adminFeatured: '/admin/destaques',
   adminCategories: '/admin/categorias',
   adminAds: '/admin/anuncios',
   adminAdsNew: '/admin/anuncios/novo',

@@ -67,6 +67,7 @@ create table public.news (
   author_id uuid not null references public.profiles (id) on delete restrict,
   status public.news_status not null default 'draft',
   is_featured boolean not null default false,
+  featured_position integer,
   views_count integer not null default 0,
   published_at timestamptz,
   created_at timestamptz not null default now(),
@@ -78,6 +79,7 @@ create index news_category_id_idx on public.news (category_id);
 create index news_author_id_idx on public.news (author_id);
 create index news_status_published_at_idx on public.news (status, published_at desc);
 create index news_is_featured_idx on public.news (is_featured) where is_featured = true;
+create index news_featured_position_idx on public.news (featured_position) where featured_position is not null;
 
 -- news_tags: tabela de junção N:N entre news e tags.
 create table public.news_tags (

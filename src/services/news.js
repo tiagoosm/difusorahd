@@ -15,8 +15,63 @@ export function fetchFeaturedNews(limit = 3) {
     .select(CARD_FIELDS)
     .eq('status', 'published')
     .eq('is_featured', true)
+    .order('featured_position', { ascending: true, nullsFirst: false })
     .order('published_at', { ascending: false })
     .limit(limit)
+}
+
+// Lista completa e ordenada dos destaques atuais, para a página
+// /admin/destaques (sem limite — o admin precisa ver e reordenar todos).
+export function fetchFeaturedNewsAdmin() {
+  return supabase
+    .from('news')
+    .select(CARD_FIELDS)
+    .eq('status', 'published')
+    .eq('is_featured', true)
+    .order('featured_position', { ascending: true, nullsFirst: false })
+    .order('published_at', { ascending: false })
+}
+
+// Notícias publicadas que ainda não são destaque, para o buscador de
+// "adicionar destaque". Busca opcional por título.
+export function fetchFeaturableNews(search = '') {
+  let query = supabase
+    .from('news')
+    .select(CARD_FIELDS)
+    .eq('status', 'published')
+    .eq('is_featured', false)
+    .order('published_at', { ascending: false })
+    .limit(20)
+
+  if (search) query = query.ilike('title', `%${sanitizeSearchTerm(search)}%`)
+
+  return query
+}
+
+// Persiste a ordem final dos destaques: quem está em `orderedIds` vira
+// destaque na posição correspondente; quem estava marcado antes e saiu da
+// lista é desmarcado. Chamado só quando o admin clica em "Salvar destaques"
+// — até lá, a reordenação/adição/remoção acontece só no estado local (preview).
+export async function saveFeaturedNews(orderedIds) {
+  const { data: current } = await supabase.from('news').select('id').eq('is_featured', true)
+  const removedIds = (current ?? [])
+    .map((item) => item.id)
+    .filter((id) => !orderedIds.includes(id))
+
+  const updates = orderedIds.map((id, index) =>
+    supabase
+      .from('news')
+      .update({ is_featured: true, featured_position: index + 1 })
+      .eq('id', id),
+  )
+
+  if (removedIds.length) {
+    updates.push(
+      supabase.from('news').update({ is_featured: false, featured_position: null }).in('id', removedIds),
+    )
+  }
+
+  return Promise.all(updates)
 }
 
 export function fetchLatestNews(limit = 6) {
