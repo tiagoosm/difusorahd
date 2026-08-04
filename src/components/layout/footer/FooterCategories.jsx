@@ -13,7 +13,7 @@ function FooterCategories() {
           {Array.from({ length: 6 }).map((_, index) => (
             <span
               key={index}
-              className="h-7 w-16 animate-pulse rounded-full bg-white/5"
+              className="h-7 w-16 animate-pulse rounded-full bg-white/10"
             />
           ))}
         </div>
@@ -23,7 +23,7 @@ function FooterCategories() {
             <Link
               key={category.id}
               to={buildPath.category(category.slug)}
-              className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/60 transition-colors hover:border-brand-600 hover:bg-brand-600 hover:text-white"
+              className="rounded-full border border-white/25 px-3 py-1 text-xs text-white/85 transition-colors hover:border-white hover:bg-white hover:text-brand-700"
             >
               {category.name}
             </Link>

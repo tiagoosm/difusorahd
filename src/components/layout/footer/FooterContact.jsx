@@ -34,10 +34,10 @@ function FooterContact() {
     <ul className="flex flex-col gap-4">
       {CONTACT_ITEMS.map(({ icon: Icon, label, content }) => (
         <li key={label} className="flex items-start gap-3">
-          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/5 text-brand-500">
+          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black/15 text-white">
             <Icon className="h-4 w-4" />
           </span>
-          <span className="text-sm text-white/60 [&_a]:text-white/80 [&_a]:transition-colors [&_a:hover]:text-white">
+          <span className="text-sm text-white/85 [&_a]:text-white [&_a]:transition-colors [&_a:hover]:text-white/70">
             {content}
           </span>
         </li>

@@ -4,7 +4,7 @@ import AdCarousel from './AdCarousel'
 
 const LABEL_TONE = {
   light: 'text-gray-400',
-  dark: 'text-white/40',
+  dark: 'text-white/70',
 }
 
 // Anúncios precisam se diferenciar claramente de conteúdo editorial na

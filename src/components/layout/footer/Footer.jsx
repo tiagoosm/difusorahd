@@ -17,9 +17,7 @@ const IDENTITY_BADGES = [
 
 function Footer() {
   return (
-    <footer className="bg-gradient-to-b from-[#170f11] to-[#0c0808]">
-      <div className="h-px bg-gradient-to-r from-transparent via-brand-600 to-transparent" />
-
+    <footer className="bg-gradient-to-b from-brand-700 to-brand-900">
       <div className="mx-auto max-w-6xl px-4 py-14">
         <div className="mx-auto mb-10 max-w-md">
           <AdBanner position="FOOTER" variant="dark" />
@@ -31,13 +29,13 @@ function Footer() {
               <img src={logo} alt="Difusora HD" className="h-11 w-auto" />
             </Link>
 
-            <p className="mt-5 text-sm font-medium text-white/80">
+            <p className="mt-5 text-sm font-medium text-white">
               Fundação São José do Paraíso
               <br />
               Rádio Difusora HD
             </p>
 
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/80">
               Há décadas levando informação, entretenimento e credibilidade para a população de
               Pouso Alegre e região.
             </p>
@@ -45,10 +43,10 @@ function Footer() {
             <div className="mt-6 flex gap-6">
               {IDENTITY_BADGES.map(({ icon: Icon, label }) => (
                 <div key={label} className="flex flex-col items-center gap-1.5">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-brand-500">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/15 text-white">
                     <Icon className="h-4 w-4" />
                   </span>
-                  <span className="text-[11px] text-white/45">{label}</span>
+                  <span className="text-[11px] text-white/70">{label}</span>
                 </div>
               ))}
             </div>

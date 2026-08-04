@@ -41,7 +41,7 @@ function FooterSocial() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={name}
-            className={`flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-white/70 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${hoverClassName}`}
+            className={`flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white/85 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${hoverClassName}`}
           >
             <Icon className="h-[18px] w-[18px]" />
           </a>
