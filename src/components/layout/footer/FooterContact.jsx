@@ -1,4 +1,5 @@
-import { MapPin, Phone, MessageCircle } from 'lucide-react'
+import { MapPin, Phone } from 'lucide-react'
+import { WhatsAppIcon } from './SocialIcons'
 
 const CONTACT_ITEMS = [
   {
@@ -18,7 +19,7 @@ const CONTACT_ITEMS = [
     content: <a href="tel:+553534231488">(35) 3423-1488</a>,
   },
   {
-    icon: MessageCircle,
+    icon: WhatsAppIcon,
     label: 'WhatsApp',
     content: (
       <a href="https://wa.me/5535998661032" target="_blank" rel="noopener noreferrer">

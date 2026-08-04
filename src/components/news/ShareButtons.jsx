@@ -1,16 +1,20 @@
-import { MessageCircle, Share2, Link as LinkIcon } from 'lucide-react'
+import { Link as LinkIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { WhatsAppIcon, XIcon } from '../layout/footer/SocialIcons'
 
+// Ícones de marca reais (não genéricos) para cada rede: um balão de chat
+// comum pode ser confundido com "comentários" — inexistente no site — em vez
+// de sinalizar claramente WhatsApp/X, já que não há texto ao lado do ícone.
 function ShareButtons({ title, url }) {
   const shareLinks = [
     {
       label: 'WhatsApp',
-      icon: MessageCircle,
+      icon: WhatsAppIcon,
       href: `https://wa.me/?text=${encodeURIComponent(`${title} ${url}`)}`,
     },
     {
       label: 'X (Twitter)',
-      icon: Share2,
+      icon: XIcon,
       href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
     },
   ]
