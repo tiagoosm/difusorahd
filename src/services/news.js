@@ -3,6 +3,9 @@ import { supabase } from './supabase'
 export const CARD_FIELDS =
   'id, title, slug, excerpt, cover_image_url, published_at, category:categories(id, name, slug)'
 
+const MOST_READ_FIELDS =
+  'id, title, slug, cover_image_url, views_count, category:categories(id, name, slug)'
+
 const DETAIL_FIELDS = `
   id, title, slug, excerpt, content, cover_image_url, cover_image_caption, audio_url, published_at,
   category:categories(id, name, slug),
@@ -83,6 +86,19 @@ export function fetchLatestNews(limit = 6) {
     .limit(limit)
 }
 
+// Ranking "de todos os tempos" via views_count (contador já existente,
+// nenhuma contagem nova). Busca um pouco mais que o exibido (limit) porque
+// quem chama filtra fora IDs já mostrados em Destaques/Últimas antes de
+// cortar pro tamanho final — evita repetir a mesma notícia na Home.
+export function fetchMostReadNews(limit = 15) {
+  return supabase
+    .from('news')
+    .select(MOST_READ_FIELDS)
+    .eq('status', 'published')
+    .order('views_count', { ascending: false })
+    .limit(limit)
+}
+
 export function fetchNewsBySlug(slug) {
   return supabase.from('news').select(DETAIL_FIELDS).eq('status', 'published').eq('slug', slug).maybeSingle()
 }
@@ -135,10 +151,6 @@ export function searchNews({ query, page = 1, pageSize = 9 }) {
     .range(from, to)
 }
 
-export function fetchNewsCountByStatus(status) {
-  return supabase.from('news').select('id', { count: 'exact', head: true }).eq('status', status)
-}
-
 // Notícias publicadas num intervalo, para o card "Notícias" do dashboard de
 // analytics (período + comparação com o anterior).
 export function fetchPublishedNewsCount(start, end) {
@@ -148,11 +160,6 @@ export function fetchPublishedNewsCount(start, end) {
     .eq('status', 'published')
     .gte('published_at', start.toISOString())
     .lt('published_at', end.toISOString())
-}
-
-export async function fetchPublishedViewsSum() {
-  const { data } = await supabase.from('news').select('views_count').eq('status', 'published')
-  return (data ?? []).reduce((sum, row) => sum + (row.views_count ?? 0), 0)
 }
 
 export function fetchRecentNews(limit = 5) {

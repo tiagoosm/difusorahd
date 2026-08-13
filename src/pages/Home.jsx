@@ -4,12 +4,13 @@ import { useSEO } from '../hooks/useSEO'
 import { SITE_NAME, SITE_DESCRIPTION } from '../utils/seo'
 import FeaturedNews from '../components/news/FeaturedNews'
 import CategorySection from '../components/news/CategorySection'
+import MostReadNews from '../components/news/MostReadNews'
 import AdBanner from '../components/ads/AdBanner'
 import EmptyState from '../components/ui/EmptyState'
 import Spinner from '../components/ui/Spinner'
 
 function Home() {
-  const { featured, latest, loading } = useHomeNews()
+  const { featured, latest, mostRead, loading } = useHomeNews()
 
   useSEO({ title: SITE_NAME, description: SITE_DESCRIPTION })
 
@@ -31,7 +32,12 @@ function Home() {
         <div className="flex flex-col gap-12">
           <FeaturedNews items={featured} />
           <AdBanner position="HOME_MIDDLE" />
-          <CategorySection title="Últimas notícias" items={latest} />
+          <div className="grid gap-8 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <CategorySection title="Últimas notícias" items={latest} />
+            </div>
+            <MostReadNews items={mostRead} />
+          </div>
         </div>
       )}
     </div>
