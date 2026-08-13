@@ -1,4 +1,4 @@
-import { Eye, Users, Newspaper, TrendingUp } from 'lucide-react'
+import { Eye, Users, Newspaper, Layers } from 'lucide-react'
 import { useAnalyticsPeriod } from '../../hooks/useAnalyticsPeriod'
 import { useAnalyticsSummary } from '../../hooks/useAnalyticsSummary'
 import { useAnalyticsTimeseries } from '../../hooks/useAnalyticsTimeseries'
@@ -30,6 +30,11 @@ function Analytics() {
   const topPages = useTopPages(range)
 
   const viewsGrowth = calcGrowth(current.views, previous.views)
+
+  // Páginas vistas por visitante — mede engajamento, diferente dos outros 3
+  // cards (que são totais). Arredondado: current.visitors=0 evita divisão por zero.
+  const currentPagesPerVisitor = current.visitors > 0 ? current.views / current.visitors : 0
+  const previousPagesPerVisitor = previous.visitors > 0 ? previous.views / previous.visitors : 0
 
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-8">
@@ -76,13 +81,13 @@ function Analytics() {
           hint="Notícias publicadas dentro do período selecionado"
         />
         <KpiCard
-          label="Crescimento"
-          value={current.views}
-          growth={viewsGrowth}
-          icon={TrendingUp}
+          label="Engajamento"
+          value={Math.round(currentPagesPerVisitor * 10) / 10}
+          growth={calcGrowth(currentPagesPerVisitor, previousPagesPerVisitor)}
+          icon={Layers}
           loading={loading}
           highlight
-          hint="Variação de visualizações em relação ao período anterior equivalente"
+          hint="Páginas vistas por visitante, em média, no período selecionado"
         />
       </div>
 
