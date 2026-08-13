@@ -481,6 +481,25 @@ $$;
 
 grant execute on function public.analytics_by_hour(timestamptz, timestamptz) to authenticated;
 
+-- Retenção de analytics_events: 26 meses cobre a comparação "Este ano vs.
+-- ano anterior" em qualquer mês do ano, sem reter eventos indefinidamente
+-- (minimização de dados / LGPD) nem deixar a tabela crescer sem limite.
+create extension if not exists pg_cron;
+
+create or replace function public.purge_old_analytics_events()
+returns void
+language sql
+set search_path = public
+as $$
+  delete from public.analytics_events where created_at < now() - interval '26 months';
+$$;
+
+select cron.schedule(
+  'purge-old-analytics-events',
+  '0 4 1 * *', -- dia 1 de cada mês, 04:00 UTC
+  $$select public.purge_old_analytics_events();$$
+);
+
 -- ----------------------------------------------------------------------------
 -- ROW LEVEL SECURITY
 -- ----------------------------------------------------------------------------
