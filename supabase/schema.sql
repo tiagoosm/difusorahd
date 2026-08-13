@@ -272,6 +272,37 @@ $$ language plpgsql security definer set search_path = public;
 
 grant execute on function public.log_analytics_event(jsonb) to anon, authenticated;
 
+-- Views + visitantes únicos (count distinct) num intervalo, para os cards do
+-- dashboard de analytics. SECURITY INVOKER (padrão): roda com o RLS de quem
+-- chama, então só admin (via policy analytics_events_select_admin) recebe
+-- dados reais.
+create or replace function public.analytics_summary(p_start timestamptz, p_end timestamptz)
+returns table (views bigint, visitors bigint)
+language sql
+stable
+set search_path = public
+as $$
+  select count(*) as views, count(distinct visitor_hash) as visitors
+  from public.analytics_events
+  where created_at >= p_start and created_at < p_end;
+$$;
+
+grant execute on function public.analytics_summary(timestamptz, timestamptz) to authenticated;
+
+-- Visitantes únicos nos últimos 5 minutos, para o indicador "tempo real".
+create or replace function public.analytics_realtime_visitors()
+returns bigint
+language sql
+stable
+set search_path = public
+as $$
+  select count(distinct visitor_hash)
+  from public.analytics_events
+  where created_at >= now() - interval '5 minutes';
+$$;
+
+grant execute on function public.analytics_realtime_visitors() to authenticated;
+
 -- ----------------------------------------------------------------------------
 -- ROW LEVEL SECURITY
 -- ----------------------------------------------------------------------------

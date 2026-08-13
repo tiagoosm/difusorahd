@@ -16,6 +16,7 @@ import NotFound from '../pages/NotFound'
 // código (editor de texto rico, formulários, etc.), só quem acessa /admin.
 const Login = lazy(() => import('../pages/admin/Login'))
 const Dashboard = lazy(() => import('../pages/admin/Dashboard'))
+const Analytics = lazy(() => import('../pages/admin/Analytics'))
 const ManageNews = lazy(() => import('../pages/admin/ManageNews'))
 const NewNews = lazy(() => import('../pages/admin/NewNews'))
 const EditNews = lazy(() => import('../pages/admin/EditNews'))
@@ -66,6 +67,7 @@ function AppRoutes() {
         }
       >
         <Route path={ROUTES.adminDashboard} element={<Dashboard />} />
+        <Route path={ROUTES.adminAnalytics} element={<Analytics />} />
         <Route path={ROUTES.adminNews} element={<ManageNews />} />
         <Route path={ROUTES.adminNewsNew} element={<NewNews />} />
         <Route path={ROUTES.adminNewsEdit} element={<EditNews />} />

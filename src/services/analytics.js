@@ -1,3 +1,5 @@
+import { supabase } from './supabase'
+
 const TRACK_ENDPOINT = '/api/track'
 
 function getUtmParams(search) {
@@ -28,4 +30,21 @@ export function trackPageView({ page, pageType, newsId, categoryId }) {
     body: JSON.stringify(payload),
     keepalive: true,
   }).catch(() => {})
+}
+
+// Views + visitantes únicos num intervalo, para os cards do dashboard admin.
+export async function fetchAnalyticsSummary(start, end) {
+  const { data, error } = await supabase.rpc('analytics_summary', {
+    p_start: start.toISOString(),
+    p_end: end.toISOString(),
+  })
+  if (error) throw error
+  const row = data?.[0]
+  return { views: row?.views ?? 0, visitors: row?.visitors ?? 0 }
+}
+
+export async function fetchRealtimeVisitors() {
+  const { data, error } = await supabase.rpc('analytics_realtime_visitors')
+  if (error) throw error
+  return data ?? 0
 }

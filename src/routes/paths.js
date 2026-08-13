@@ -6,6 +6,7 @@ export const ROUTES = {
   search: '/busca',
   adminLogin: '/admin/login',
   adminDashboard: '/admin',
+  adminAnalytics: '/admin/analise',
   adminNews: '/admin/noticias',
   adminNewsNew: '/admin/noticias/nova',
   adminNewsEdit: '/admin/noticias/:id/editar',

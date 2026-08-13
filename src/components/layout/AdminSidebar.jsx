@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import {
   LayoutDashboard,
+  BarChart3,
   Newspaper,
   FilePlus,
   Star,
@@ -16,6 +17,7 @@ import { ROUTES } from '../../routes/paths'
 
 const NAV_ITEMS = [
   { to: ROUTES.adminDashboard, label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: ROUTES.adminAnalytics, label: 'Análise', icon: BarChart3 },
   { to: ROUTES.adminNews, label: 'Notícias', icon: Newspaper },
   { to: ROUTES.adminNewsNew, label: 'Nova Notícia', icon: FilePlus },
   { to: ROUTES.adminFeatured, label: 'Destaques', icon: Star },
