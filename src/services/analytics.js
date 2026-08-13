@@ -48,3 +48,53 @@ export async function fetchRealtimeVisitors() {
   if (error) throw error
   return data ?? 0
 }
+
+// bucket: 'day' | 'hour' — 'hour' faz sentido só para períodos de 1-2 dias
+// (Hoje/Ontem); para o resto, agrupar por hora geraria um gráfico ilegível.
+export async function fetchAnalyticsTimeseries(start, end, bucket = 'day') {
+  const { data, error } = await supabase.rpc('analytics_timeseries', {
+    p_start: start.toISOString(),
+    p_end: end.toISOString(),
+    p_bucket: bucket,
+  })
+  if (error) throw error
+  return data ?? []
+}
+
+export async function fetchAnalyticsBySource(start, end) {
+  const { data, error } = await supabase.rpc('analytics_by_source', {
+    p_start: start.toISOString(),
+    p_end: end.toISOString(),
+  })
+  if (error) throw error
+  return data ?? []
+}
+
+export async function fetchAnalyticsByCategory(start, end) {
+  const { data, error } = await supabase.rpc('analytics_by_category', {
+    p_start: start.toISOString(),
+    p_end: end.toISOString(),
+  })
+  if (error) throw error
+  return data ?? []
+}
+
+export async function fetchTopNews(start, end, limit = 8) {
+  const { data, error } = await supabase.rpc('analytics_top_news', {
+    p_start: start.toISOString(),
+    p_end: end.toISOString(),
+    p_limit: limit,
+  })
+  if (error) throw error
+  return data ?? []
+}
+
+export async function fetchTopPages(start, end, limit = 10) {
+  const { data, error } = await supabase.rpc('analytics_top_pages', {
+    p_start: start.toISOString(),
+    p_end: end.toISOString(),
+    p_limit: limit,
+  })
+  if (error) throw error
+  return data ?? []
+}

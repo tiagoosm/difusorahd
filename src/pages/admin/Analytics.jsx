@@ -1,14 +1,28 @@
 import { Eye, Users, Newspaper, TrendingUp } from 'lucide-react'
 import { useAnalyticsPeriod } from '../../hooks/useAnalyticsPeriod'
 import { useAnalyticsSummary } from '../../hooks/useAnalyticsSummary'
+import { useAnalyticsTimeseries } from '../../hooks/useAnalyticsTimeseries'
+import { useAnalyticsBreakdowns } from '../../hooks/useAnalyticsBreakdowns'
+import { useTopNews } from '../../hooks/useTopNews'
+import { useTopPages } from '../../hooks/useTopPages'
 import { calcGrowth } from '../../utils/formatNumber'
 import PeriodSelector from '../../components/admin/analytics/PeriodSelector'
 import RealtimeBadge from '../../components/admin/analytics/RealtimeBadge'
 import KpiCard from '../../components/admin/analytics/KpiCard'
+import EvolutionChart from '../../components/admin/analytics/EvolutionChart'
+import TrafficSourceChart from '../../components/admin/analytics/TrafficSourceChart'
+import CategoryPerformanceChart from '../../components/admin/analytics/CategoryPerformanceChart'
+import TopNewsList from '../../components/admin/analytics/TopNewsList'
+import TopPagesTable from '../../components/admin/analytics/TopPagesTable'
+import DashboardCard from '../../components/ui/DashboardCard'
 
 function Analytics() {
   const { period, customFrom, customTo, range, setPeriod, setCustomRange } = useAnalyticsPeriod()
   const { current, previous, loading } = useAnalyticsSummary(range)
+  const timeseries = useAnalyticsTimeseries(range)
+  const breakdowns = useAnalyticsBreakdowns(range)
+  const topNews = useTopNews()
+  const topPages = useTopPages(range)
 
   const viewsGrowth = calcGrowth(current.views, previous.views)
 
@@ -66,6 +80,35 @@ function Analytics() {
           hint="Variação de visualizações em relação ao período anterior equivalente"
         />
       </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <DashboardCard title="Evolução dos acessos" className="lg:col-span-2">
+          <EvolutionChart data={timeseries.data} bucket={timeseries.bucket} loading={timeseries.loading} />
+        </DashboardCard>
+
+        <DashboardCard title="Origem do tráfego">
+          <TrafficSourceChart data={breakdowns.bySource} loading={breakdowns.loading} />
+        </DashboardCard>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <DashboardCard title="Notícias mais lidas">
+          <TopNewsList
+            news={topNews.news}
+            period={topNews.period}
+            onPeriodChange={topNews.setPeriod}
+            loading={topNews.loading}
+          />
+        </DashboardCard>
+
+        <DashboardCard title="Desempenho por categoria">
+          <CategoryPerformanceChart data={breakdowns.byCategory} loading={breakdowns.loading} />
+        </DashboardCard>
+      </div>
+
+      <DashboardCard title="Páginas mais acessadas">
+        <TopPagesTable pages={topPages.pages} loading={topPages.loading} />
+      </DashboardCard>
     </div>
   )
 }
