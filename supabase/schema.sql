@@ -80,6 +80,7 @@ create index news_author_id_idx on public.news (author_id);
 create index news_status_published_at_idx on public.news (status, published_at desc);
 create index news_is_featured_idx on public.news (is_featured) where is_featured = true;
 create index news_featured_position_idx on public.news (featured_position) where featured_position is not null;
+create index news_status_views_count_idx on public.news (status, views_count desc) where status = 'published';
 
 -- news_tags: tabela de junção N:N entre news e tags.
 create table public.news_tags (

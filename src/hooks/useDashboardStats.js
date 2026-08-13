@@ -1,9 +1,21 @@
 import { useEffect, useState } from 'react'
-import { fetchNewsCountByStatus, fetchPublishedViewsSum, fetchRecentNews } from '../services/news'
-import { fetchCategoriesCount } from '../services/categories'
+import { fetchNewsStats, fetchRecentNews } from '../services/news'
+import { fetchAnalyticsSummary } from '../services/analytics'
+import { getPeriodRange } from '../utils/analyticsPeriods'
 
+const EMPTY_NEWS_STATS = { total: 0, published: 0, drafts: 0, publishedThisMonth: 0, totalViews: 0 }
+const EMPTY_SUMMARY = { views: 0, visitors: 0 }
+
+// Reaproveita fetchNewsStats (já usado em ManageNews) para as contagens de
+// conteúdo, e fetchAnalyticsSummary (já usado em /admin/analise) para
+// hoje/7 dias com comparação — nenhuma contagem nova, só reunir o que já
+// existe num único carregamento pro Dashboard.
 export function useDashboardStats() {
-  const [stats, setStats] = useState({ published: 0, drafts: 0, categories: 0, totalViews: 0 })
+  const [newsStats, setNewsStats] = useState(EMPTY_NEWS_STATS)
+  const [today, setToday] = useState(EMPTY_SUMMARY)
+  const [yesterday, setYesterday] = useState(EMPTY_SUMMARY)
+  const [last7, setLast7] = useState(EMPTY_SUMMARY)
+  const [previous7, setPrevious7] = useState(EMPTY_SUMMARY)
   const [recentNews, setRecentNews] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -11,22 +23,26 @@ export function useDashboardStats() {
     let isMounted = true
 
     async function load() {
-      const [publishedResult, draftResult, categoriesResult, totalViews, recentResult] = await Promise.all([
-        fetchNewsCountByStatus('published'),
-        fetchNewsCountByStatus('draft'),
-        fetchCategoriesCount(),
-        fetchPublishedViewsSum(),
-        fetchRecentNews(5),
-      ])
+      const todayRange = getPeriodRange('today')
+      const last7Range = getPeriodRange('last7')
+
+      const [newsStatsResult, todaySummary, yesterdaySummary, last7Summary, previous7Summary, recentResult] =
+        await Promise.all([
+          fetchNewsStats(),
+          fetchAnalyticsSummary(todayRange.start, todayRange.end),
+          fetchAnalyticsSummary(todayRange.previousStart, todayRange.previousEnd),
+          fetchAnalyticsSummary(last7Range.start, last7Range.end),
+          fetchAnalyticsSummary(last7Range.previousStart, last7Range.previousEnd),
+          fetchRecentNews(5),
+        ])
 
       if (!isMounted) return
 
-      setStats({
-        published: publishedResult.count ?? 0,
-        drafts: draftResult.count ?? 0,
-        categories: categoriesResult.count ?? 0,
-        totalViews,
-      })
+      setNewsStats(newsStatsResult)
+      setToday(todaySummary)
+      setYesterday(yesterdaySummary)
+      setLast7(last7Summary)
+      setPrevious7(previous7Summary)
       setRecentNews(recentResult.data ?? [])
       setLoading(false)
     }
@@ -38,5 +54,5 @@ export function useDashboardStats() {
     }
   }, [])
 
-  return { stats, recentNews, loading }
+  return { newsStats, today, yesterday, last7, previous7, recentNews, loading }
 }
