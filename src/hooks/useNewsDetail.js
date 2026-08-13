@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { fetchNewsBySlug, fetchRelatedNews, incrementNewsViews } from '../services/news'
+import { trackPageView } from '../services/analytics'
 
 export function useNewsDetail(slug) {
   const [news, setNews] = useState(null)
@@ -26,6 +27,12 @@ export function useNewsDetail(slug) {
       setNews(newsData)
       setLoading(false)
       incrementNewsViews(slug)
+      trackPageView({
+        page: `/noticia/${slug}`,
+        pageType: 'news',
+        newsId: newsData.id,
+        categoryId: newsData.category?.id,
+      })
 
       if (newsData.category?.id) {
         const { data: relatedData } = await fetchRelatedNews({

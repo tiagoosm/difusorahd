@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { fetchFeaturedNews, fetchLatestNews } from '../services/news'
+import { trackPageView } from '../services/analytics'
 
 export function useHomeNews() {
   const [featured, setFeatured] = useState([])
@@ -22,6 +23,7 @@ export function useHomeNews() {
       setFeatured(featuredResult.data ?? [])
       setLatest(latestResult.data ?? [])
       setLoading(false)
+      trackPageView({ page: '/', pageType: 'home' })
     }
 
     load()

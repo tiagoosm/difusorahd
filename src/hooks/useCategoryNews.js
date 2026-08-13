@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { fetchCategoryBySlug } from '../services/categories'
 import { fetchNewsByCategory } from '../services/news'
+import { trackPageView } from '../services/analytics'
 
 const PAGE_SIZE = 9
 
@@ -28,6 +29,7 @@ export function useCategoryNews(slug, page) {
       }
 
       setCategory(categoryData)
+      trackPageView({ page: `/categoria/${slug}`, pageType: 'category', categoryId: categoryData.id })
 
       const { data: newsData, count } = await fetchNewsByCategory({
         categoryId: categoryData.id,

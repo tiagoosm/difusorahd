@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { searchNews } from '../services/news'
+import { trackPageView } from '../services/analytics'
 
 const PAGE_SIZE = 9
 
@@ -24,6 +25,7 @@ export function useSearchNews(query, page) {
       setNews(data ?? [])
       setTotalCount(count ?? 0)
       setLoading(false)
+      trackPageView({ page: '/busca', pageType: 'search' })
     })
 
     return () => {
