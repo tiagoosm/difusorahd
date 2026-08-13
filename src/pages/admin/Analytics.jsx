@@ -3,6 +3,7 @@ import { useAnalyticsPeriod } from '../../hooks/useAnalyticsPeriod'
 import { useAnalyticsSummary } from '../../hooks/useAnalyticsSummary'
 import { useAnalyticsTimeseries } from '../../hooks/useAnalyticsTimeseries'
 import { useAnalyticsBreakdowns } from '../../hooks/useAnalyticsBreakdowns'
+import { useAudienceBreakdowns } from '../../hooks/useAudienceBreakdowns'
 import { useTopNews } from '../../hooks/useTopNews'
 import { useTopPages } from '../../hooks/useTopPages'
 import { calcGrowth } from '../../utils/formatNumber'
@@ -14,6 +15,9 @@ import TrafficSourceChart from '../../components/admin/analytics/TrafficSourceCh
 import CategoryPerformanceChart from '../../components/admin/analytics/CategoryPerformanceChart'
 import TopNewsList from '../../components/admin/analytics/TopNewsList'
 import TopPagesTable from '../../components/admin/analytics/TopPagesTable'
+import DeviceBreakdown from '../../components/admin/analytics/DeviceBreakdown'
+import LocationBreakdown from '../../components/admin/analytics/LocationBreakdown'
+import HourlyChart from '../../components/admin/analytics/HourlyChart'
 import DashboardCard from '../../components/ui/DashboardCard'
 
 function Analytics() {
@@ -21,6 +25,7 @@ function Analytics() {
   const { current, previous, loading } = useAnalyticsSummary(range)
   const timeseries = useAnalyticsTimeseries(range)
   const breakdowns = useAnalyticsBreakdowns(range)
+  const audience = useAudienceBreakdowns(range)
   const topNews = useTopNews()
   const topPages = useTopPages(range)
 
@@ -105,6 +110,25 @@ function Analytics() {
           <CategoryPerformanceChart data={breakdowns.byCategory} loading={breakdowns.loading} />
         </DashboardCard>
       </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <DashboardCard title="Dispositivos">
+          <DeviceBreakdown
+            byDevice={audience.byDevice}
+            byOs={audience.byOs}
+            byBrowser={audience.byBrowser}
+            loading={audience.loading}
+          />
+        </DashboardCard>
+
+        <DashboardCard title="Localização dos visitantes">
+          <LocationBreakdown byLocation={audience.byLocation} loading={audience.loading} />
+        </DashboardCard>
+      </div>
+
+      <DashboardCard title="Horários de maior acesso">
+        <HourlyChart byHour={audience.byHour} loading={audience.loading} />
+      </DashboardCard>
 
       <DashboardCard title="Páginas mais acessadas">
         <TopPagesTable pages={topPages.pages} loading={topPages.loading} />

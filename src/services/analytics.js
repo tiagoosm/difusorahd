@@ -98,3 +98,18 @@ export async function fetchTopPages(start, end, limit = 10) {
   if (error) throw error
   return data ?? []
 }
+
+async function callRange(fnName, start, end) {
+  const { data, error } = await supabase.rpc(fnName, {
+    p_start: start.toISOString(),
+    p_end: end.toISOString(),
+  })
+  if (error) throw error
+  return data ?? []
+}
+
+export const fetchAnalyticsByDevice = (start, end) => callRange('analytics_by_device', start, end)
+export const fetchAnalyticsByOs = (start, end) => callRange('analytics_by_os', start, end)
+export const fetchAnalyticsByBrowser = (start, end) => callRange('analytics_by_browser', start, end)
+export const fetchAnalyticsByLocation = (start, end) => callRange('analytics_by_location', start, end)
+export const fetchAnalyticsByHour = (start, end) => callRange('analytics_by_hour', start, end)
