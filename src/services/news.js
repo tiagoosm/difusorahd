@@ -3,8 +3,9 @@ import { supabase } from './supabase'
 export const CARD_FIELDS =
   'id, title, slug, excerpt, cover_image_url, published_at, category:categories(id, name, slug)'
 
-const MOST_READ_FIELDS =
-  'id, title, slug, cover_image_url, views_count, category:categories(id, name, slug)'
+// Sem views_count no select: o ranking usa a coluna pra ordenar no banco,
+// mas o valor não deve chegar ao navegador (não é exibido publicamente).
+const MOST_READ_FIELDS = 'id, title, slug, cover_image_url, category:categories(id, name, slug)'
 
 const DETAIL_FIELDS = `
   id, title, slug, excerpt, content, cover_image_url, cover_image_caption, audio_url, published_at,

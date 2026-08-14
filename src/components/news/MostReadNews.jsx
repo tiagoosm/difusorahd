@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Flame, Eye } from 'lucide-react'
+import { Flame } from 'lucide-react'
 import { buildPath } from '../../routes/paths'
-import { formatNumber } from '../../utils/formatNumber'
 
 // Identidade própria (não é NewsCard nem a lista da FeaturedNews): card
 // fechado com borda, numeração grande em destaque — o padrão clássico de
@@ -40,16 +39,9 @@ function MostReadNews({ items }) {
                 <h3 className="line-clamp-2 text-sm leading-snug font-semibold text-gray-900 group-hover:text-brand-600">
                   {item.title}
                 </h3>
-                <p className="mt-1 flex items-center gap-1 text-xs text-gray-400">
-                  {item.category?.name && (
-                    <>
-                      <span className="font-medium text-brand-600">{item.category.name}</span>
-                      <span>•</span>
-                    </>
-                  )}
-                  <Eye className="h-3 w-3" />
-                  {formatNumber(item.views_count)}
-                </p>
+                {item.category?.name && (
+                  <p className="mt-1 text-xs font-medium text-brand-600">{item.category.name}</p>
+                )}
               </div>
             </Link>
           </li>
