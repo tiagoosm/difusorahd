@@ -2,6 +2,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { useAdEditor } from '../../../hooks/useAdEditor'
 import { updateAd } from '../../../services/ads'
+import { removeFile } from '../../../services/storage'
 import { ROUTES } from '../../../routes/paths'
 import { toDatetimeLocalValue } from '../../../utils/datetimeLocal'
 import AdForm from '../../../components/ads/AdForm'
@@ -29,6 +30,12 @@ function EditAd() {
           : error.message || 'Não foi possível atualizar o anúncio.',
       )
       return
+    }
+
+    // Mesmo cuidado do EditNews: só limpa a imagem antiga depois que a troca
+    // já está salva, nunca antes.
+    if (ad.image_url && ad.image_url !== payload.image_url) {
+      removeFile('ads-images', ad.image_url)
     }
 
     toast.success('Anúncio atualizado com sucesso!')

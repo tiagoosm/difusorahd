@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { removeFile } from './storage'
 
 export const CARD_FIELDS =
   'id, title, slug, excerpt, cover_image_url, published_at, category:categories(id, name, slug)'
@@ -260,7 +261,11 @@ export async function fetchNewsStats() {
 // Pedir a linha de volta (.select()) é a única forma de diferenciar
 // "excluiu" de "não achou nada para excluir" (ex: sem permissão).
 export async function deleteNews(id) {
-  const { data, error } = await supabase.from('news').delete().eq('id', id).select()
+  const { data, error } = await supabase
+    .from('news')
+    .delete()
+    .eq('id', id)
+    .select('id, cover_image_url, audio_url')
 
   if (error) return { deleted: false, error }
 
@@ -270,6 +275,14 @@ export async function deleteNews(id) {
       error: { message: 'Nenhuma notícia foi excluída. Confirme se sua sessão ainda está autenticada como administrador.' },
     }
   }
+
+  // Não falha a operação inteira por isso: o registro já foi excluído com
+  // sucesso, só a limpeza dos arquivos não pôde ser confirmada.
+  const deletedNews = data[0]
+  await Promise.all([
+    removeFile('news-media', deletedNews.cover_image_url),
+    removeFile('news-media', deletedNews.audio_url),
+  ])
 
   return { deleted: true, error: null }
 }

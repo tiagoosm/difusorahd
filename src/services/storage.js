@@ -15,6 +15,24 @@ const MIME_BY_EXTENSION = {
   flac: 'audio/flac',
 }
 
+// Extrai o caminho interno do arquivo (ex: "covers/abc.png") a partir da
+// URL pública que o Storage retorna, para poder chamar .remove() nele.
+export function extractStoragePath(publicUrl, bucket) {
+  if (!publicUrl) return null
+  const marker = `/object/public/${bucket}/`
+  const index = publicUrl.indexOf(marker)
+  return index === -1 ? null : publicUrl.slice(index + marker.length)
+}
+
+// Remove um arquivo do Storage a partir da URL pública salva no banco.
+// Best-effort: quem chama decide se uma falha aqui deve bloquear a operação
+// principal (em geral não deve — o registro em si já foi salvo/excluído).
+export async function removeFile(bucket, publicUrl) {
+  const path = extractStoragePath(publicUrl, bucket)
+  if (!path) return
+  await supabase.storage.from(bucket).remove([path])
+}
+
 export async function uploadFile(bucket, folder, file) {
   const extension = file.name.split('.').pop()
   const path = `${folder}/${crypto.randomUUID()}.${extension}`

@@ -2,6 +2,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { useNewsEditor } from '../../hooks/useNewsEditor'
 import { updateNews } from '../../services/news'
+import { removeFile } from '../../services/storage'
 import { ROUTES } from '../../routes/paths'
 import NewsForm from '../../components/news/NewsForm'
 import Spinner from '../../components/ui/Spinner'
@@ -33,6 +34,17 @@ function EditNews() {
           : error.message || 'Não foi possível atualizar a notícia.',
       )
       return
+    }
+
+    // Só limpa o arquivo antigo depois que a troca já está salva — limpar
+    // antes (ex: assim que o admin escolhe um novo arquivo no formulário)
+    // arriscaria apagar um arquivo que a notícia publicada ainda usa, caso a
+    // edição seja abandonada sem salvar.
+    if (news.cover_image_url && news.cover_image_url !== payload.cover_image_url) {
+      removeFile('news-media', news.cover_image_url)
+    }
+    if (news.audio_url && news.audio_url !== payload.audio_url) {
+      removeFile('news-media', news.audio_url)
     }
 
     toast.success('Notícia atualizada com sucesso!')

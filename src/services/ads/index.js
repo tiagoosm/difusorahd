@@ -1,4 +1,5 @@
 import { supabase } from '../supabase'
+import { removeFile } from '../storage'
 
 const AD_FIELDS =
   'id, title, image_url, link_url, position, active, start_date, end_date, priority, created_at, updated_at'
@@ -70,15 +71,6 @@ export function updateAd(id, payload) {
   return supabase.from('ads').update(payload).eq('id', id).select().single()
 }
 
-// Extrai o caminho interno do arquivo (ex: "banners/abc.png") a partir da
-// URL pública que o Storage retorna, para poder chamar .remove() nele.
-function extractStoragePath(publicUrl, bucket) {
-  if (!publicUrl) return null
-  const marker = `/object/public/${bucket}/`
-  const index = publicUrl.indexOf(marker)
-  return index === -1 ? null : publicUrl.slice(index + marker.length)
-}
-
 // Recebe o anúncio inteiro (não só o id) porque precisa da image_url para
 // também limpar o arquivo no Storage.
 //
@@ -102,12 +94,9 @@ export async function deleteAd(ad) {
     }
   }
 
-  const path = extractStoragePath(ad.image_url, 'ads-images')
-  if (path) {
-    // Não falha a operação inteira por isso: o registro já foi excluído com
-    // sucesso, só a limpeza do arquivo não pôde ser confirmada.
-    await supabase.storage.from('ads-images').remove([path])
-  }
+  // Não falha a operação inteira por isso: o registro já foi excluído com
+  // sucesso, só a limpeza do arquivo não pôde ser confirmada.
+  await removeFile('ads-images', ad.image_url)
 
   return { deleted: true, error: null }
 }
