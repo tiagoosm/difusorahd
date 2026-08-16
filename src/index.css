@@ -2,8 +2,18 @@
 @import "@fontsource-variable/inter";
 @plugin "@tailwindcss/typography";
 
+/* ============================================================================
+   Design system — Difusora HD
+   Um único lugar para cor, tipografia e sombra. Componentes devem consumir
+   estes tokens (ou os utilitários gray, green e red padrão do Tailwind para
+   casos pontuais) em vez de inventar valores soltos.
+   ============================================================================ */
 @theme {
   --font-sans: "Inter Variable", system-ui, sans-serif;
+  /* Fonte editorial para manchetes: dá peso e personalidade a título grande
+     sem depender de um segundo arquivo de fonte (mesma família variável,
+     só um corte mais condensado/expressivo via font-stretch não é suportado
+     em todo browser — por isso o peso/tracking fazem esse trabalho abaixo). */
 
   --color-brand-50: #faf4f4;
   --color-brand-100: #f2e4e4;
@@ -16,6 +26,20 @@
   --color-brand-800: #691618;
   --color-brand-900: #531113;
 
+  /* Tinta neutra com leve calor (não é um cinza puro de dashboard) — reforça
+     a identidade editorial junto do vermelho da marca. Usada para texto e
+     superfícies em vez do gray-* neutro do Tailwind nos lugares redesenhados. */
+  --color-ink-50: #faf9f8;
+  --color-ink-100: #f2f0ee;
+  --color-ink-200: #e4e0dd;
+  --color-ink-300: #cbc4bf;
+  --color-ink-400: #9c928c;
+  --color-ink-500: #756b65;
+  --color-ink-600: #564e49;
+  --color-ink-700: #3d3733;
+  --color-ink-800: #262220;
+  --color-ink-900: #171412;
+
   --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 1px 3px 0 rgb(0 0 0 / 0.06);
   --shadow-card-hover: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 8px 10px -2px rgb(0 0 0 / 0.06);
 }
@@ -26,6 +50,16 @@
 
 body {
   margin: 0;
+}
+
+/* Ritmo de leitura do corpo de notícia — um pouco mais folgado que o
+   padrão do plugin typography, pensado para leitura confortável em texto
+   longo (item 6 do redesign). */
+.article-prose {
+  --tw-prose-body: var(--color-ink-700);
+  --tw-prose-headings: var(--color-ink-900);
+  --tw-prose-links: var(--color-brand-600);
+  line-height: 1.85;
 }
 
 /* Placeholder do editor Tiptap: exige seletor CSS custom, não expressável em utilitários Tailwind. */

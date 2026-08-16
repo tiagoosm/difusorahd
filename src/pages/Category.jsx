@@ -5,6 +5,7 @@ import { useSEO } from '../hooks/useSEO'
 import { SITE_NAME } from '../utils/seo'
 import { ROUTES } from '../routes/paths'
 import NewsCard from '../components/news/NewsCard'
+import NewsRow from '../components/news/NewsRow'
 import Pagination from '../components/ui/Pagination'
 import Spinner from '../components/ui/Spinner'
 import EmptyState from '../components/ui/EmptyState'
@@ -51,13 +52,23 @@ function Category() {
     )
   }
 
+  // Só a primeira página abre com um item em destaque (imagem+texto maior) —
+  // em páginas seguintes isso não seria "o assunto do momento" e sim só
+  // paginação, então tudo entra na grade normal.
+  const featuredItem = page === 1 ? news[0] : null
+  const gridItems = page === 1 ? news.slice(1) : news
+
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:py-10 lg:py-12">
-      <header>
-        <h1 className="text-2xl leading-tight font-semibold text-gray-900 sm:text-3xl">
+      <header className="flex flex-col gap-2 border-b-2 border-ink-900 pb-5">
+        <span className="text-xs font-bold tracking-wide text-brand-600 uppercase">Categoria</span>
+        <h1 className="text-3xl leading-tight font-bold tracking-tight text-ink-900 sm:text-4xl">
           {category.name}
         </h1>
-        {category.description && <p className="mt-1.5 text-gray-500">{category.description}</p>}
+        {category.description && <p className="max-w-2xl text-ink-500">{category.description}</p>}
+        <p className="text-sm text-ink-400">
+          {totalCount} notícia{totalCount === 1 ? '' : 's'}
+        </p>
       </header>
 
       {news.length === 0 ? (
@@ -68,11 +79,20 @@ function Category() {
         />
       ) : (
         <>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {news.map((item) => (
-              <NewsCard key={item.id} news={item} />
-            ))}
-          </div>
+          {featuredItem && (
+            <div className="border-b border-ink-100 pb-2">
+              <NewsRow news={featuredItem} size="lg" />
+            </div>
+          )}
+
+          {gridItems.length > 0 && (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {gridItems.map((item) => (
+                <NewsCard key={item.id} news={item} />
+              ))}
+            </div>
+          )}
+
           <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
         </>
       )}

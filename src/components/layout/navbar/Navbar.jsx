@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Search } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
@@ -9,12 +9,33 @@ import CategoryStrip from './CategoryStrip'
 
 function Navbar() {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const { categories, loading } = useCategories()
 
+  // Compacta sutilmente ao rolar — não muda a estrutura, só reduz a
+  // respiração vertical, então a navbar ocupa menos tela numa leitura longa
+  // sem nunca sumir (mantém a busca e as categorias sempre à mão).
+  useEffect(() => {
+    function handleScroll() {
+      setIsScrolled(window.scrollY > 8)
+    }
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <header className="sticky top-0 z-40 bg-brand-600 shadow-md shadow-black/10">
+    <header
+      className={`sticky top-0 z-40 bg-brand-600 transition-shadow duration-200 ${
+        isScrolled ? 'shadow-lg shadow-black/20' : 'shadow-md shadow-black/10'
+      }`}
+    >
       <div className="border-b border-white/10">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5">
+        <div
+          className={`mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 transition-[padding] duration-200 ${
+            isScrolled ? 'py-2.5' : 'py-3.5'
+          }`}
+        >
           {isMobileSearchOpen ? (
             <NavbarSearch
               autoFocus
@@ -27,7 +48,11 @@ function Navbar() {
                 to={ROUTES.home}
                 className="flex shrink-0 items-center rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none"
               >
-                <img src={logo} alt="Difusora HD" className="h-8 w-auto sm:h-10" />
+                <img
+                  src={logo}
+                  alt="Difusora HD"
+                  className={`w-auto transition-[height] duration-200 ${isScrolled ? 'h-7 sm:h-8' : 'h-8 sm:h-10'}`}
+                />
               </Link>
 
               {/* Busca ocupa o espaço central — elemento principal da navegação

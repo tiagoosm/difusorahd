@@ -25,28 +25,30 @@ function ShareButtons({ title, url }) {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-sm font-medium text-gray-500">Compartilhar:</span>
-      {shareLinks.map(({ label, icon: Icon, href }) => (
-        <a
-          key={label}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={label}
-          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+    <div className="flex items-center gap-3">
+      <span className="text-xs font-bold tracking-wide text-ink-500 uppercase">Compartilhar</span>
+      <div className="flex items-center gap-2">
+        {shareLinks.map(({ label, icon: Icon, href }) => (
+          <a
+            key={label}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={label}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-ink-200 text-ink-500 transition-colors hover:border-brand-600 hover:bg-brand-50 hover:text-brand-600 focus-visible:ring-2 focus-visible:ring-brand-500/50 focus-visible:outline-none"
+          >
+            <Icon className="h-4 w-4" />
+          </a>
+        ))}
+        <button
+          type="button"
+          onClick={handleCopyLink}
+          aria-label="Copiar link"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-ink-200 text-ink-500 transition-colors hover:border-brand-600 hover:bg-brand-50 hover:text-brand-600 focus-visible:ring-2 focus-visible:ring-brand-500/50 focus-visible:outline-none"
         >
-          <Icon className="h-4 w-4" />
-        </a>
-      ))}
-      <button
-        type="button"
-        onClick={handleCopyLink}
-        aria-label="Copiar link"
-        className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-      >
-        <LinkIcon className="h-4 w-4" />
-      </button>
+          <LinkIcon className="h-4 w-4" />
+        </button>
+      </div>
     </div>
   )
 }

@@ -18,15 +18,17 @@ const IDENTITY_BADGES = [
 function Footer() {
   return (
     <footer className="bg-gradient-to-b from-brand-700 to-brand-900">
+      <div className="h-1 bg-gradient-to-r from-brand-400 via-brand-300 to-brand-400" aria-hidden="true" />
+
       <div className="mx-auto max-w-6xl px-4 py-14">
         <div className="mx-auto mb-10 max-w-md">
           <AdBanner position="FOOTER" variant="dark" />
         </div>
 
-        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-8">
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-10">
           <FooterColumn>
             <Link to={ROUTES.home} className="inline-flex items-center">
-              <img src={logo} alt="Difusora HD" className="h-11 w-auto" />
+              <img src={logo} alt="Difusora HD" className="h-12 w-auto" />
             </Link>
 
             <p className="mt-5 text-sm font-medium text-white">
