@@ -26,7 +26,7 @@ function EditAd() {
       toast.error(
         error.code === '23514'
           ? 'A data de término deve ser igual ou posterior à data de início.'
-          : 'Não foi possível atualizar o anúncio.',
+          : error.message || 'Não foi possível atualizar o anúncio.',
       )
       return
     }

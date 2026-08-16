@@ -20,7 +20,9 @@ function NewNews() {
 
     if (error) {
       toast.error(
-        error.code === '23505' ? 'Já existe uma notícia com esse slug.' : 'Não foi possível criar a notícia.',
+        error.code === '23505'
+          ? 'Já existe uma notícia com esse slug.'
+          : error.message || 'Não foi possível criar a notícia.',
       )
       return
     }

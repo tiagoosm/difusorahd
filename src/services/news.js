@@ -3,9 +3,6 @@ import { supabase } from './supabase'
 export const CARD_FIELDS =
   'id, title, slug, excerpt, cover_image_url, published_at, category:categories(id, name, slug)'
 
-// Sem views_count no select: o ranking usa a coluna pra ordenar no banco,
-// mas o valor não deve chegar ao navegador (não é exibido publicamente).
-const MOST_READ_FIELDS = 'id, title, slug, cover_image_url, category:categories(id, name, slug)'
 
 const DETAIL_FIELDS = `
   id, title, slug, excerpt, content, cover_image_url, cover_image_caption, audio_url, published_at,
@@ -75,7 +72,12 @@ export async function saveFeaturedNews(orderedIds) {
     )
   }
 
-  return Promise.all(updates)
+  // Promise.all nunca rejeita por erro de request do Supabase (só por falha
+  // de rede) — cada resultado tem seu próprio {error}, que precisa ser
+  // checado manualmente, senão uma falha de permissão passa despercebida.
+  const results = await Promise.all(updates)
+  const failed = results.find((result) => result.error)
+  return { error: failed?.error ?? null }
 }
 
 export function fetchLatestNews(limit = 6) {
@@ -87,17 +89,27 @@ export function fetchLatestNews(limit = 6) {
     .limit(limit)
 }
 
-// Ranking "de todos os tempos" via views_count (contador já existente,
-// nenhuma contagem nova). Busca um pouco mais que o exibido (limit) porque
-// quem chama filtra fora IDs já mostrados em Destaques/Últimas antes de
-// cortar pro tamanho final — evita repetir a mesma notícia na Home.
-export function fetchMostReadNews(limit = 15) {
-  return supabase
-    .from('news')
-    .select(MOST_READ_FIELDS)
-    .eq('status', 'published')
-    .order('views_count', { ascending: false })
-    .limit(limit)
+// Ranking da semana atual (segunda a agora), via analytics_events — não
+// views_count (esse é acumulado desde sempre e não reflete "essa semana").
+// RPC pública (SECURITY DEFINER), não expõe contagem de views nem dados
+// crus de analytics. Busca um pouco mais que o exibido (limit) porque quem
+// chama filtra fora IDs já mostrados em Destaques/Últimas antes de cortar
+// pro tamanho final — evita repetir a mesma notícia na Home.
+export async function fetchWeeklyTopNews(limit = 20) {
+  const { data, error } = await supabase.rpc('public_weekly_top_news', { p_limit: limit })
+  if (error) return { data: null, error }
+
+  const mapped = (data ?? []).map((row) => ({
+    id: row.news_id,
+    title: row.title,
+    slug: row.slug,
+    cover_image_url: row.cover_image_url,
+    category: row.category_name
+      ? { id: row.category_id, name: row.category_name, slug: row.category_slug }
+      : null,
+  }))
+
+  return { data: mapped, error: null }
 }
 
 export function fetchNewsBySlug(slug) {
@@ -242,8 +254,24 @@ export async function fetchNewsStats() {
   }
 }
 
-export function deleteNews(id) {
-  return supabase.from('news').delete().eq('id', id)
+// O Supabase/PostgREST retorna sucesso (sem "error") mesmo quando o DELETE
+// não afeta nenhuma linha — seja porque o id não existe, seja porque a
+// sessão expirou e a policy de RLS excluiu a linha do escopo do comando.
+// Pedir a linha de volta (.select()) é a única forma de diferenciar
+// "excluiu" de "não achou nada para excluir" (ex: sem permissão).
+export async function deleteNews(id) {
+  const { data, error } = await supabase.from('news').delete().eq('id', id).select()
+
+  if (error) return { deleted: false, error }
+
+  if (!data || data.length === 0) {
+    return {
+      deleted: false,
+      error: { message: 'Nenhuma notícia foi excluída. Confirme se sua sessão ainda está autenticada como administrador.' },
+    }
+  }
+
+  return { deleted: true, error: null }
 }
 
 export function fetchNewsById(id) {

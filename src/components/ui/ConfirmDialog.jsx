@@ -13,14 +13,16 @@ function ConfirmDialog({
   cancelLabel = 'Cancelar',
   loading = false,
 }) {
+  // Enquanto a ação está em andamento, ignora fechar pelo backdrop/Esc/X —
+  // evita fechar o modal e disparar uma segunda exclusão em cima da primeira.
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title}>
+    <Modal isOpen={isOpen} onClose={loading ? () => {} : onClose} title={title}>
       <p className="text-sm text-gray-600">{description}</p>
       <div className="mt-5 flex justify-end gap-2">
         <Button variant="secondary" onClick={onClose} disabled={loading}>
           {cancelLabel}
         </Button>
-        <Button variant="danger" onClick={onConfirm} loading={loading}>
+        <Button variant="danger" onClick={onConfirm} loading={loading} disabled={loading}>
           {confirmLabel}
         </Button>
       </div>

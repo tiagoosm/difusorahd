@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Flame } from 'lucide-react'
+import { TrendingUp } from 'lucide-react'
 import { buildPath } from '../../routes/paths'
 
 // Identidade própria (não é NewsCard nem a lista da FeaturedNews): card
@@ -13,9 +13,9 @@ function MostReadNews({ items }) {
     <section className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-card lg:p-6">
       <div className="flex items-center gap-2 border-b border-gray-100 pb-4">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-          <Flame className="h-4 w-4" />
+          <TrendingUp className="h-4 w-4" />
         </span>
-        <h2 className="text-lg font-semibold text-gray-900">Mais Lidas</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Mais Lidas da Semana</h2>
       </div>
 
       <ol className="flex flex-col divide-y divide-gray-100">

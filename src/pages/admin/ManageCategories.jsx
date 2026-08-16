@@ -14,12 +14,17 @@ function ManageCategories() {
   const { categories, loading, reload } = useCategoriesAdmin()
   const [modalState, setModalState] = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   async function handleCreate(values) {
     const { error } = await createCategory(values)
 
     if (error) {
-      toast.error(error.code === '23505' ? 'Já existe uma categoria com esse nome ou slug.' : 'Não foi possível criar a categoria.')
+      toast.error(
+        error.code === '23505'
+          ? 'Já existe uma categoria com esse nome ou slug.'
+          : error.message || 'Não foi possível criar a categoria.',
+      )
       return
     }
 
@@ -32,7 +37,11 @@ function ManageCategories() {
     const { error } = await updateCategory(modalState.category.id, values)
 
     if (error) {
-      toast.error(error.code === '23505' ? 'Já existe uma categoria com esse nome ou slug.' : 'Não foi possível atualizar a categoria.')
+      toast.error(
+        error.code === '23505'
+          ? 'Já existe uma categoria com esse nome ou slug.'
+          : error.message || 'Não foi possível atualizar a categoria.',
+      )
       return
     }
 
@@ -42,13 +51,15 @@ function ManageCategories() {
   }
 
   async function handleDelete() {
-    const { error } = await deleteCategory(deleteTarget.id)
+    setIsDeleting(true)
+    const { deleted, error } = await deleteCategory(deleteTarget.id)
+    setIsDeleting(false)
 
-    if (error) {
+    if (!deleted) {
       toast.error(
-        error.code === '23503'
+        error?.code === '23503'
           ? 'Essa categoria possui notícias vinculadas e não pode ser excluída.'
-          : 'Não foi possível excluir a categoria.',
+          : error?.message || 'Não foi possível excluir a categoria.',
       )
       setDeleteTarget(null)
       return
@@ -137,6 +148,7 @@ function ManageCategories() {
         isOpen={Boolean(deleteTarget)}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
+        loading={isDeleting}
         title="Excluir categoria"
         description={
           <>

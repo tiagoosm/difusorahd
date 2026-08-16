@@ -102,7 +102,7 @@ function NewsForm({ defaultValues, onSubmit, submitLabel = 'Salvar' }) {
           <FileUpload
             label="Áudio da notícia (opcional — ex: versão narrada)"
             kind="audio"
-            accept="audio/*"
+            accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.webm,.flac"
             bucket="news-media"
             folder="audio"
             value={field.value}

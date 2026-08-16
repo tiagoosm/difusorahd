@@ -482,6 +482,44 @@ $$;
 
 grant execute on function public.analytics_by_hour(timestamptz, timestamptz) to authenticated;
 
+-- Ranking semanal de "Mais Lidas" para a Home — público (anon), diferente das
+-- funções analytics_* acima (admin-only). analytics_events tem RLS restrita a
+-- admin, então esta função precisa ser SECURITY DEFINER (mesmo padrão de
+-- increment_news_views/log_analytics_event) para poder ler os eventos da
+-- semana e devolver só o ranking agregado — sem contagem de views, sem
+-- nenhum dado bruto de analytics.
+create or replace function public.public_weekly_top_news(p_limit int default 5)
+returns table (
+  news_id uuid,
+  title text,
+  slug text,
+  cover_image_url text,
+  category_id uuid,
+  category_name text,
+  category_slug text
+)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select n.id, n.title, n.slug, n.cover_image_url, c.id, c.name, c.slug
+  from public.analytics_events e
+  join public.news n on n.id = e.news_id and n.status = 'published'
+  left join public.categories c on c.id = n.category_id
+  where e.page_type = 'news'
+    and e.news_id is not null
+    -- Início da semana atual (segunda-feira 00:00, fuso de Brasília) até
+    -- agora — views de semanas anteriores nunca entram no ranking.
+    and e.created_at >= (date_trunc('week', now() at time zone 'America/Sao_Paulo')) at time zone 'America/Sao_Paulo'
+    and e.created_at < now()
+  group by n.id, n.title, n.slug, n.cover_image_url, c.id, c.name, c.slug
+  order by count(e.id) desc
+  limit p_limit;
+$$;
+
+grant execute on function public.public_weekly_top_news(int) to anon, authenticated;
+
 -- Retenção de analytics_events: 26 meses cobre a comparação "Este ano vs.
 -- ano anterior" em qualquer mês do ano, sem reter eventos indefinidamente
 -- (minimização de dados / LGPD) nem deixar a tabela crescer sem limite.
@@ -624,6 +662,10 @@ create policy "analytics_events_select_admin" on public.analytics_events
 -- ----------------------------------------------------------------------------
 -- STORAGE: bucket único para imagem de capa e áudio das notícias
 -- ----------------------------------------------------------------------------
+-- Lista de MIME types de áudio cobre as variações que navegadores/SO
+-- diferentes reportam para o mesmo formato (ex: M4A como audio/mp4,
+-- audio/x-m4a ou audio/m4a; WAV como audio/wav, audio/x-wav ou audio/wave) —
+-- o Storage rejeita silenciosamente qualquer variação fora da lista.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
   'news-media',
@@ -632,7 +674,13 @@ values (
   20971520, -- 20 MB
   array[
     'image/jpeg', 'image/png', 'image/webp', 'image/gif',
-    'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/webm'
+    'audio/mpeg', 'audio/mp3',
+    'audio/wav', 'audio/x-wav', 'audio/wave',
+    'audio/ogg',
+    'audio/mp4', 'audio/x-m4a', 'audio/m4a',
+    'audio/aac',
+    'audio/webm',
+    'audio/flac'
   ]
 )
 on conflict (id) do update set

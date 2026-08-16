@@ -16,6 +16,20 @@ export function updateCategory(id, { name, slug, description }) {
   return supabase.from('categories').update({ name, slug, description }).eq('id', id).select().single()
 }
 
-export function deleteCategory(id) {
-  return supabase.from('categories').delete().eq('id', id)
+// Mesmo cuidado de deleteNews/deleteAd: PostgREST não retorna erro quando o
+// DELETE é silenciosamente esvaziado pela RLS (ex: sessão expirou) — só
+// pedindo a linha de volta dá pra distinguir isso de uma exclusão real.
+export async function deleteCategory(id) {
+  const { data, error } = await supabase.from('categories').delete().eq('id', id).select()
+
+  if (error) return { deleted: false, error }
+
+  if (!data || data.length === 0) {
+    return {
+      deleted: false,
+      error: { message: 'Nenhuma categoria foi excluída. Confirme se sua sessão ainda está autenticada como administrador.' },
+    }
+  }
+
+  return { deleted: true, error: null }
 }

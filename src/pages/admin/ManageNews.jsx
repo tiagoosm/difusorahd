@@ -69,6 +69,7 @@ function ManageNews() {
   })
   const { stats, reload: reloadStats } = useNewsStats()
   const [deleteTarget, setDeleteTarget] = useState(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
 
@@ -96,10 +97,12 @@ function ManageNews() {
   }
 
   async function handleDelete() {
-    const { error } = await deleteNews(deleteTarget.id)
+    setIsDeleting(true)
+    const { deleted, error } = await deleteNews(deleteTarget.id)
+    setIsDeleting(false)
 
-    if (error) {
-      toast.error('Não foi possível excluir a notícia.')
+    if (!deleted) {
+      toast.error(error?.message || 'Não foi possível excluir a notícia.')
       setDeleteTarget(null)
       return
     }
@@ -326,6 +329,7 @@ function ManageNews() {
         isOpen={Boolean(deleteTarget)}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
+        loading={isDeleting}
         title="Excluir notícia"
         description={
           <>

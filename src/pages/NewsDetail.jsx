@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
-import { Headphones } from 'lucide-react'
+import { useState } from 'react'
+import { Headphones, AlertTriangle } from 'lucide-react'
 import { useNewsDetail } from '../hooks/useNewsDetail'
 import { useSEO } from '../hooks/useSEO'
 import { formatDate } from '../utils/formatDate'
@@ -14,6 +15,7 @@ import AdBanner from '../components/ads/AdBanner'
 function NewsDetail() {
   const { slug } = useParams()
   const { news, related, loading, notFound } = useNewsDetail(slug)
+  const [audioError, setAudioError] = useState(false)
 
   useSEO({
     title: news ? `${news.title} — Difusora HD` : undefined,
@@ -85,7 +87,13 @@ function NewsDetail() {
               <Headphones className="h-4 w-4" />
               Ouça esta notícia
             </span>
-            <audio src={news.audio_url} controls className="w-full" />
+            <audio src={news.audio_url} controls className="w-full" onError={() => setAudioError(true)} />
+            {audioError && (
+              <p className="flex items-center gap-1.5 text-xs text-amber-600">
+                <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                Não foi possível reproduzir o áudio neste navegador.
+              </p>
+            )}
           </div>
         )}
 

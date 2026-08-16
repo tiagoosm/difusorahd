@@ -34,7 +34,7 @@ function Home() {
           <AdBanner position="HOME_MIDDLE" />
           <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <CategorySection title="Últimas notícias" items={latest} />
+              <CategorySection title="Últimas notícias" items={latest} columns={2} />
             </div>
             <MostReadNews items={mostRead} />
           </div>

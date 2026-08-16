@@ -40,6 +40,7 @@ function ManageAds() {
   const { ads, totalCount, pageSize, loading, reload } = useAds({ position, status, search, sort, page })
   const { counts, reload: reloadCounts } = useAdCounts()
   const [deleteTarget, setDeleteTarget] = useState(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
 
@@ -57,7 +58,9 @@ function ManageAds() {
   }
 
   async function handleDelete() {
+    setIsDeleting(true)
     const { deleted, error } = await deleteAd(deleteTarget)
+    setIsDeleting(false)
 
     if (!deleted) {
       toast.error(error?.message || 'Não foi possível excluir o anúncio.')
@@ -150,6 +153,7 @@ function ManageAds() {
         isOpen={Boolean(deleteTarget)}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
+        loading={isDeleting}
         title="Excluir anúncio"
         description={
           <>

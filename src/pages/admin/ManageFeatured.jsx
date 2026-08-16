@@ -35,8 +35,14 @@ function ManageFeatured() {
 
   async function handleSave() {
     setIsSaving(true)
-    await saveFeaturedNews(items.map((item) => item.id))
+    const { error } = await saveFeaturedNews(items.map((item) => item.id))
     setIsSaving(false)
+
+    if (error) {
+      toast.error(error.message || 'Não foi possível salvar os destaques.')
+      return
+    }
+
     toast.success('Destaques atualizados com sucesso!')
   }
 

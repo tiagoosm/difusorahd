@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Search } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
 import { useCategories } from '../../../hooks/useCategories'
-import logo from '../../../assets/logo-difusora-hd-icon-white.png'
+import logo from '../../../assets/logo-difusora-hd.png'
 import NavbarSearch from './NavbarSearch'
 import CategoryStrip from './CategoryStrip'
 
@@ -27,7 +27,7 @@ function Navbar() {
                 to={ROUTES.home}
                 className="flex shrink-0 items-center rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none"
               >
-                <img src={logo} alt="Difusora HD" className="h-11 w-auto" />
+                <img src={logo} alt="Difusora HD" className="h-8 w-auto sm:h-10" />
               </Link>
 
               {/* Busca ocupa o espaço central — elemento principal da navegação

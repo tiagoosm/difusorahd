@@ -30,7 +30,7 @@ function EditNews() {
       toast.error(
         error.code === '23505'
           ? 'Já existe uma notícia com esse slug.'
-          : 'Não foi possível atualizar a notícia.',
+          : error.message || 'Não foi possível atualizar a notícia.',
       )
       return
     }

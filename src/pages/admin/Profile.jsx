@@ -21,7 +21,7 @@ function Profile() {
     const { error } = await updateProfile(user.id, { full_name })
 
     if (error) {
-      toast.error('Não foi possível atualizar o perfil.')
+      toast.error(error.message || 'Não foi possível atualizar o perfil.')
       return
     }
 
