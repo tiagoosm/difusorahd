@@ -21,8 +21,8 @@ describe('MostReadNews', () => {
   it('renders a numbered ranking with one entry per item, without a view count', () => {
     renderWithRouter(<MostReadNews items={ITEMS} />)
 
-    expect(screen.getByText('01')).toBeInTheDocument()
-    expect(screen.getByText('02')).toBeInTheDocument()
+    expect(screen.getByText('1')).toBeInTheDocument()
+    expect(screen.getByText('2')).toBeInTheDocument()
     expect(screen.getByText('Matéria A')).toBeInTheDocument()
     expect(screen.getByText('Matéria B')).toBeInTheDocument()
   })
@@ -43,11 +43,11 @@ describe('MostReadNews', () => {
     expect(screen.getByText('Cotidiano')).toBeInTheDocument()
   })
 
-  it('gives the ranking numerals a brand-colored tint that fades by position instead of flat gray', () => {
+  it('gives the ranking badge a color hierarchy that fades by position instead of a flat gray number', () => {
     renderWithRouter(<MostReadNews items={ITEMS} />)
 
-    expect(screen.getByText('01').className).toMatch(/text-brand-600(?!\/)/)
-    expect(screen.getByText('02').className).toMatch(/text-brand-600\//)
+    expect(screen.getByText('1').className).toMatch(/(?<!:)bg-brand-600/)
+    expect(screen.getByText('2').className).not.toMatch(/(?<!:)bg-brand-600/)
   })
 
   it('never truncates a ranking title', () => {
