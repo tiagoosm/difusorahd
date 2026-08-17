@@ -27,11 +27,18 @@ describe('MostReadNews', () => {
     expect(screen.getByText('Matéria B')).toBeInTheDocument()
   })
 
-  it('does not render the removed flame icon, and uses the trending-up icon instead', () => {
+  it('does not render the removed flame icon (or any decorative icon in the header, to match the rest of the site)', () => {
     const { container } = renderWithRouter(<MostReadNews items={ITEMS} />)
 
     expect(container.querySelector('svg.lucide-flame')).toBeNull()
-    expect(container.querySelector('svg.lucide-trending-up')).not.toBeNull()
+    expect(container.querySelector('svg')).toBeNull()
+  })
+
+  it('uses the same SectionHeading/Eyebrow pattern as the rest of the site instead of a standalone dark header', () => {
+    renderWithRouter(<MostReadNews items={ITEMS} />)
+
+    expect(screen.getByRole('heading', { name: 'Mais Lidas da Semana' })).toBeInTheDocument()
+    expect(screen.getByText('Cotidiano')).toBeInTheDocument()
   })
 
   it('never truncates a ranking title', () => {
