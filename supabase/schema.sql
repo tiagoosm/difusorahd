@@ -10,7 +10,6 @@ create extension if not exists pgcrypto;
 -- ----------------------------------------------------------------------------
 create type public.user_role as enum ('admin', 'reader');
 create type public.news_status as enum ('draft', 'published');
-create type public.comment_status as enum ('pending', 'approved', 'rejected');
 create type public.ad_position as enum (
   'TOP_HOME',
   'HOME_MIDDLE',
@@ -90,19 +89,6 @@ create table public.news_tags (
   primary key (news_id, tag_id)
 );
 comment on table public.news_tags is 'Junção N:N entre news e tags.';
-
--- comments: comentários de leitores autenticados em notícias.
-create table public.comments (
-  id uuid primary key default gen_random_uuid(),
-  news_id uuid not null references public.news (id) on delete cascade,
-  user_id uuid references public.profiles (id) on delete set null,
-  content text not null,
-  status public.comment_status not null default 'pending',
-  created_at timestamptz not null default now()
-);
-comment on table public.comments is 'Comentários de leitores em notícias, moderados por admins (status).';
-
-create index comments_news_id_idx on public.comments (news_id);
 
 -- ads: banners de imagem + link exibidos em posições fixas do site.
 create table public.ads (
@@ -549,7 +535,6 @@ alter table public.categories enable row level security;
 alter table public.tags enable row level security;
 alter table public.news enable row level security;
 alter table public.news_tags enable row level security;
-alter table public.comments enable row level security;
 alter table public.analytics_events enable row level security;
 
 -- profiles: leitura pública (nome/avatar aparecem como autor nas notícias);
@@ -621,19 +606,6 @@ create policy "news_tags_insert_admin" on public.news_tags
 
 create policy "news_tags_delete_admin" on public.news_tags
   for delete using (public.is_admin());
-
--- comments: leitor vê aprovados + os próprios; insere autenticado; admin modera
-create policy "comments_select" on public.comments
-  for select using (status = 'approved' or user_id = (select auth.uid()) or public.is_admin());
-
-create policy "comments_insert_authenticated" on public.comments
-  for insert with check ((select auth.uid()) = user_id);
-
-create policy "comments_update_admin" on public.comments
-  for update using (public.is_admin()) with check (public.is_admin());
-
-create policy "comments_delete_own_or_admin" on public.comments
-  for delete using (user_id = (select auth.uid()) or public.is_admin());
 
 -- ads: público só vê os "no ar" agora (regra de ativo + período aplicada no banco);
 -- admin vê e gerencia tudo.

@@ -93,7 +93,10 @@ export default async function handler(req, res) {
     const city = req.headers['x-vercel-ip-city'] ? decodeURIComponent(req.headers['x-vercel-ip-city']) : null
 
     const referrerHost = referrer ? extractHostname(referrer) : null
-    const siteHost = extractHostname(process.env.SITE_URL || '')
+    // SITE_URL não está configurada no Vercel — sem esse fallback, navegação
+    // interna com referrer preenchido (ex: recarregar a página) era
+    // classificada como "Referral" em vez de "Direto".
+    const siteHost = extractHostname(process.env.SITE_URL || 'https://difusorahd.com.br')
     const source = classifySource({ utmSource, referrerHost, siteHost })
     const { deviceType, browser, os } = parseUserAgent(userAgent)
 

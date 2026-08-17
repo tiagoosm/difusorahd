@@ -26,7 +26,9 @@ ${lastmod ? `    <lastmod>${lastmod}</lastmod>\n` : ''}    <changefreq>${changef
 }
 
 export default async function handler(req, res) {
-  const siteUrl = (process.env.SITE_URL || 'https://example.com').replace(/\/$/, '')
+  // SITE_URL não está configurada no Vercel — sem esse fallback, o sitemap
+  // gerava URLs em example.com em vez do domínio real.
+  const siteUrl = (process.env.SITE_URL || 'https://difusorahd.com.br').replace(/\/$/, '')
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY)
 
   const [{ data: news }, { data: categories }] = await Promise.all([
