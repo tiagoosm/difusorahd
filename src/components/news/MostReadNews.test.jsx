@@ -38,7 +38,15 @@ describe('MostReadNews', () => {
     renderWithRouter(<MostReadNews items={ITEMS} />)
 
     expect(screen.getByRole('heading', { name: 'Mais Lidas da Semana' })).toBeInTheDocument()
+    expect(screen.getByText('Ranking')).toBeInTheDocument()
     expect(screen.getByText('Cotidiano')).toBeInTheDocument()
+  })
+
+  it('gives the ranking numerals a brand-colored tint that fades by position instead of flat gray', () => {
+    renderWithRouter(<MostReadNews items={ITEMS} />)
+
+    expect(screen.getByText('01').className).toMatch(/text-brand-600(?!\/)/)
+    expect(screen.getByText('02').className).toMatch(/text-brand-600\//)
   })
 
   it('never truncates a ranking title', () => {
