@@ -30,7 +30,7 @@ function Home() {
         <div className="flex flex-col gap-12">
           <FeaturedNews items={featured} />
           <AdBanner position="HOME_MIDDLE" />
-          <div className="grid gap-10 lg:grid-cols-3 lg:gap-12">
+          <div className="grid items-start gap-10 lg:grid-cols-3 lg:gap-12">
             <div className="lg:col-span-2">
               <LatestNewsList title="Últimas notícias" items={latest} />
             </div>
