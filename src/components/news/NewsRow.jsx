@@ -11,7 +11,7 @@ function NewsRow({ news, size = 'md' }) {
   const isLarge = size === 'lg'
 
   return (
-    <Link to={buildPath.news(news.slug)} className="group flex gap-4 py-4 sm:gap-5">
+    <Link to={buildPath.news(news.slug)} className="group flex min-w-0 gap-4 py-4 sm:gap-5">
       <div
         className={`shrink-0 overflow-hidden rounded-xl bg-ink-100 ${
           isLarge ? 'h-28 w-28 sm:h-40 sm:w-56' : 'h-20 w-20 sm:h-24 sm:w-32'
@@ -28,7 +28,7 @@ function NewsRow({ news, size = 'md' }) {
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
         {news.category?.name && <Eyebrow>{news.category.name}</Eyebrow>}
         <h3
-          className={`line-clamp-2 font-semibold text-ink-900 group-hover:text-brand-700 ${
+          className={`font-semibold break-words text-ink-900 group-hover:text-brand-700 ${
             isLarge ? 'text-lg leading-snug sm:text-2xl' : 'text-sm leading-snug sm:text-base'
           }`}
         >
@@ -37,7 +37,7 @@ function NewsRow({ news, size = 'md' }) {
         {isLarge && news.excerpt && (
           <p className="hidden text-sm leading-relaxed text-ink-500 sm:line-clamp-2">{news.excerpt}</p>
         )}
-        <span className="text-xs text-ink-400">{formatDate(news.published_at)}</span>
+        <span className="text-xs text-ink-500">{formatDate(news.published_at)}</span>
       </div>
     </Link>
   )

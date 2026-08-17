@@ -15,7 +15,7 @@ function CategorySection({ title, items, viewAllHref, columns = 3 }) {
   return (
     <section className="flex flex-col gap-5">
       <SectionHeading title={title} viewAllHref={viewAllHref} />
-      <div className={`grid gap-6 ${GRID_COLUMNS[columns]}`}>
+      <div className={`grid items-start gap-6 ${GRID_COLUMNS[columns]}`}>
         {items.map((item) => (
           <NewsCard key={item.id} news={item} />
         ))}

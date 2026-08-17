@@ -10,7 +10,7 @@ function AdCarousel({ ads, position, className = '' }) {
   ])
 
   return (
-    <div className={`overflow-hidden rounded-xl border border-gray-200 ${className}`} ref={emblaRef}>
+    <div className={`overflow-hidden rounded-xl border border-ink-200 ${className}`} ref={emblaRef}>
       <div className="flex">
         {ads.map((ad) => (
           <a

@@ -73,7 +73,7 @@ function ManageCategories() {
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">Gerenciar Categorias</h1>
+        <h1 className="text-2xl font-semibold text-ink-900">Gerenciar Categorias</h1>
         <Button onClick={() => setModalState({ mode: 'create' })}>
           <Plus className="h-4 w-4" />
           Nova Categoria
@@ -87,9 +87,9 @@ function ManageCategories() {
       ) : categories.length === 0 ? (
         <EmptyState title="Nenhuma categoria cadastrada ainda" />
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-card">
+        <div className="overflow-x-auto rounded-xl border border-ink-200 bg-white shadow-card">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
+            <thead className="border-b border-ink-200 bg-ink-50 text-ink-500">
               <tr>
                 <th className="px-5 py-3 font-medium">Nome</th>
                 <th className="px-5 py-3 font-medium">Slug</th>
@@ -97,12 +97,12 @@ function ManageCategories() {
                 <th className="px-5 py-3 font-medium text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-ink-100">
               {categories.map((category) => (
                 <tr key={category.id}>
-                  <td className="px-5 py-3 font-medium text-gray-900">{category.name}</td>
-                  <td className="px-5 py-3 text-gray-500">{category.slug}</td>
-                  <td className="max-w-xs truncate px-5 py-3 text-gray-500">
+                  <td className="px-5 py-3 font-medium text-ink-900">{category.name}</td>
+                  <td className="px-5 py-3 text-ink-500">{category.slug}</td>
+                  <td className="max-w-xs truncate px-5 py-3 text-ink-500">
                     {category.description || '—'}
                   </td>
                   <td className="px-5 py-3">
@@ -111,7 +111,7 @@ function ManageCategories() {
                         type="button"
                         onClick={() => setModalState({ mode: 'edit', category })}
                         aria-label="Editar"
-                        className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                        className="rounded-lg p-2 text-ink-500 hover:bg-ink-100 hover:text-ink-900"
                       >
                         <Pencil className="h-4 w-4" />
                       </button>
@@ -119,7 +119,7 @@ function ManageCategories() {
                         type="button"
                         onClick={() => setDeleteTarget(category)}
                         aria-label="Excluir"
-                        className="rounded-lg p-2 text-gray-500 hover:bg-red-50 hover:text-red-600"
+                        className="rounded-lg p-2 text-ink-500 hover:bg-red-50 hover:text-red-600"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

@@ -42,17 +42,17 @@ function AdminSidebar({ isOpen, onClose }) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col border-r border-gray-200 bg-white transition-transform duration-200 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col border-r border-ink-200 bg-white transition-transform duration-200 lg:static lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-5">
-          <span className="text-lg font-semibold text-gray-900">Portal Admin</span>
+        <div className="flex items-center justify-between border-b border-ink-200 px-6 py-5">
+          <span className="text-lg font-semibold text-ink-900">Portal Admin</span>
           <button
             type="button"
             onClick={onClose}
             aria-label="Fechar menu"
-            className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 lg:hidden"
+            className="rounded-lg p-1 text-ink-400 hover:bg-ink-100 lg:hidden"
           >
             <X className="h-5 w-5" />
           </button>
@@ -69,7 +69,7 @@ function AdminSidebar({ isOpen, onClose }) {
                 `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                   isActive
                     ? 'bg-brand-50 text-brand-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    : 'text-ink-600 hover:bg-ink-50 hover:text-ink-900'
                 }`
               }
             >
@@ -79,11 +79,11 @@ function AdminSidebar({ isOpen, onClose }) {
           ))}
         </nav>
 
-        <div className="border-t border-gray-200 px-3 py-4">
+        <div className="border-t border-ink-200 px-3 py-4">
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-50 hover:text-ink-900"
           >
             <LogOut className="h-4 w-4" />
             Sair

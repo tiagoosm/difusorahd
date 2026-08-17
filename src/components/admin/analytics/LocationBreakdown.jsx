@@ -6,7 +6,7 @@ const TOP_N = 5
 
 function LocationBreakdown({ byLocation, loading }) {
   if (loading) {
-    return <div className="h-56 w-full animate-pulse rounded-lg bg-gray-100" />
+    return <div className="h-56 w-full animate-pulse rounded-lg bg-ink-100" />
   }
 
   if (byLocation.length === 0) {
@@ -26,16 +26,16 @@ function LocationBreakdown({ byLocation, loading }) {
         return (
           <li key={row.city} className="flex flex-col gap-1">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-700">{row.city}</span>
-              <span className="font-medium text-gray-900">{pct.toFixed(0)}%</span>
+              <span className="text-ink-700">{row.city}</span>
+              <span className="font-medium text-ink-900">{pct.toFixed(0)}%</span>
             </div>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-ink-100">
               <div className="h-full rounded-full bg-brand-600" style={{ width: `${pct}%` }} />
             </div>
           </li>
         )
       })}
-      <li className="pt-1 text-xs text-gray-400">{formatNumber(total)} visualizações com localização identificada</li>
+      <li className="pt-1 text-xs text-ink-500">{formatNumber(total)} visualizações com localização identificada</li>
     </ul>
   )
 }

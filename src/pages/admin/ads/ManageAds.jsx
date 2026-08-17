@@ -77,7 +77,7 @@ function ManageAds() {
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">Gerenciar Anúncios</h1>
+        <h1 className="text-2xl font-semibold text-ink-900">Gerenciar Anúncios</h1>
         <Link to={ROUTES.adminAdsNew}>
           <Button>
             <Plus className="h-4 w-4" />
@@ -90,9 +90,9 @@ function ManageAds() {
         {AD_POSITIONS.map((item) => (
           <span
             key={item.value}
-            className="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs text-gray-500"
+            className="rounded-full border border-ink-200 bg-white px-3 py-1 text-xs text-ink-500"
           >
-            {item.label}: <strong className="text-gray-700">{counts[item.value] ?? 0}</strong>
+            {item.label}: <strong className="text-ink-700">{counts[item.value] ?? 0}</strong>
           </span>
         ))}
       </div>

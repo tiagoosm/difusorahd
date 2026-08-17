@@ -40,8 +40,8 @@ function Analytics() {
     <div className="flex flex-col gap-6 p-4 sm:p-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Análise</h1>
-          <p className="mt-1 text-gray-500">Desempenho de audiência do portal.</p>
+          <h1 className="text-2xl font-semibold text-ink-900">Análise</h1>
+          <p className="mt-1 text-ink-500">Desempenho de audiência do portal.</p>
         </div>
         <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
           <RealtimeBadge />

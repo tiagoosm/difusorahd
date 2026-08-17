@@ -10,12 +10,12 @@ function Pagination({ page, totalPages, onPageChange }) {
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
         aria-label="Página anterior"
-        className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
+        className="rounded-lg p-2 text-ink-600 hover:bg-ink-100 disabled:pointer-events-none disabled:opacity-40"
       >
         <ChevronLeft className="h-4 w-4" />
       </button>
 
-      <span className="text-sm text-gray-600">
+      <span className="text-sm text-ink-600">
         Página {page} de {totalPages}
       </span>
 
@@ -24,7 +24,7 @@ function Pagination({ page, totalPages, onPageChange }) {
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
         aria-label="Próxima página"
-        className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
+        className="rounded-lg p-2 text-ink-600 hover:bg-ink-100 disabled:pointer-events-none disabled:opacity-40"
       >
         <ChevronRight className="h-4 w-4" />
       </button>

@@ -31,8 +31,8 @@ function Profile() {
 
   return (
     <div className="p-4 sm:p-8">
-      <h1 className="text-2xl font-semibold text-gray-900">Perfil do Administrador</h1>
-      <p className="mt-1 text-gray-500">Atualize suas informações de exibição.</p>
+      <h1 className="text-2xl font-semibold text-ink-900">Perfil do Administrador</h1>
+      <p className="mt-1 text-ink-500">Atualize suas informações de exibição.</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 flex max-w-sm flex-col gap-4">
         <Input id="email" label="E-mail" value={user?.email ?? ''} disabled />

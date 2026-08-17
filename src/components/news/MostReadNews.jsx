@@ -10,7 +10,7 @@ function MostReadNews({ items }) {
   if (!items.length) return null
 
   return (
-    <section className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-card">
+    <section className="flex min-w-0 flex-col gap-0 overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-card">
       <div className="flex items-center gap-2 bg-ink-900 px-5 py-4">
         <TrendingUp className="h-4 w-4 text-brand-400" />
         <h2 className="text-sm font-bold tracking-wide text-white uppercase">Mais Lidas da Semana</h2>
@@ -34,7 +34,7 @@ function MostReadNews({ items }) {
               </div>
 
               <div className="min-w-0 flex-1">
-                <h3 className="line-clamp-2 text-sm leading-snug font-semibold text-ink-900 group-hover:text-brand-700">
+                <h3 className="text-sm leading-snug font-semibold break-words text-ink-900 group-hover:text-brand-700">
                   {item.title}
                 </h3>
                 {item.category?.name && (

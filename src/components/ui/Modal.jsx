@@ -24,13 +24,13 @@ function Modal({ isOpen, onClose, title, children }) {
         className="w-full max-w-md rounded-xl bg-white shadow-card-hover"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-base font-semibold text-gray-900">{title}</h2>
+        <div className="flex items-center justify-between border-b border-ink-200 px-5 py-4">
+          <h2 className="text-base font-semibold text-ink-900">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-lg p-1 text-ink-400 hover:bg-ink-100 hover:text-ink-600"
           >
             <X className="h-5 w-5" />
           </button>

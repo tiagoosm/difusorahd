@@ -13,7 +13,7 @@ function FeaturedNews({ items }) {
       <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch">
         <Link
           to={buildPath.news(main.slug)}
-          className="group relative flex min-h-[24rem] flex-col justify-end overflow-hidden rounded-2xl bg-ink-900 shadow-card transition-shadow hover:shadow-card-hover lg:col-span-2 lg:min-h-[28rem]"
+          className="group relative flex min-h-[24rem] min-w-0 flex-col justify-end overflow-hidden rounded-2xl bg-ink-900 shadow-card transition-shadow hover:shadow-card-hover lg:col-span-2 lg:min-h-[28rem]"
         >
           <img
             src={main.cover_image_url}
@@ -36,7 +36,7 @@ function FeaturedNews({ items }) {
         </Link>
 
         {secondary.length > 0 && (
-          <div className="flex flex-col divide-y divide-ink-100 rounded-2xl border border-ink-200 bg-white shadow-card">
+          <div className="flex min-w-0 flex-col divide-y divide-ink-100 rounded-2xl border border-ink-200 bg-white shadow-card">
             {secondary.map((item) => (
               <FeaturedListItem key={item.id} news={item} />
             ))}
@@ -49,7 +49,7 @@ function FeaturedNews({ items }) {
 
 function FeaturedListItem({ news }) {
   return (
-    <Link to={buildPath.news(news.slug)} className="group flex items-center gap-3.5 p-4">
+    <Link to={buildPath.news(news.slug)} className="group flex min-w-0 items-center gap-3.5 p-4">
       <div className="aspect-square h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-ink-100">
         <img
           src={news.cover_image_url}
@@ -58,12 +58,12 @@ function FeaturedListItem({ news }) {
           loading="lazy"
         />
       </div>
-      <div className="flex flex-1 flex-col gap-1.5">
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         {news.category?.name && <Eyebrow>{news.category.name}</Eyebrow>}
-        <h3 className="line-clamp-2 text-sm leading-snug font-semibold text-ink-900 group-hover:text-brand-700">
+        <h3 className="text-sm leading-snug font-semibold break-words text-ink-900 group-hover:text-brand-700">
           {news.title}
         </h3>
-        <span className="text-xs text-ink-400">{formatDate(news.published_at)}</span>
+        <span className="text-xs text-ink-500">{formatDate(news.published_at)}</span>
       </div>
     </Link>
   )

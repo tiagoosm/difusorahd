@@ -116,7 +116,7 @@ function ManageNews() {
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">Gerenciar Notícias</h1>
+        <h1 className="text-2xl font-semibold text-ink-900">Gerenciar Notícias</h1>
         <Link to={ROUTES.adminNewsNew}>
           <Button>
             <Plus className="h-4 w-4" />
@@ -133,7 +133,7 @@ function ManageNews() {
         <StatsCard label="Publicadas este mês" value={stats.publishedThisMonth} icon={CalendarCheck} />
       </div>
 
-      <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-card">
+      <div className="flex flex-col gap-3 rounded-xl border border-ink-200 bg-white p-4 shadow-card">
         <div className="w-full sm:max-w-md">
           <SearchBar
             defaultValue={search}
@@ -184,22 +184,22 @@ function ManageNews() {
           </Select>
 
           <div className="flex w-full flex-col gap-1.5 sm:w-auto">
-            <span className="text-sm font-medium text-gray-700">Publicada de</span>
+            <span className="text-sm font-medium text-ink-700">Publicada de</span>
             <input
               type="date"
               value={publishedFrom}
               onChange={(event) => updateFilters({ from: event.target.value || undefined, page: undefined })}
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 sm:w-auto"
+              className="w-full rounded-lg border border-ink-300 px-3.5 py-2.5 text-sm text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 sm:w-auto"
             />
           </div>
 
           <div className="flex w-full flex-col gap-1.5 sm:w-auto">
-            <span className="text-sm font-medium text-gray-700">até</span>
+            <span className="text-sm font-medium text-ink-700">até</span>
             <input
               type="date"
               value={publishedTo}
               onChange={(event) => updateFilters({ to: event.target.value || undefined, page: undefined })}
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 sm:w-auto"
+              className="w-full rounded-lg border border-ink-300 px-3.5 py-2.5 text-sm text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 sm:w-auto"
             />
           </div>
 
@@ -230,9 +230,9 @@ function ManageNews() {
         />
       ) : (
         <>
-          <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-card">
+          <div className="overflow-x-auto rounded-xl border border-ink-200 bg-white shadow-card">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
+              <thead className="border-b border-ink-200 bg-ink-50 text-ink-500">
                 <tr>
                   <th className="px-5 py-3 font-medium">Notícia</th>
                   <th className="px-5 py-3 font-medium">Categoria</th>
@@ -242,12 +242,12 @@ function ManageNews() {
                   <th className="px-5 py-3 font-medium text-right">Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-ink-100">
                 {news.map((item) => (
-                  <tr key={item.id} className="transition-colors hover:bg-gray-50">
+                  <tr key={item.id} className="transition-colors hover:bg-ink-50">
                     <td className="px-5 py-3">
                       <div className="flex min-w-0 items-center gap-3">
-                        <div className="h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                        <div className="h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-ink-100">
                           {item.cover_image_url ? (
                             <img
                               src={item.cover_image_url}
@@ -255,12 +255,12 @@ function ManageNews() {
                               className="h-full w-full object-cover"
                             />
                           ) : (
-                            <div className="flex h-full w-full items-center justify-center text-gray-300">
+                            <div className="flex h-full w-full items-center justify-center text-ink-300">
                               <ImageOff className="h-5 w-5" />
                             </div>
                           )}
                         </div>
-                        <span className="max-w-xs truncate font-medium text-gray-900">{item.title}</span>
+                        <span className="max-w-xs truncate font-medium text-ink-900">{item.title}</span>
                       </div>
                     </td>
                     <td className="px-5 py-3">
@@ -271,13 +271,13 @@ function ManageNews() {
                         {item.status === 'published' ? 'Publicada' : 'Rascunho'}
                       </Badge>
                     </td>
-                    <td className="px-5 py-3 text-gray-500">
+                    <td className="px-5 py-3 text-ink-500">
                       <span className="flex items-center gap-1">
                         <Eye className="h-3.5 w-3.5" />
                         {item.views_count}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-gray-500">
+                    <td className="px-5 py-3 text-ink-500">
                       {item.published_at ? formatDate(item.published_at) : '—'}
                     </td>
                     <td className="px-5 py-3">
@@ -288,7 +288,7 @@ function ManageNews() {
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label="Ver no site"
-                            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                            className="rounded-lg p-2 text-ink-500 hover:bg-ink-100 hover:text-ink-900"
                           >
                             <ExternalLink className="h-4 w-4" />
                           </a>
@@ -296,7 +296,7 @@ function ManageNews() {
                         <Link
                           to={buildPath.adminNewsEdit(item.id)}
                           aria-label="Editar"
-                          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                          className="rounded-lg p-2 text-ink-500 hover:bg-ink-100 hover:text-ink-900"
                         >
                           <Pencil className="h-4 w-4" />
                         </Link>
@@ -304,7 +304,7 @@ function ManageNews() {
                           type="button"
                           onClick={() => setDeleteTarget(item)}
                           aria-label="Excluir"
-                          className="rounded-lg p-2 text-gray-500 hover:bg-red-50 hover:text-red-600"
+                          className="rounded-lg p-2 text-ink-500 hover:bg-red-50 hover:text-red-600"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -317,7 +317,7 @@ function ManageNews() {
           </div>
 
           <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-ink-500">
               {totalCount} notícia{totalCount === 1 ? '' : 's'} encontrada{totalCount === 1 ? '' : 's'}
             </span>
             <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />

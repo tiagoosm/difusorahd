@@ -15,22 +15,22 @@ function TooltipContent({ active, payload, bucket }) {
   const { bucket: rawBucket, views, visitors } = payload[0].payload
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs shadow-card">
-      <p className="font-medium text-gray-900">{formatBucketLabel(rawBucket, bucket)}</p>
-      <p className="text-gray-500">{formatNumber(views)} visualizações</p>
-      <p className="text-gray-500">{formatNumber(visitors)} visitantes</p>
+    <div className="rounded-lg border border-ink-200 bg-white px-3 py-2 text-xs shadow-card">
+      <p className="font-medium text-ink-900">{formatBucketLabel(rawBucket, bucket)}</p>
+      <p className="text-ink-500">{formatNumber(views)} visualizações</p>
+      <p className="text-ink-500">{formatNumber(visitors)} visitantes</p>
     </div>
   )
 }
 
 function EvolutionChart({ data, bucket, loading }) {
   if (loading) {
-    return <div className="h-72 w-full animate-pulse rounded-lg bg-gray-100" />
+    return <div className="h-72 w-full animate-pulse rounded-lg bg-ink-100" />
   }
 
   if (data.length === 0) {
     return (
-      <div className="flex h-72 items-center justify-center text-sm text-gray-400">
+      <div className="flex h-72 items-center justify-center text-sm text-ink-500">
         Sem dados de acesso no período selecionado.
       </div>
     )

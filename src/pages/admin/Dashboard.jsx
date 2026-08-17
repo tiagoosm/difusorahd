@@ -31,12 +31,12 @@ function Dashboard() {
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-8">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-        <p className="mt-1 text-gray-500">Bem-vindo, {profile?.full_name || 'Administrador'}.</p>
+        <h1 className="text-2xl font-semibold text-ink-900">Dashboard</h1>
+        <p className="mt-1 text-ink-500">Bem-vindo, {profile?.full_name || 'Administrador'}.</p>
       </div>
 
       <div>
-        <p className="mb-3 text-xs font-semibold tracking-wide text-gray-500 uppercase">Conteúdo</p>
+        <p className="mb-3 text-xs font-semibold tracking-wide text-ink-500 uppercase">Conteúdo</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatsCard label="Total de notícias" value={newsStats.total} icon={FileStack} loading={loading} />
           <StatsCard label="Publicadas" value={newsStats.published} icon={Newspaper} loading={loading} />
@@ -46,7 +46,7 @@ function Dashboard() {
       </div>
 
       <div>
-        <p className="mb-3 text-xs font-semibold tracking-wide text-gray-500 uppercase">Audiência</p>
+        <p className="mb-3 text-xs font-semibold tracking-wide text-ink-500 uppercase">Audiência</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard
             label="Visualizações hoje"
@@ -95,7 +95,7 @@ function Dashboard() {
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   chartPeriod === option.value
                     ? 'bg-brand-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-ink-100 text-ink-600 hover:bg-ink-200'
                 }`}
               >
                 {option.label}
@@ -118,25 +118,25 @@ function Dashboard() {
         {loading ? (
           <div className="flex flex-col gap-3">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="h-6 w-full animate-pulse rounded bg-gray-100" />
+              <div key={index} className="h-6 w-full animate-pulse rounded bg-ink-100" />
             ))}
           </div>
         ) : recentNews.length === 0 ? (
           <EmptyState title="Nenhuma notícia cadastrada ainda" />
         ) : (
-          <ul className="flex flex-col divide-y divide-gray-100">
+          <ul className="flex flex-col divide-y divide-ink-100">
             {recentNews.map((item) => (
               <li key={item.id} className="flex items-center justify-between gap-4 py-3">
                 <Link
                   to={buildPath.adminNewsEdit(item.id)}
-                  className="min-w-0 flex-1 truncate text-sm font-medium text-gray-900 hover:text-brand-600"
+                  className="min-w-0 flex-1 truncate text-sm font-medium text-ink-900 hover:text-brand-600"
                 >
                   {item.title}
                 </Link>
                 <Badge tone={item.status === 'published' ? 'green' : 'gray'}>
                   {item.status === 'published' ? 'Publicada' : 'Rascunho'}
                 </Badge>
-                <span className="shrink-0 text-xs text-gray-400">{formatDate(item.created_at)}</span>
+                <span className="shrink-0 text-xs text-ink-500">{formatDate(item.created_at)}</span>
               </li>
             ))}
           </ul>

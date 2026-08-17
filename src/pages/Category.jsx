@@ -66,7 +66,7 @@ function Category() {
           {category.name}
         </h1>
         {category.description && <p className="max-w-2xl text-ink-500">{category.description}</p>}
-        <p className="text-sm text-ink-400">
+        <p className="text-sm text-ink-500">
           {totalCount} notícia{totalCount === 1 ? '' : 's'}
         </p>
       </header>
@@ -86,7 +86,7 @@ function Category() {
           )}
 
           {gridItems.length > 0 && (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {gridItems.map((item) => (
                 <NewsCard key={item.id} news={item} />
               ))}

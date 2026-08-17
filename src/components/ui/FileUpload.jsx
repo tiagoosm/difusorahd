@@ -63,16 +63,19 @@ function FileUpload({ value, onChange, bucket, folder, accept, kind = 'image', l
 
   function handleRemove() {
     setPlaybackError(false)
-    onChange('')
+    // null, não '': permite distinguir "sem arquivo" de "campo vazio" no
+    // banco (ex: audio_url is not null passava a contar string vazia como
+    // "tem áudio").
+    onChange(null)
   }
 
   return (
     <div className="flex flex-col gap-1.5">
-      {label && <span className="text-sm font-medium text-gray-700">{label}</span>}
+      {label && <span className="text-sm font-medium text-ink-700">{label}</span>}
 
       {value ? (
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3 rounded-lg border border-gray-300 p-3">
+          <div className="flex items-center gap-3 rounded-lg border border-ink-300 p-3">
             {kind === 'image' ? (
               <img src={value} alt="" className="h-16 w-16 rounded-lg object-cover" />
             ) : (
@@ -88,7 +91,7 @@ function FileUpload({ value, onChange, bucket, folder, accept, kind = 'image', l
               type="button"
               onClick={handleRemove}
               aria-label="Remover arquivo"
-              className="ml-auto rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600"
+              className="ml-auto rounded-lg p-2 text-ink-400 hover:bg-ink-100 hover:text-red-600"
             >
               <X className="h-4 w-4" />
             </button>
@@ -106,7 +109,7 @@ function FileUpload({ value, onChange, bucket, folder, accept, kind = 'image', l
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-gray-300 py-6 text-sm text-gray-500 hover:border-brand-400 hover:text-brand-600 disabled:pointer-events-none disabled:opacity-60"
+          className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-ink-300 py-6 text-sm text-ink-500 hover:border-brand-400 hover:text-brand-600 disabled:pointer-events-none disabled:opacity-60"
         >
           {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
           {uploading ? 'Enviando...' : 'Clique para enviar um arquivo'}

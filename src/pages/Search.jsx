@@ -33,7 +33,7 @@ function Search() {
           {query ? `Resultados para "${query}"` : 'Pesquisar notícias'}
         </h1>
         {!loading && query && (
-          <p className="mt-1 text-sm text-ink-400">
+          <p className="mt-1 text-sm text-ink-500">
             {totalCount} resultado{totalCount !== 1 ? 's' : ''} encontrado{totalCount !== 1 ? 's' : ''}
           </p>
         )}
@@ -66,7 +66,7 @@ function Search() {
         />
       ) : (
         <>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {news.map((item) => (
               <NewsCard key={item.id} news={item} />
             ))}

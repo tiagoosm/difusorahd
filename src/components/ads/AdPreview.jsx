@@ -6,7 +6,7 @@ function AdPreview({ title, imageUrl, linkUrl, position }) {
   if (!imageUrl) {
     return (
       <div
-        className={`flex items-center justify-center rounded-xl border border-dashed border-gray-300 text-sm text-gray-400 ${height}`}
+        className={`flex items-center justify-center rounded-xl border border-dashed border-ink-300 text-sm text-ink-400 ${height}`}
       >
         A prévia aparece aqui depois que você enviar uma imagem
       </div>
@@ -15,15 +15,15 @@ function AdPreview({ title, imageUrl, linkUrl, position }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-sm font-medium text-gray-700">
-        Prévia {position && <span className="font-normal text-gray-400">(tamanho real do banner)</span>}
+      <span className="text-sm font-medium text-ink-700">
+        Prévia {position && <span className="font-normal text-ink-500">(tamanho real do banner)</span>}
       </span>
       <a
         href={linkUrl || '#'}
         target="_blank"
         rel="noopener noreferrer"
         onClick={(event) => !linkUrl && event.preventDefault()}
-        className="block overflow-hidden rounded-xl border border-gray-200 transition-opacity hover:opacity-90"
+        className="block overflow-hidden rounded-xl border border-ink-200 transition-opacity hover:opacity-90"
       >
         <img src={imageUrl} alt={title || 'Prévia do anúncio'} className={`w-full object-cover ${height}`} />
       </a>

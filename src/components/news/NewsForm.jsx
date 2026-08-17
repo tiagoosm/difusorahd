@@ -14,8 +14,8 @@ const EMPTY_VALUES = {
   excerpt: '',
   content: '',
   cover_image_url: '',
-  cover_image_caption: '',
-  audio_url: '',
+  cover_image_caption: null,
+  audio_url: null,
   category_id: '',
   status: 'draft',
   is_featured: false,
@@ -126,7 +126,7 @@ function NewsForm({ defaultValues, onSubmit, submitLabel = 'Salvar' }) {
       </Select>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-sm font-medium text-gray-700">Conteúdo</span>
+        <span className="text-sm font-medium text-ink-700">Conteúdo</span>
         <Controller
           name="content"
           control={control}
@@ -144,10 +144,10 @@ function NewsForm({ defaultValues, onSubmit, submitLabel = 'Salvar' }) {
           <option value="published">Publicada</option>
         </Select>
 
-        <label className="mt-6 flex items-center gap-2 text-sm text-gray-700">
+        <label className="mt-6 flex items-center gap-2 text-sm text-ink-700">
           <input
             type="checkbox"
-            className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500/30"
+            className="h-4 w-4 rounded border-ink-300 text-brand-600 focus:ring-brand-500/30"
             {...register('is_featured')}
           />
           Destacar na Home

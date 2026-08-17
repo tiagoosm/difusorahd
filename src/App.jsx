@@ -4,7 +4,7 @@ import ScrollToTop from './routes/ScrollToTop'
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
+    <div className="min-h-screen bg-ink-50 font-sans">
       <ScrollToTop />
       <AppRoutes />
       <Toaster position="top-right" />

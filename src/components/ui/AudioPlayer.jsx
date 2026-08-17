@@ -118,7 +118,7 @@ function AudioPlayer({ src }) {
           }}
           className={`h-1.5 w-full cursor-pointer appearance-none rounded-full ${rangeThumbClass}`}
         />
-        <div className="flex justify-between text-xs text-ink-400 tabular-nums">
+        <div className="flex justify-between text-xs text-ink-500 tabular-nums">
           <span>{formatTime(currentTime)}</span>
           <span>{formatTime(duration)}</span>
         </div>

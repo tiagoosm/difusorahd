@@ -6,7 +6,7 @@ export const CARD_FIELDS =
 
 
 const DETAIL_FIELDS = `
-  id, title, slug, excerpt, content, cover_image_url, cover_image_caption, audio_url, published_at,
+  id, title, slug, excerpt, content, cover_image_url, cover_image_caption, audio_url, published_at, updated_at,
   category:categories(id, name, slug),
   author:profiles(full_name)
 `

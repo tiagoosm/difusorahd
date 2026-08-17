@@ -3,7 +3,7 @@ import { AD_POSITION_LABELS } from '../../utils/adPositions'
 import AdCarousel from './AdCarousel'
 
 const LABEL_TONE = {
-  light: 'text-gray-400',
+  light: 'text-ink-500',
   dark: 'text-white/70',
 }
 
@@ -14,7 +14,7 @@ function AdBanner({ position, className = '', variant = 'light' }) {
   const height = AD_POSITION_LABELS[position]?.height ?? 'h-[180px]'
 
   if (loading) {
-    return <div className={`w-full animate-pulse rounded-xl bg-gray-100 ${height} ${className}`} />
+    return <div className={`w-full animate-pulse rounded-xl bg-ink-100 ${height} ${className}`} />
   }
 
   // Sem anúncio válido para essa posição: não reserva espaço, o layout
@@ -34,7 +34,7 @@ function AdBanner({ position, className = '', variant = 'light' }) {
           target="_blank"
           rel="noopener noreferrer sponsored"
           aria-label={ads[0].title}
-          className="block overflow-hidden rounded-xl border border-gray-200 transition-opacity hover:opacity-90"
+          className="block overflow-hidden rounded-xl border border-ink-200 transition-opacity hover:opacity-90"
         >
           <img src={ads[0].image_url} alt={ads[0].title} loading="lazy" className={`w-full object-cover ${height}`} />
         </a>

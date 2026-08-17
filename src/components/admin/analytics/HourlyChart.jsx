@@ -11,7 +11,7 @@ function fillHours(byHour) {
 
 function HourlyChart({ byHour, loading }) {
   if (loading) {
-    return <div className="h-64 w-full animate-pulse rounded-lg bg-gray-100" />
+    return <div className="h-64 w-full animate-pulse rounded-lg bg-ink-100" />
   }
 
   const data = fillHours(byHour)

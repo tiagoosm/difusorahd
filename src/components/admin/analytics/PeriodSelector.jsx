@@ -24,15 +24,15 @@ function PeriodSelector({ period, customFrom, customTo, onPeriodChange, onCustom
             value={customFrom}
             max={customTo || undefined}
             onChange={(event) => onCustomRangeChange({ from: event.target.value, to: customTo })}
-            className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            className="rounded-lg border border-ink-300 px-3.5 py-2.5 text-sm text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
           />
-          <span className="text-sm text-gray-500">até</span>
+          <span className="text-sm text-ink-500">até</span>
           <input
             type="date"
             value={customTo}
             min={customFrom || undefined}
             onChange={(event) => onCustomRangeChange({ from: customFrom, to: event.target.value })}
-            className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            className="rounded-lg border border-ink-300 px-3.5 py-2.5 text-sm text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
           />
         </div>
       )}

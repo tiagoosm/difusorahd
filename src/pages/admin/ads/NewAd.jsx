@@ -31,8 +31,8 @@ function NewAd() {
 
   return (
     <div className="p-4 sm:p-8">
-      <h1 className="text-2xl font-semibold text-gray-900">Novo Anúncio</h1>
-      <p className="mt-1 text-gray-500">Preencha os dados abaixo para cadastrar um novo anúncio.</p>
+      <h1 className="text-2xl font-semibold text-ink-900">Novo Anúncio</h1>
+      <p className="mt-1 text-ink-500">Preencha os dados abaixo para cadastrar um novo anúncio.</p>
 
       <div className="mt-6 max-w-2xl">
         <AdForm onSubmit={handleCreate} submitLabel="Criar anúncio" />

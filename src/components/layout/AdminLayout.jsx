@@ -14,16 +14,16 @@ function AdminLayout() {
       <AdminSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
+        <header className="flex items-center gap-3 border-b border-ink-200 bg-white px-4 py-3 lg:hidden">
           <button
             type="button"
             onClick={() => setIsSidebarOpen(true)}
             aria-label="Abrir menu"
-            className="rounded-lg p-2 text-gray-600 hover:bg-gray-100"
+            className="rounded-lg p-2 text-ink-600 hover:bg-ink-100"
           >
             <Menu className="h-5 w-5" />
           </button>
-          <span className="text-base font-semibold text-gray-900">Portal Admin</span>
+          <span className="text-base font-semibold text-ink-900">Portal Admin</span>
         </header>
 
         <main className="flex-1 overflow-y-auto">

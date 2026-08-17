@@ -71,8 +71,8 @@ function EditAd() {
 
   return (
     <div className="p-4 sm:p-8">
-      <h1 className="text-2xl font-semibold text-gray-900">Editar Anúncio</h1>
-      <p className="mt-1 text-gray-500">Atualize os dados do anúncio abaixo.</p>
+      <h1 className="text-2xl font-semibold text-ink-900">Editar Anúncio</h1>
+      <p className="mt-1 text-ink-500">Atualize os dados do anúncio abaixo.</p>
 
       <div className="mt-6 max-w-2xl">
         <AdForm defaultValues={defaultValues} onSubmit={handleUpdate} submitLabel="Salvar alterações" />

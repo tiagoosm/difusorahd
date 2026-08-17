@@ -13,7 +13,7 @@ function ToolbarButton({ onClick, isActive, disabled, label, children }) {
       aria-label={label}
       title={label}
       className={`rounded-lg p-2 transition-colors disabled:pointer-events-none disabled:opacity-40 ${
-        isActive ? 'bg-brand-100 text-brand-700' : 'text-gray-600 hover:bg-gray-100'
+        isActive ? 'bg-brand-100 text-brand-700' : 'text-ink-600 hover:bg-ink-100'
       }`}
     >
       {children}
@@ -39,7 +39,7 @@ function EditorToolbar({ editor }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-1 border-b border-gray-200 p-2">
+    <div className="flex flex-wrap items-center gap-1 border-b border-ink-200 p-2">
       <ToolbarButton
         label="Negrito"
         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -79,7 +79,7 @@ function EditorToolbar({ editor }) {
         <LinkIcon className="h-4 w-4" />
       </ToolbarButton>
 
-      <div className="mx-1 h-5 w-px bg-gray-200" />
+      <div className="mx-1 h-5 w-px bg-ink-200" />
 
       <ToolbarButton
         label="Desfazer"
@@ -118,7 +118,7 @@ function Editor({ value, onChange, placeholder = 'Escreva o conteúdo da notíci
   })
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-300 bg-white focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/30">
+    <div className="overflow-hidden rounded-lg border border-ink-300 bg-white focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/30">
       <EditorToolbar editor={editor} />
       <EditorContent editor={editor} />
     </div>

@@ -33,4 +33,15 @@ describe('MostReadNews', () => {
     expect(container.querySelector('svg.lucide-flame')).toBeNull()
     expect(container.querySelector('svg.lucide-trending-up')).not.toBeNull()
   })
+
+  it('never truncates a ranking title', () => {
+    const longTitle =
+      'Prefeitura de Pouso Alegre anuncia investimento histórico de mais de 400 milhões de reais em obras'
+    renderWithRouter(
+      <MostReadNews items={[{ id: '1', slug: 'a', title: longTitle, cover_image_url: 'https://example.com/a.png' }]} />,
+    )
+
+    const heading = screen.getByText(longTitle)
+    expect(heading.className).not.toMatch(/line-clamp/)
+  })
 })

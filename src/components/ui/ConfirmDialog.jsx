@@ -17,7 +17,7 @@ function ConfirmDialog({
   // evita fechar o modal e disparar uma segunda exclusão em cima da primeira.
   return (
     <Modal isOpen={isOpen} onClose={loading ? () => {} : onClose} title={title}>
-      <p className="text-sm text-gray-600">{description}</p>
+      <p className="text-sm text-ink-600">{description}</p>
       <div className="mt-5 flex justify-end gap-2">
         <Button variant="secondary" onClick={onClose} disabled={loading}>
           {cancelLabel}

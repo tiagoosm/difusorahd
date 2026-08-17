@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import { Headphones, User, Clock } from 'lucide-react'
 import { useNewsDetail } from '../hooks/useNewsDetail'
 import { useSEO } from '../hooks/useSEO'
+import { buildNewsArticleJsonLd } from '../utils/seo'
 import { formatDate } from '../utils/formatDate'
 import { estimateReadingTime } from '../utils/readingTime'
 import { ROUTES, buildPath } from '../routes/paths'
@@ -21,6 +22,7 @@ function NewsDetail() {
     title: news ? `${news.title} — Difusora HD` : undefined,
     description: news?.excerpt,
     image: news?.cover_image_url,
+    jsonLd: news ? buildNewsArticleJsonLd(news, window.location.href) : undefined,
   })
 
   if (loading) {
@@ -96,7 +98,7 @@ function NewsDetail() {
               <img src={news.cover_image_url} alt={news.title} className="w-full object-cover" />
             </div>
             {news.cover_image_caption && (
-              <figcaption className="mt-2 text-xs text-ink-400 italic">
+              <figcaption className="mt-2 text-xs text-ink-500 italic">
                 {news.cover_image_caption}
               </figcaption>
             )}

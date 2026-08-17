@@ -4,11 +4,11 @@ import { CHART_COLORS } from '../../../utils/chartColors'
 
 function TrafficSourceChart({ data, loading }) {
   if (loading) {
-    return <div className="h-64 w-full animate-pulse rounded-lg bg-gray-100" />
+    return <div className="h-64 w-full animate-pulse rounded-lg bg-ink-100" />
   }
 
   if (data.length === 0) {
-    return <div className="flex h-32 items-center justify-center text-sm text-gray-400">Sem dados no período.</div>
+    return <div className="flex h-32 items-center justify-center text-sm text-ink-500">Sem dados no período.</div>
   }
 
   const total = data.reduce((sum, row) => sum + Number(row.views), 0)
@@ -47,9 +47,9 @@ function TrafficSourceChart({ data, loading }) {
                 className="h-2.5 w-2.5 shrink-0 rounded-full"
                 style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
               />
-              <span className="truncate text-gray-700">{row.source}</span>
+              <span className="truncate text-ink-700">{row.source}</span>
             </span>
-            <span className="shrink-0 text-gray-500">
+            <span className="shrink-0 text-ink-500">
               {formatNumber(row.views)} · {((row.views / total) * 100).toFixed(0)}%
             </span>
           </li>

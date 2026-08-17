@@ -58,8 +58,8 @@ function ManageFeatured() {
     <div className="flex flex-col gap-8 p-4 sm:p-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Gerenciar Destaques</h1>
-          <p className="mt-1 text-gray-500">
+          <h1 className="text-2xl font-semibold text-ink-900">Gerenciar Destaques</h1>
+          <p className="mt-1 text-ink-500">
             Arraste para reordenar. O primeiro item é o destaque principal da Home.
           </p>
         </div>
@@ -92,19 +92,19 @@ function ManageFeatured() {
               onDragEnd={handleDragEnd}
               className={`flex items-center gap-3 rounded-xl border bg-white p-3 shadow-card transition-opacity ${
                 draggedId === item.id ? 'opacity-40' : 'opacity-100'
-              } ${index === 0 ? 'border-brand-200 ring-1 ring-brand-100' : 'border-gray-200'}`}
+              } ${index === 0 ? 'border-brand-200 ring-1 ring-brand-100' : 'border-ink-200'}`}
             >
-              <GripVertical className="h-4 w-4 shrink-0 cursor-grab text-gray-300" />
+              <GripVertical className="h-4 w-4 shrink-0 cursor-grab text-ink-300" />
 
               <div
-                className={`shrink-0 overflow-hidden rounded-lg bg-gray-100 ${
+                className={`shrink-0 overflow-hidden rounded-lg bg-ink-100 ${
                   index === 0 ? 'h-16 w-24' : 'h-12 w-16'
                 }`}
               >
                 {item.cover_image_url ? (
                   <img src={item.cover_image_url} alt="" className="h-full w-full object-cover" />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-gray-300">
+                  <div className="flex h-full w-full items-center justify-center text-ink-300">
                     <ImageOff className="h-4 w-4" />
                   </div>
                 )}
@@ -113,20 +113,20 @@ function ManageFeatured() {
               <div className="min-w-0 flex-1">
                 <span
                   className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${
-                    index === 0 ? 'bg-brand-100 text-brand-700' : 'bg-gray-100 text-gray-500'
+                    index === 0 ? 'bg-brand-100 text-brand-700' : 'bg-ink-100 text-ink-500'
                   }`}
                 >
                   {index === 0 ? 'Principal' : `Secundário ${index}`}
                 </span>
-                <p className="mt-1 truncate text-sm font-medium text-gray-900">{item.title}</p>
-                <p className="text-xs text-gray-400">{formatDate(item.published_at)}</p>
+                <p className="mt-1 truncate text-sm font-medium text-ink-900">{item.title}</p>
+                <p className="text-xs text-ink-500">{formatDate(item.published_at)}</p>
               </div>
 
               <button
                 type="button"
                 onClick={() => handleRemove(item.id)}
                 aria-label="Remover destaque"
-                className="shrink-0 rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                className="shrink-0 rounded-lg p-1.5 text-ink-400 transition-colors hover:bg-red-50 hover:text-red-600"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -141,10 +141,10 @@ function ManageFeatured() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <span className="text-sm font-medium text-gray-700">Preview da Home</span>
-        <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 sm:p-6">
+        <span className="text-sm font-medium text-ink-700">Preview da Home</span>
+        <div className="rounded-xl border border-dashed border-ink-300 bg-ink-50 p-4 sm:p-6">
           {items.length === 0 ? (
-            <p className="py-12 text-center text-sm text-gray-400">
+            <p className="py-12 text-center text-sm text-ink-500">
               Adicione destaques para ver o preview.
             </p>
           ) : (

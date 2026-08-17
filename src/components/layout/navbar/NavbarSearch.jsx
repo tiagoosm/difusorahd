@@ -62,14 +62,14 @@ function NavbarSearch({ autoFocus = false, onSubmitSuccess, onCancel }) {
         autoFocus={autoFocus}
         placeholder="Pesquisar notícias..."
         aria-label="Pesquisar notícias"
-        className="w-full rounded-full border border-transparent bg-white py-2.5 pr-12 pl-4 text-sm text-gray-900 shadow-sm outline-none transition-shadow duration-200 placeholder:text-gray-400 [&::-webkit-search-cancel-button]:appearance-none focus:ring-2 focus:ring-white/70"
+        className="w-full rounded-full border border-transparent bg-white py-2.5 pr-12 pl-4 text-sm text-ink-900 shadow-sm outline-none transition-shadow duration-200 placeholder:text-ink-500 [&::-webkit-search-cancel-button]:appearance-none focus:ring-2 focus:ring-white/70"
       />
       {showClear && (
         <button
           type="button"
           onClick={handleClear}
           aria-label="Limpar pesquisa"
-          className="absolute top-1/2 right-11 -translate-y-1/2 rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:outline-none"
+          className="absolute top-1/2 right-11 -translate-y-1/2 rounded-full p-1.5 text-ink-400 transition-colors hover:bg-ink-100 hover:text-ink-600 focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:outline-none"
         >
           <X className="h-3.5 w-3.5" />
         </button>

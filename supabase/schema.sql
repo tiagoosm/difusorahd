@@ -80,7 +80,8 @@ create index news_author_id_idx on public.news (author_id);
 create index news_status_published_at_idx on public.news (status, published_at desc);
 create index news_is_featured_idx on public.news (is_featured) where is_featured = true;
 create index news_featured_position_idx on public.news (featured_position) where featured_position is not null;
-create index news_status_views_count_idx on public.news (status, views_count desc) where status = 'published';
+-- (não há mais índice em views_count: "Mais Lidas" ordena por analytics_events,
+-- não pelo contador acumulado — ver public_weekly_top_news)
 
 -- news_tags: tabela de junção N:N entre news e tags.
 create table public.news_tags (
@@ -556,8 +557,10 @@ alter table public.analytics_events enable row level security;
 create policy "profiles_select_all" on public.profiles
   for select using (true);
 
+-- (select auth.uid()) em vez de auth.uid() direto: avaliado uma vez por
+-- query, não uma vez por linha (mesmo resultado, mais barato em escala).
 create policy "profiles_update_own" on public.profiles
-  for update using (auth.uid() = id) with check (auth.uid() = id);
+  for update using ((select auth.uid()) = id) with check ((select auth.uid()) = id);
 
 create policy "profiles_update_admin" on public.profiles
   for update using (public.is_admin()) with check (public.is_admin());
@@ -621,16 +624,16 @@ create policy "news_tags_delete_admin" on public.news_tags
 
 -- comments: leitor vê aprovados + os próprios; insere autenticado; admin modera
 create policy "comments_select" on public.comments
-  for select using (status = 'approved' or user_id = auth.uid() or public.is_admin());
+  for select using (status = 'approved' or user_id = (select auth.uid()) or public.is_admin());
 
 create policy "comments_insert_authenticated" on public.comments
-  for insert with check (auth.uid() = user_id);
+  for insert with check ((select auth.uid()) = user_id);
 
 create policy "comments_update_admin" on public.comments
   for update using (public.is_admin()) with check (public.is_admin());
 
 create policy "comments_delete_own_or_admin" on public.comments
-  for delete using (user_id = auth.uid() or public.is_admin());
+  for delete using (user_id = (select auth.uid()) or public.is_admin());
 
 -- ads: público só vê os "no ar" agora (regra de ativo + período aplicada no banco);
 -- admin vê e gerencia tudo.

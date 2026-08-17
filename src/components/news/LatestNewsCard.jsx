@@ -25,7 +25,7 @@ function LatestNewsCard({ news }) {
         <h3 className="text-base leading-snug font-semibold break-words text-ink-900 group-hover:text-brand-700 sm:text-lg">
           {news.title}
         </h3>
-        <span className="text-xs text-ink-400">{formatDate(news.published_at)}</span>
+        <span className="text-xs text-ink-500">{formatDate(news.published_at)}</span>
       </div>
     </Link>
   )

@@ -4,12 +4,12 @@ import { CHART_COLORS, CHART_GRID_COLOR, CHART_AXIS_COLOR } from '../../../utils
 
 function CategoryPerformanceChart({ data, loading }) {
   if (loading) {
-    return <div className="h-72 w-full animate-pulse rounded-lg bg-gray-100" />
+    return <div className="h-72 w-full animate-pulse rounded-lg bg-ink-100" />
   }
 
   if (data.length === 0) {
     return (
-      <div className="flex h-72 items-center justify-center text-sm text-gray-400">
+      <div className="flex h-72 items-center justify-center text-sm text-ink-500">
         Sem visualizações em notícias no período selecionado.
       </div>
     )

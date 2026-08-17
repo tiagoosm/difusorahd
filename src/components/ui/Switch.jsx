@@ -9,10 +9,10 @@ function Switch({ id, checked, onChange, label }) {
           onChange={(event) => onChange(event.target.checked)}
           className="peer sr-only"
         />
-        <span className="absolute inset-0 rounded-full bg-gray-300 transition-colors peer-checked:bg-brand-600" />
+        <span className="absolute inset-0 rounded-full bg-ink-300 transition-colors peer-checked:bg-brand-600" />
         <span className="absolute left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5" />
       </span>
-      {label && <span className="text-sm font-medium text-gray-700">{label}</span>}
+      {label && <span className="text-sm font-medium text-ink-700">{label}</span>}
     </label>
   )
 }
