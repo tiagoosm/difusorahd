@@ -34,11 +34,12 @@ describe('MostReadNews', () => {
     expect(container.querySelector('svg')).toBeNull()
   })
 
-  it('uses the same SectionHeading/Eyebrow pattern as the rest of the site instead of a standalone dark header', () => {
+  it('highlights the section title with a brand-colored background instead of a "Ranking" label', () => {
     renderWithRouter(<MostReadNews items={ITEMS} />)
 
-    expect(screen.getByRole('heading', { name: 'Mais Lidas da Semana' })).toBeInTheDocument()
-    expect(screen.getByText('Ranking')).toBeInTheDocument()
+    const heading = screen.getByRole('heading', { name: 'Mais Lidas da Semana' })
+    expect(heading.className).toMatch(/bg-brand-600/)
+    expect(screen.queryByText('Ranking')).toBeNull()
     expect(screen.getByText('Cotidiano')).toBeInTheDocument()
   })
 

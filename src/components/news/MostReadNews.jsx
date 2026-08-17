@@ -1,22 +1,22 @@
 import { Link } from 'react-router-dom'
 import { buildPath } from '../../routes/paths'
 import Eyebrow from '../ui/Eyebrow'
-import SectionHeading from '../ui/SectionHeading'
 
 // Numeração perde intensidade a cada posição (100% -> 25% de opacidade em
 // brand-600): o 1º lugar ganha destaque de cor real em vez de tamanho
 // exagerado, e a lista inteira já lê como "ranking" sem precisar de ícone.
 const RANK_TINT = ['text-brand-600', 'text-brand-600/70', 'text-brand-600/50', 'text-brand-600/35', 'text-brand-600/25']
 
-// Mesmo SectionHeading e Eyebrow usados no resto do site (Últimas notícias,
-// NewsCard...) — em vez de uma faixa escura isolada que destoava do resto
-// da página.
+// Título com fundo vermelho (em vez do eyebrow "Ranking") é o único ponto de
+// cor forte da seção, como uma etiqueta de destaque sobre a lista.
 function MostReadNews({ items }) {
   if (!items.length) return null
 
   return (
     <section className="flex min-w-0 flex-col gap-5">
-      <SectionHeading eyebrow="Ranking" title="Mais Lidas da Semana" />
+      <h2 className="inline-block w-fit bg-brand-600 px-3 py-1.5 text-lg font-bold tracking-tight text-white sm:text-xl">
+        Mais Lidas da Semana
+      </h2>
 
       <ol className="flex flex-col divide-y divide-ink-100">
         {items.map((item, index) => (
