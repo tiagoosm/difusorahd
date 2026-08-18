@@ -646,7 +646,7 @@ values (
   'news-media',
   'news-media',
   true,
-  20971520, -- 20 MB
+  52428800, -- 50 MB (áudio de narração sem compressão/WAV passa fácil dos 20 MB antigos)
   array[
     'image/jpeg', 'image/png', 'image/webp', 'image/gif',
     'audio/mpeg', 'audio/mp3',

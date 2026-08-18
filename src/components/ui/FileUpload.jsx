@@ -3,7 +3,7 @@ import { UploadCloud, X, Loader2, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { uploadFile } from '../../services/storage'
 
-const MAX_SIZE_MB = { image: 5, audio: 20 }
+const MAX_SIZE_MB = { image: 5, audio: 50 }
 
 const FORMAT_HINT = {
   image: 'JPG, PNG, WEBP ou GIF',
