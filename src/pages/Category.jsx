@@ -61,14 +61,10 @@ function Category() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:py-10 lg:py-12">
       <header className="flex flex-col gap-2 border-b-2 border-ink-900 pb-5">
-        <span className="text-xs font-bold tracking-wide text-brand-600 uppercase">Categoria</span>
         <h1 className="text-3xl leading-tight font-bold tracking-tight text-ink-900 sm:text-4xl">
           {category.name}
         </h1>
         {category.description && <p className="max-w-2xl text-ink-500">{category.description}</p>}
-        <p className="text-sm text-ink-500">
-          {totalCount} notícia{totalCount === 1 ? '' : 's'}
-        </p>
       </header>
 
       {news.length === 0 ? (
