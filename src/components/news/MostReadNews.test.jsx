@@ -21,8 +21,8 @@ describe('MostReadNews', () => {
   it('renders a numbered ranking with one entry per item, without a view count', () => {
     renderWithRouter(<MostReadNews items={ITEMS} />)
 
-    expect(screen.getByText('1')).toBeInTheDocument()
-    expect(screen.getByText('2')).toBeInTheDocument()
+    expect(screen.getByText('01')).toBeInTheDocument()
+    expect(screen.getByText('02')).toBeInTheDocument()
     expect(screen.getByText('Matéria A')).toBeInTheDocument()
     expect(screen.getByText('Matéria B')).toBeInTheDocument()
   })
@@ -34,20 +34,25 @@ describe('MostReadNews', () => {
     expect(container.querySelector('svg')).toBeNull()
   })
 
-  it('highlights the section title with a brand-colored background instead of a "Ranking" label', () => {
+  it('uses a plain heading (no colored banner, no "Ranking" label) so the section stays discreet', () => {
     renderWithRouter(<MostReadNews items={ITEMS} />)
 
     const heading = screen.getByRole('heading', { name: 'Mais Lidas da Semana' })
-    expect(heading.className).toMatch(/bg-brand-600/)
+    expect(heading.className).not.toMatch(/bg-brand-600/)
     expect(screen.queryByText('Ranking')).toBeNull()
     expect(screen.getByText('Cotidiano')).toBeInTheDocument()
   })
 
-  it('gives the ranking badge a color hierarchy that fades by position instead of a flat gray number', () => {
+  it('keeps the ranking numeral small, neutral and undecorated so it never outweighs the title', () => {
     renderWithRouter(<MostReadNews items={ITEMS} />)
 
-    expect(screen.getByText('1').className).toMatch(/(?<!:)bg-brand-600/)
-    expect(screen.getByText('2').className).not.toMatch(/(?<!:)bg-brand-600/)
+    const numeral = screen.getByText('01')
+    expect(numeral.className).toMatch(/text-xs/)
+    expect(numeral.className).toMatch(/text-ink-300/)
+    expect(numeral.className).not.toMatch(/font-black|font-extrabold|font-bold|bg-brand-600|rounded-full|ring-/)
+
+    const title = screen.getByText('Matéria A')
+    expect(title.className).toMatch(/font-semibold/)
   })
 
   it('never truncates a ranking title', () => {
