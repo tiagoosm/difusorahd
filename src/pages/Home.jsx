@@ -30,10 +30,14 @@ function Home() {
         <div className="flex flex-col gap-12">
           <FeaturedNews items={featured} />
           <AdBanner position="HOME_MIDDLE" />
-          <div className="grid items-start gap-10 lg:grid-cols-3 lg:gap-12">
-            <div className="lg:col-span-2">
-              <LatestNewsList title="Últimas notícias" items={latest} />
-            </div>
+          {/* Uma única grid pras duas seções (em vez de duas grids
+              independentes lado a lado) — é o que permite o card de
+              preenchimento de "Mais Lidas" alinhar de verdade com a última
+              linha de "Últimas notícias" em vez de só flutuar abaixo da
+              lista. Ver LatestNewsList/MostReadNews: cada item se posiciona
+              explicitamente (linha/coluna) nesta mesma grid. */}
+          <div className="grid gap-8 lg:grid-cols-3 lg:items-start lg:gap-10">
+            <LatestNewsList title="Últimas notícias" items={latest} />
             <MostReadNews items={mostRead} moreItems={latestFiller} />
           </div>
         </div>

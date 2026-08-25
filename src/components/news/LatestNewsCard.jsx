@@ -8,9 +8,9 @@ import Eyebrow from '../ui/Eyebrow'
 // fica espremido numa coluna estreita, então qualquer tamanho de título
 // quebra em quantas linhas precisar sem forçar corte. Deliberadamente sem
 // line-clamp/max-height/overflow-hidden no título — é a regra da seção.
-function LatestNewsCard({ news }) {
+function LatestNewsCard({ news, className = '' }) {
   return (
-    <Link to={buildPath.news(news.slug)} className="group flex min-w-0 flex-col gap-3">
+    <Link to={buildPath.news(news.slug)} className={`group flex min-w-0 flex-col gap-3 ${className}`}>
       <div className="aspect-video w-full overflow-hidden rounded-xl bg-ink-100">
         <img
           src={news.cover_image_url}

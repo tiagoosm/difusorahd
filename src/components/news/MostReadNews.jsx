@@ -4,35 +4,45 @@ import Eyebrow from '../ui/Eyebrow'
 import SectionHeading from '../ui/SectionHeading'
 import LatestNewsCard from './LatestNewsCard'
 
+// Cartão(ões) de preenchimento posicionados explicitamente na linha 4 da
+// grid externa (a mesma linha dos 2 últimos cards de "Últimas notícias") —
+// é isso que garante que a borda do cartão encoste exatamente na borda dos
+// cards vizinhos, em vez de só "flutuar" abaixo da lista do ranking.
+const FILLER_POSITION = ['lg:col-start-3 lg:row-start-4', 'lg:col-start-3 lg:row-start-5']
+
 // Numeração deliberadamente discreta (texto pequeno, peso médio, cinza
 // neutro, alinhada ao topo) — é só um indicador de posição, não pode
 // competir com o título. Cor da marca aparece apenas no hover, na Eyebrow
 // de categoria e no título — nunca como fundo do número ou do cabeçalho.
+//
+// Heading, lista do ranking e preenchimento são 3 células separadas da
+// MESMA grid externa (ver Home.jsx / LatestNewsList) — não uma coluna
+// própria e independente. A lista ocupa as linhas 2-3 (as 2 primeiras
+// linhas de cards), deixando a linha 4 livre para o preenchimento alinhar
+// com a última linha de "Últimas notícias".
 function MostReadNews({ items, moreItems = [] }) {
   if (!items.length) return null
 
   return (
-    <section className="flex min-w-0 flex-col gap-5">
-      <SectionHeading title="Mais Lidas" />
+    <>
+      <div className="lg:col-start-3 lg:row-start-1">
+        <SectionHeading title="Mais Lidas" />
+      </div>
 
-      <ol className="flex flex-col divide-y divide-ink-100">
+      <ol className="flex flex-col divide-y divide-ink-100 lg:col-start-3 lg:row-start-2 lg:row-span-2">
         {items.map((item, index) => (
           <MostReadRow key={item.id} item={item} rank={index + 1} />
         ))}
       </ol>
 
-      {/* Preenche o espaço que sobra abaixo do ranking quando "Últimas
-          notícias" (coluna vizinha) ainda continua — mesmo cartão grande
-          usado lá (imagem + título), em vez de mais linhas compactas, pra
-          fechar a coluna no mesmo ritmo visual da grade ao lado. */}
-      {moreItems.length > 0 && (
-        <div className="flex flex-col gap-5">
-          {moreItems.map((item) => (
-            <LatestNewsCard key={item.id} news={item} />
-          ))}
-        </div>
-      )}
-    </section>
+      {moreItems.map((item, index) => (
+        <LatestNewsCard
+          key={item.id}
+          news={item}
+          className={FILLER_POSITION[index] ?? 'lg:col-start-3'}
+        />
+      ))}
+    </>
   )
 }
 
