@@ -55,21 +55,30 @@ describe('MostReadNews', () => {
     expect(title.className).toMatch(/font-semibold/)
   })
 
-  it('fills leftover sidebar space with extra unnumbered items when moreItems is given', () => {
+  it('fills leftover sidebar space with a full news card (same style as Últimas notícias) when moreItems is given', () => {
     const moreItems = [
-      { id: '3', slug: 'c', title: 'Matéria C', cover_image_url: 'https://example.com/c.png', category: { name: 'Rádio' } },
+      {
+        id: '3',
+        slug: 'c',
+        title: 'Matéria C',
+        cover_image_url: 'https://example.com/c.png',
+        category: { name: 'Rádio' },
+        published_at: '2026-01-01T00:00:00Z',
+      },
     ]
-    renderWithRouter(<MostReadNews items={ITEMS} moreItems={moreItems} />)
+    const { container } = renderWithRouter(<MostReadNews items={ITEMS} moreItems={moreItems} />)
 
     expect(screen.getByText('Matéria C')).toBeInTheDocument()
-    // Item de preenchimento não tem número de ranking (é continuação da
-    // lista, não faz parte do top 5).
+    // Cartão de preenchimento não tem número de ranking (não faz parte do
+    // top 5) nem a largura fixa (h-14 w-14) da miniatura do ranking — é o
+    // mesmo cartão grande (aspect-video) usado em "Últimas notícias".
     expect(screen.queryByText('03')).toBeNull()
+    expect(container.querySelector('.aspect-video')).not.toBeNull()
   })
 
-  it('does not render the filler list when there are no extra items', () => {
-    const { container } = renderWithRouter(<MostReadNews items={ITEMS} />)
-    expect(container.querySelector('ul')).toBeNull()
+  it('does not render any filler card when there are no extra items', () => {
+    renderWithRouter(<MostReadNews items={ITEMS} />)
+    expect(screen.getAllByRole('link')).toHaveLength(ITEMS.length)
   })
 
   it('never truncates a ranking title', () => {

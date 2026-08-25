@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { buildPath } from '../../routes/paths'
 import Eyebrow from '../ui/Eyebrow'
 import SectionHeading from '../ui/SectionHeading'
+import LatestNewsCard from './LatestNewsCard'
 
 // Numeração deliberadamente discreta (texto pequeno, peso médio, cinza
 // neutro, alinhada ao topo) — é só um indicador de posição, não pode
@@ -21,15 +22,15 @@ function MostReadNews({ items, moreItems = [] }) {
       </ol>
 
       {/* Preenche o espaço que sobra abaixo do ranking quando "Últimas
-          notícias" (coluna vizinha, mais alta) ainda continua — a mesma
-          lista segue com mais notícias, sem numeração, em vez de deixar
-          vazio. */}
+          notícias" (coluna vizinha) ainda continua — mesmo cartão grande
+          usado lá (imagem + título), em vez de mais linhas compactas, pra
+          fechar a coluna no mesmo ritmo visual da grade ao lado. */}
       {moreItems.length > 0 && (
-        <ul className="flex flex-col divide-y divide-ink-100 border-t border-ink-100">
+        <div className="flex flex-col gap-5">
           {moreItems.map((item) => (
-            <MostReadRow key={item.id} item={item} />
+            <LatestNewsCard key={item.id} news={item} />
           ))}
-        </ul>
+        </div>
       )}
     </section>
   )

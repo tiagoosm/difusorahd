@@ -4,11 +4,12 @@ import { trackPageView } from '../services/analytics'
 
 const MOST_READ_DISPLAY_COUNT = 5
 const LATEST_DISPLAY_COUNT = 6
-// "Mais Lidas" (coluna lateral, 5 itens) termina antes de "Últimas
-// notícias" (coluna larga, 6 itens em grade), sobrando espaço vazio na
-// lateral. Busca esses itens a mais para continuar a mesma lista lateral
-// e preencher esse espaço em vez de deixá-lo em branco.
-const LATEST_SIDEBAR_FILL_COUNT = 6
+// "Mais Lidas" (coluna lateral, 5 itens compactos) termina antes de
+// "Últimas notícias" (coluna larga, 3 linhas de cards), sobrando o
+// equivalente a uma linha vazia na lateral. Busca 1 item a mais para
+// preencher essa última linha com um card no mesmo estilo da grade ao
+// lado, em vez de deixar o espaço em branco.
+const LATEST_SIDEBAR_FILL_COUNT = 1
 
 export function useHomeNews() {
   const [featured, setFeatured] = useState([])
