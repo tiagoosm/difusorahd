@@ -17,9 +17,10 @@ function NewsRow({ news, size = 'md' }) {
           isLarge ? 'h-28 w-28 sm:h-40 sm:w-56' : 'h-20 w-20 sm:h-24 sm:w-32'
         }`}
       >
+        {/* Decorativa: o título vem ao lado no mesmo link. */}
         <img
           src={news.cover_image_url}
-          alt={news.title}
+          alt=""
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />

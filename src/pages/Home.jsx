@@ -7,10 +7,11 @@ import LatestNewsList from '../components/news/LatestNewsList'
 import MostReadNews from '../components/news/MostReadNews'
 import AdBanner from '../components/ads/AdBanner'
 import EmptyState from '../components/ui/EmptyState'
+import ErrorState from '../components/ui/ErrorState'
 import HomeSkeleton from '../components/news/HomeSkeleton'
 
 function Home() {
-  const { featured, latest, latestFiller, mostRead, loading } = useHomeNews()
+  const { featured, latest, latestFiller, mostRead, loading, error, retry } = useHomeNews()
 
   useSEO({ title: SITE_NAME, description: SITE_DESCRIPTION })
 
@@ -20,6 +21,8 @@ function Home() {
 
       {loading ? (
         <HomeSkeleton />
+      ) : error ? (
+        <ErrorState onRetry={retry} />
       ) : !featured.length && !latest.length ? (
         <EmptyState
           icon={Newspaper}

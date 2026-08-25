@@ -12,9 +12,11 @@ function LatestNewsCard({ news, className = '' }) {
   return (
     <Link to={buildPath.news(news.slug)} className={`group flex min-w-0 flex-col gap-3 ${className}`}>
       <div className="aspect-video w-full overflow-hidden rounded-xl bg-ink-100">
+        {/* alt vazio: a imagem é decorativa aqui — o título logo abaixo já
+            é lido pelo leitor de tela, e repeti-lo no alt duplica o anúncio. */}
         <img
           src={news.cover_image_url}
-          alt={news.title}
+          alt=""
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />

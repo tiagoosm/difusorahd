@@ -37,7 +37,9 @@ function FooterContact() {
           <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black/15 text-white">
             <Icon className="h-4 w-4" />
           </span>
-          <span className="text-sm text-white/85 [&_a]:text-white [&_a]:transition-colors [&_a:hover]:text-white/70">
+          {/* inline-block + py nos links: telefone e WhatsApp tinham 17px de
+              altura clicável, abaixo do mínimo de 24px do WCAG 2.2 (2.5.8). */}
+          <span className="text-sm text-white/85 [&_a]:inline-block [&_a]:py-1 [&_a]:text-white [&_a]:transition-colors [&_a:hover]:text-white/70">
             {content}
           </span>
         </li>

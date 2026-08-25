@@ -15,17 +15,22 @@ function FeaturedNews({ items }) {
           to={buildPath.news(main.slug)}
           className="group relative flex min-h-[24rem] min-w-0 flex-col justify-end overflow-hidden rounded-2xl bg-ink-900 shadow-card transition-shadow hover:shadow-card-hover lg:col-span-2 lg:min-h-[28rem]"
         >
+          {/* Imagem do LCP da Home: eager (sem lazy) + fetchPriority alta para
+              o browser buscá-la antes das demais. */}
           <img
             src={main.cover_image_url}
-            alt={main.title}
+            alt=""
+            fetchPriority="high"
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
           <div className="relative flex flex-col gap-3.5 p-6 md:p-8 lg:p-10">
             {main.category?.name && <Eyebrow tone="light">{main.category.name}</Eyebrow>}
-            <h2 className="text-2xl leading-[1.1] font-bold tracking-tight text-white md:text-4xl lg:text-5xl">
+            {/* h1 da Home: a manchete principal é o título da página. Antes a
+                Home não tinha nenhum h1 — falha de semântica e de SEO. */}
+            <h1 className="text-2xl leading-[1.1] font-bold tracking-tight text-white md:text-4xl lg:text-5xl">
               {main.title}
-            </h2>
+            </h1>
             {main.excerpt && (
               <p className="line-clamp-2 max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
                 {main.excerpt}
@@ -51,9 +56,10 @@ function FeaturedListItem({ news }) {
   return (
     <Link to={buildPath.news(news.slug)} className="group flex min-w-0 items-center gap-3.5 p-4">
       <div className="aspect-square h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-ink-100">
+        {/* Decorativa: o título vem ao lado no mesmo link. */}
         <img
           src={news.cover_image_url}
-          alt={news.title}
+          alt=""
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />

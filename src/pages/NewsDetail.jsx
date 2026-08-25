@@ -8,15 +8,16 @@ import { estimateReadingTime } from '../utils/readingTime'
 import { ROUTES, buildPath } from '../routes/paths'
 import Eyebrow from '../components/ui/Eyebrow'
 import AudioPlayer from '../components/ui/AudioPlayer'
-import Spinner from '../components/ui/Spinner'
 import EmptyState from '../components/ui/EmptyState'
+import ErrorState from '../components/ui/ErrorState'
+import ArticleSkeleton from '../components/news/ArticleSkeleton'
 import ShareButtons from '../components/news/ShareButtons'
 import CategorySection from '../components/news/CategorySection'
 import AdBanner from '../components/ads/AdBanner'
 
 function NewsDetail() {
   const { slug } = useParams()
-  const { news, related, loading, notFound } = useNewsDetail(slug)
+  const { news, related, loading, notFound, error, retry } = useNewsDetail(slug)
 
   useSEO({
     title: news ? `${news.title} — Difusora HD` : undefined,
@@ -26,9 +27,17 @@ function NewsDetail() {
   })
 
   if (loading) {
+    return <ArticleSkeleton />
+  }
+
+  if (error) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <Spinner />
+      <div className="mx-auto max-w-3xl px-4 py-16">
+        <ErrorState
+          title="Não foi possível carregar esta notícia"
+          description="Verifique sua conexão e tente novamente."
+          onRetry={retry}
+        />
       </div>
     )
   }
@@ -94,8 +103,16 @@ function NewsDetail() {
 
         {news.cover_image_url && (
           <figure className="mt-8">
-            <div className="overflow-hidden rounded-2xl bg-ink-100 shadow-card">
-              <img src={news.cover_image_url} alt={news.title} className="w-full object-cover" />
+            {/* aspect-ratio fixo reserva o espaço antes da imagem carregar —
+                sem isso o corpo da matéria "pulava" para baixo quando a capa
+                chegava (era o maior deslocamento de layout do site). */}
+            <div className="aspect-[16/9] overflow-hidden rounded-2xl bg-ink-100 shadow-card">
+              <img
+                src={news.cover_image_url}
+                alt={news.title}
+                fetchPriority="high"
+                className="h-full w-full object-cover"
+              />
             </div>
             {news.cover_image_caption && (
               <figcaption className="mt-2 text-xs text-ink-500 italic">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { fetchFeaturedNews, fetchLatestNews, fetchWeeklyTopNews } from '../services/news'
 import { trackPageView } from '../services/analytics'
 
@@ -17,9 +17,15 @@ export function useHomeNews() {
   const [latestFiller, setLatestFiller] = useState([])
   const [mostRead, setMostRead] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [reloadKey, setReloadKey] = useState(0)
+
+  const retry = useCallback(() => setReloadKey((key) => key + 1), [])
 
   useEffect(() => {
     let isMounted = true
+    setLoading(true)
+    setError(null)
 
     async function load() {
       const [featuredResult, latestResult, mostReadResult] = await Promise.all([
@@ -31,6 +37,16 @@ export function useHomeNews() {
       ])
 
       if (!isMounted) return
+
+      // Destaques e Últimas são o conteúdo essencial da Home: se qualquer um
+      // falhar, é erro de carregamento, não "não há notícias publicadas".
+      // Mais Lidas é complementar — falha ali degrada em silêncio.
+      const criticalError = featuredResult.error ?? latestResult.error
+      if (criticalError) {
+        setError(criticalError)
+        setLoading(false)
+        return
+      }
 
       const featuredItems = featuredResult.data ?? []
       const allLatestItems = latestResult.data ?? []
@@ -61,7 +77,7 @@ export function useHomeNews() {
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [reloadKey])
 
-  return { featured, latest, latestFiller, mostRead, loading }
+  return { featured, latest, latestFiller, mostRead, loading, error, retry }
 }

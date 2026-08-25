@@ -7,15 +7,16 @@ import { ROUTES } from '../routes/paths'
 import NewsCard from '../components/news/NewsCard'
 import NewsRow from '../components/news/NewsRow'
 import Pagination from '../components/ui/Pagination'
-import Spinner from '../components/ui/Spinner'
 import EmptyState from '../components/ui/EmptyState'
+import ErrorState from '../components/ui/ErrorState'
+import CardGridSkeleton from '../components/news/CardGridSkeleton'
 
 function Category() {
   const { slug } = useParams()
   const [searchParams, setSearchParams] = useSearchParams()
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
 
-  const { category, news, totalCount, pageSize, loading, notFound } = useCategoryNews(slug, page)
+  const { category, news, totalCount, pageSize, loading, notFound, error, retry } = useCategoryNews(slug, page)
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
 
   useSEO({
@@ -30,8 +31,16 @@ function Category() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <Spinner />
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:py-10 lg:py-12">
+        <CardGridSkeleton withHeader />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-16">
+        <ErrorState onRetry={retry} />
       </div>
     )
   }

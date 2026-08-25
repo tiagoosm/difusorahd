@@ -10,9 +10,10 @@ function NewsCard({ news }) {
       className="group flex min-w-0 flex-col overflow-hidden rounded-xl border border-ink-200 bg-white shadow-card transition-shadow hover:shadow-card-hover"
     >
       <div className="aspect-video overflow-hidden bg-ink-100">
+        {/* Decorativa: o título vem logo abaixo no mesmo link. */}
         <img
           src={news.cover_image_url}
-          alt={news.title}
+          alt=""
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
