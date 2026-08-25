@@ -475,6 +475,12 @@ grant execute on function public.analytics_by_hour(timestamptz, timestamptz) to 
 -- increment_news_views/log_analytics_event) para poder ler os eventos da
 -- semana e devolver só o ranking agregado — sem contagem de views, sem
 -- nenhum dado bruto de analytics.
+--
+-- Fallback em cascata pra nunca devolver menos que p_limit (enquanto houver
+-- notícia publicada suficiente): semana atual -> semana a semana pra trás
+-- (até 12 semanas) -> ranking geral de analytics_events (todo o histórico)
+-- -> views_count acumulado. Sempre prioriza o período mais recente e nunca
+-- repete uma notícia já escolhida num estágio anterior.
 create or replace function public.public_weekly_top_news(p_limit int default 5)
 returns table (
   news_id uuid,
@@ -485,24 +491,92 @@ returns table (
   category_name text,
   category_slug text
 )
-language sql
+language plpgsql
 stable
 security definer
 set search_path = public
 as $$
-  select n.id, n.title, n.slug, n.cover_image_url, c.id, c.name, c.slug
-  from public.analytics_events e
-  join public.news n on n.id = e.news_id and n.status = 'published'
-  left join public.categories c on c.id = n.category_id
-  where e.page_type = 'news'
-    and e.news_id is not null
-    -- Início da semana atual (segunda-feira 00:00, fuso de Brasília) até
-    -- agora — views de semanas anteriores nunca entram no ranking.
-    and e.created_at >= (date_trunc('week', now() at time zone 'America/Sao_Paulo')) at time zone 'America/Sao_Paulo'
-    and e.created_at < now()
-  group by n.id, n.title, n.slug, n.cover_image_url, c.id, c.name, c.slug
-  order by count(e.id) desc
-  limit p_limit;
+declare
+  chosen_ids uuid[] := '{}';
+  new_ids uuid[];
+  week_start timestamptz;
+  week_end timestamptz;
+  weeks_checked int := 0;
+  max_weeks_back constant int := 12;
+begin
+  -- Início da semana atual (segunda-feira 00:00, fuso de Brasília) — mesmo
+  -- cálculo de antes, só que agora repetido semana a semana pra trás.
+  week_start := (date_trunc('week', now() at time zone 'America/Sao_Paulo')) at time zone 'America/Sao_Paulo';
+  week_end := now();
+
+  while coalesce(array_length(chosen_ids, 1), 0) < p_limit and weeks_checked < max_weeks_back loop
+    select coalesce(array_agg(x.id order by x.views desc), '{}')
+    into new_ids
+    from (
+      select e.news_id as id, count(*) as views
+      from public.analytics_events e
+      join public.news n on n.id = e.news_id and n.status = 'published'
+      where e.page_type = 'news'
+        and e.news_id is not null
+        and e.created_at >= week_start
+        and e.created_at < week_end
+        and not (e.news_id = any (chosen_ids))
+      group by e.news_id
+      order by views desc
+      limit (p_limit - coalesce(array_length(chosen_ids, 1), 0))
+    ) x;
+
+    chosen_ids := chosen_ids || new_ids;
+
+    week_end := week_start;
+    week_start := week_start - interval '7 days';
+    weeks_checked := weeks_checked + 1;
+  end loop;
+
+  -- Ranking geral de analytics_events (sem filtro de semana), pra quem
+  -- ainda não foi escolhido.
+  if coalesce(array_length(chosen_ids, 1), 0) < p_limit then
+    select coalesce(array_agg(x.id order by x.views desc), '{}')
+    into new_ids
+    from (
+      select e.news_id as id, count(*) as views
+      from public.analytics_events e
+      join public.news n on n.id = e.news_id and n.status = 'published'
+      where e.page_type = 'news'
+        and e.news_id is not null
+        and not (e.news_id = any (chosen_ids))
+      group by e.news_id
+      order by views desc
+      limit (p_limit - coalesce(array_length(chosen_ids, 1), 0))
+    ) x;
+
+    chosen_ids := chosen_ids || new_ids;
+  end if;
+
+  -- Último fallback: views_count acumulado da notícia (cobre notícias sem
+  -- nenhum evento em analytics_events ainda, ou um site muito novo).
+  if coalesce(array_length(chosen_ids, 1), 0) < p_limit then
+    select coalesce(array_agg(x.id order by x.views_count desc, x.published_at desc), '{}')
+    into new_ids
+    from (
+      select n.id, n.views_count, n.published_at
+      from public.news n
+      where n.status = 'published'
+        and not (n.id = any (chosen_ids))
+      order by n.views_count desc, n.published_at desc
+      limit (p_limit - coalesce(array_length(chosen_ids, 1), 0))
+    ) x;
+
+    chosen_ids := chosen_ids || new_ids;
+  end if;
+
+  return query
+    select n.id, n.title, n.slug, n.cover_image_url, c.id, c.name, c.slug
+    from unnest(chosen_ids) with ordinality as picked (id, ord)
+    join public.news n on n.id = picked.id
+    left join public.categories c on c.id = n.category_id
+    order by picked.ord;
+end;
 $$;
 
 grant execute on function public.public_weekly_top_news(int) to anon, authenticated;
