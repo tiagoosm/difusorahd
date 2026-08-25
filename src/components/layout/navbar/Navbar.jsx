@@ -8,11 +8,31 @@ import NavbarSearch from './NavbarSearch'
 import CategoryStrip from './CategoryStrip'
 import MobileMenu from './MobileMenu'
 
+// Duração da transição de entrada/saída do painel do menu mobile — precisa
+// bater com a classe `duration-[180ms]` usada em MobileMenu.jsx.
+const MOBILE_MENU_TRANSITION_MS = 180
+
 function Navbar() {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
+  // "Mounted" controla se o painel existe no DOM; "open" controla a classe
+  // CSS que anima. Abrir monta e, no frame seguinte, marca como aberto (pra
+  // a transição partir de um estado inicial real). Fechar desmarca primeiro
+  // e só desmonta depois da transição — sem isso o painel só existia
+  // animado ao ABRIR, e sumia instantaneamente ao fechar.
+  const [isMobileMenuMounted, setIsMobileMenuMounted] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const { categories, loading } = useCategories()
+
+  function openMobileMenu() {
+    setIsMobileMenuMounted(true)
+    requestAnimationFrame(() => setIsMobileMenuOpen(true))
+  }
+
+  function closeMobileMenu() {
+    setIsMobileMenuOpen(false)
+    setTimeout(() => setIsMobileMenuMounted(false), MOBILE_MENU_TRANSITION_MS)
+  }
 
   // Compacta sutilmente ao rolar — não muda a estrutura, só reduz a
   // respiração vertical, então a navbar ocupa menos tela numa leitura longa
@@ -32,7 +52,13 @@ function Navbar() {
         isScrolled ? 'shadow-lg shadow-black/20' : 'shadow-md shadow-black/10'
       }`}
     >
-      <div className="border-b border-white/10">
+      {/* relative z-40: sem isso, o fundo fixed do menu mobile (posicionado,
+          z-30) pinta por cima desta linha inteira mesmo com o <header> tendo
+          z-40 — z-index só compara entre elementos posicionados dentro do
+          mesmo contexto de empilhamento, e nada aqui tinha position até
+          agora. Sem essa camada, o botão de fechar (o próprio ícone que
+          abriu o menu) ficava "atrás" do fundo, inclicável. */}
+      <div className="relative z-40 border-b border-white/10">
         <div
           className={`mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 transition-[padding] duration-200 ${
             isScrolled ? 'py-2.5' : 'py-3.5'
@@ -70,7 +96,7 @@ function Navbar() {
                 <button
                   type="button"
                   onClick={() => {
-                    setIsMobileMenuOpen(false)
+                    closeMobileMenu()
                     setIsMobileSearchOpen(true)
                   }}
                   aria-label="Pesquisar"
@@ -84,13 +110,13 @@ function Navbar() {
                   categoria já fica sempre visível na faixa abaixo. */}
               <button
                 type="button"
-                onClick={() => setIsMobileMenuOpen((open) => !open)}
-                aria-label={isMobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
-                aria-expanded={isMobileMenuOpen}
+                onClick={() => (isMobileMenuMounted ? closeMobileMenu() : openMobileMenu())}
+                aria-label={isMobileMenuMounted ? 'Fechar menu' : 'Abrir menu'}
+                aria-expanded={isMobileMenuMounted}
                 aria-controls="mobile-menu"
                 className="rounded-lg p-2 text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none md:hidden"
               >
-                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {isMobileMenuMounted ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
             </>
           )}
@@ -103,9 +129,14 @@ function Navbar() {
         <CategoryStrip categories={categories} loading={loading} />
       </div>
 
-      {isMobileMenuOpen && (
+      {isMobileMenuMounted && (
         <div id="mobile-menu">
-          <MobileMenu categories={categories} loading={loading} onClose={() => setIsMobileMenuOpen(false)} />
+          <MobileMenu
+            isOpen={isMobileMenuOpen}
+            categories={categories}
+            loading={loading}
+            onRequestClose={closeMobileMenu}
+          />
         </div>
       )}
     </header>
