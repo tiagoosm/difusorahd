@@ -7,17 +7,20 @@ import SectionHeading from '../ui/SectionHeading'
 // neutro, alinhada ao topo) — é só um indicador de posição, não pode
 // competir com o título. Cor da marca aparece apenas no hover, na Eyebrow
 // de categoria e no título — nunca como fundo do número ou do cabeçalho.
+// Grade de 2 colunas (em vez de lista vertical única) porque a seção passou
+// a ocupar a largura inteira da home, empilhada acima de "Últimas notícias"
+// — evita uma coluna estreita e alta que sobrava vazia ao lado da grade.
 function MostReadNews({ items }) {
   if (!items.length) return null
 
   return (
-    <section className="flex min-w-0 flex-col gap-4">
-      <SectionHeading title="Mais Lidas da Semana" />
+    <section className="flex min-w-0 flex-col gap-5">
+      <SectionHeading title="Mais Lidas" />
 
-      <ol className="flex flex-col divide-y divide-ink-100">
+      <ol className="grid items-start gap-x-8 gap-y-5 sm:grid-cols-2">
         {items.map((item, index) => (
-          <li key={item.id}>
-            <Link to={buildPath.news(item.slug)} className="group flex items-start gap-3.5 py-3.5">
+          <li key={item.id} className="min-w-0">
+            <Link to={buildPath.news(item.slug)} className="group flex items-start gap-3.5">
               <span className="mt-0.5 w-5 shrink-0 text-xs font-medium text-ink-300 tabular-nums transition-colors duration-200 group-hover:text-brand-600">
                 {String(index + 1).padStart(2, '0')}
               </span>

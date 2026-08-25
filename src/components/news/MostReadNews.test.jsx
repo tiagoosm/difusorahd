@@ -37,7 +37,7 @@ describe('MostReadNews', () => {
   it('uses a plain heading (no colored banner, no "Ranking" label) so the section stays discreet', () => {
     renderWithRouter(<MostReadNews items={ITEMS} />)
 
-    const heading = screen.getByRole('heading', { name: 'Mais Lidas da Semana' })
+    const heading = screen.getByRole('heading', { name: 'Mais Lidas' })
     expect(heading.className).not.toMatch(/bg-brand-600/)
     expect(screen.queryByText('Ranking')).toBeNull()
     expect(screen.getByText('Cotidiano')).toBeInTheDocument()
