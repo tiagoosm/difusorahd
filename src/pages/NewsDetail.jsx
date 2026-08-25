@@ -5,6 +5,7 @@ import { useSEO } from '../hooks/useSEO'
 import { buildNewsArticleJsonLd } from '../utils/seo'
 import { formatDate } from '../utils/formatDate'
 import { estimateReadingTime } from '../utils/readingTime'
+import { buildSrcSet } from '../utils/imageUrl'
 import { ROUTES, buildPath } from '../routes/paths'
 import Eyebrow from '../components/ui/Eyebrow'
 import AudioPlayer from '../components/ui/AudioPlayer'
@@ -109,6 +110,8 @@ function NewsDetail() {
             <div className="aspect-[16/9] overflow-hidden rounded-2xl bg-ink-100 shadow-card">
               <img
                 src={news.cover_image_url}
+                srcSet={buildSrcSet(news.cover_image_url, [768, 1152, 1536])}
+                sizes="(min-width: 768px) 768px, 100vw"
                 alt={news.title}
                 fetchPriority="high"
                 className="h-full w-full object-cover"

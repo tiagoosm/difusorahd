@@ -1,7 +1,13 @@
 import { Link } from 'react-router-dom'
 import { buildPath } from '../../routes/paths'
 import { formatDate } from '../../utils/formatDate'
+import { buildSrcSet } from '../../utils/imageUrl'
 import Eyebrow from '../ui/Eyebrow'
+
+// Card cabe em até 2 colunas dentro do container de 1152px (2/3 dele na
+// Home) — a imagem original raramente precisa passar de ~800px na tela.
+const IMAGE_WIDTHS = [400, 600, 800]
+const IMAGE_SIZES = '(min-width: 1024px) 380px, (min-width: 640px) 45vw, 100vw'
 
 // Imagem em cima, título abaixo ocupando a largura inteira do card — ao
 // contrário de um layout com imagem ao lado (NewsRow), o título aqui nunca
@@ -16,6 +22,8 @@ function LatestNewsCard({ news, className = '' }) {
             é lido pelo leitor de tela, e repeti-lo no alt duplica o anúncio. */}
         <img
           src={news.cover_image_url}
+          srcSet={buildSrcSet(news.cover_image_url, IMAGE_WIDTHS)}
+          sizes={IMAGE_SIZES}
           alt=""
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"

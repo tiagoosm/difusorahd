@@ -1,53 +1,44 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { searchNews } from '../services/news'
 import { trackPageView } from '../services/analytics'
 
 const PAGE_SIZE = 9
 
+async function fetchSearchData(query, page) {
+  const { data, count, error } = await searchNews({ query, page, pageSize: PAGE_SIZE })
+  if (error) throw error
+  return { news: data ?? [], totalCount: count ?? 0 }
+}
+
 export function useSearchNews(query, page) {
-  const [news, setNews] = useState([])
-  const [totalCount, setTotalCount] = useState(0)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [reloadKey, setReloadKey] = useState(0)
+  const searchQuery = useQuery({
+    queryKey: ['search', query, page],
+    queryFn: () => fetchSearchData(query, page),
+    enabled: !!query,
+  })
 
-  const retry = useCallback(() => setReloadKey((key) => key + 1), [])
-
+  // Rastreia cada busca nova (termo + página) uma vez, quando os resultados
+  // chegam — não a cada re-render nem de novo por causa de refetch em cache.
+  const trackedKeyRef = useRef(null)
   useEffect(() => {
-    if (!query) {
-      setNews([])
-      setTotalCount(0)
-      setLoading(false)
-      setError(null)
-      return
-    }
+    if (!query || !searchQuery.isSuccess) return
+    const key = `${query}:${page}`
+    if (trackedKeyRef.current === key) return
+    trackedKeyRef.current = key
+    trackPageView({ page: '/busca', pageType: 'search' })
+  }, [query, page, searchQuery.isSuccess])
 
-    let isMounted = true
-    setLoading(true)
-    setError(null)
+  if (!query) {
+    return { news: [], totalCount: 0, pageSize: PAGE_SIZE, loading: false, error: null, retry: () => {} }
+  }
 
-    searchNews({ query, page, pageSize: PAGE_SIZE }).then(({ data, count, error: searchError }) => {
-      if (!isMounted) return
-
-      // Sem isso, uma busca que falhou mostrava "Não encontramos nenhuma
-      // matéria para sua busca" — o usuário concluiria que o termo não
-      // existe no site, quando na verdade a requisição nem completou.
-      if (searchError) {
-        setError(searchError)
-        setLoading(false)
-        return
-      }
-
-      setNews(data ?? [])
-      setTotalCount(count ?? 0)
-      setLoading(false)
-      trackPageView({ page: '/busca', pageType: 'search' })
-    })
-
-    return () => {
-      isMounted = false
-    }
-  }, [query, page, reloadKey])
-
-  return { news, totalCount, pageSize: PAGE_SIZE, loading, error, retry }
+  return {
+    news: searchQuery.data?.news ?? [],
+    totalCount: searchQuery.data?.totalCount ?? 0,
+    pageSize: PAGE_SIZE,
+    loading: searchQuery.isLoading,
+    error: searchQuery.error ?? null,
+    retry: searchQuery.refetch,
+  }
 }

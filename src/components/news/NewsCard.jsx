@@ -1,7 +1,13 @@
 import { Link } from 'react-router-dom'
 import { buildPath } from '../../routes/paths'
 import { formatDate } from '../../utils/formatDate'
+import { buildSrcSet } from '../../utils/imageUrl'
 import Eyebrow from '../ui/Eyebrow'
+
+// Card cabe em até 3 colunas dentro do container de 1152px — a imagem
+// original raramente precisa passar de ~800px de largura real na tela.
+const IMAGE_WIDTHS = [400, 600, 800]
+const IMAGE_SIZES = '(min-width: 1024px) 360px, (min-width: 640px) 45vw, 100vw'
 
 function NewsCard({ news }) {
   return (
@@ -13,6 +19,8 @@ function NewsCard({ news }) {
         {/* Decorativa: o título vem logo abaixo no mesmo link. */}
         <img
           src={news.cover_image_url}
+          srcSet={buildSrcSet(news.cover_image_url, IMAGE_WIDTHS)}
+          sizes={IMAGE_SIZES}
           alt=""
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"

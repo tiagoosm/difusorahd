@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { fetchFeaturedNews, fetchLatestNews, fetchWeeklyTopNews } from '../services/news'
 import { trackPageView } from '../services/analytics'
 
@@ -11,73 +12,70 @@ const LATEST_DISPLAY_COUNT = 6
 // lado, em vez de deixar o espaço em branco.
 const LATEST_SIDEBAR_FILL_COUNT = 1
 
+async function fetchFeaturedData() {
+  const { data, error } = await fetchFeaturedNews(6)
+  if (error) throw error
+  return data ?? []
+}
+
+async function fetchLatestData() {
+  const { data, error } = await fetchLatestNews(LATEST_DISPLAY_COUNT + LATEST_SIDEBAR_FILL_COUNT)
+  if (error) throw error
+  return data ?? []
+}
+
+async function fetchMostReadData() {
+  // Busca uma folga grande o bastante para sobrar MOST_READ_DISPLAY_COUNT
+  // mesmo no pior caso (todo mundo do topo já está em Destaques/Últimas).
+  const { data, error } = await fetchWeeklyTopNews(MOST_READ_DISPLAY_COUNT + 15)
+  if (error) throw error
+  return data ?? []
+}
+
 export function useHomeNews() {
-  const [featured, setFeatured] = useState([])
-  const [latest, setLatest] = useState([])
-  const [latestFiller, setLatestFiller] = useState([])
-  const [mostRead, setMostRead] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [reloadKey, setReloadKey] = useState(0)
+  const featuredQuery = useQuery({ queryKey: ['home', 'featured'], queryFn: fetchFeaturedData })
+  const latestQuery = useQuery({ queryKey: ['home', 'latest'], queryFn: fetchLatestData })
+  // Mais Lidas é complementar: sua própria falha não bloqueia a Home (ver
+  // `error` abaixo, que só olha featured/latest).
+  const mostReadQuery = useQuery({ queryKey: ['home', 'mostRead'], queryFn: fetchMostReadData })
 
-  const retry = useCallback(() => setReloadKey((key) => key + 1), [])
+  const loading = featuredQuery.isLoading || latestQuery.isLoading || mostReadQuery.isLoading
+  const error = featuredQuery.error ?? latestQuery.error ?? null
 
+  const featuredItems = featuredQuery.data ?? []
+  const allLatestItems = latestQuery.data ?? []
+  const latestItems = allLatestItems.slice(0, LATEST_DISPLAY_COUNT)
+  const latestFillerItems = allLatestItems.slice(LATEST_DISPLAY_COUNT)
+
+  // Mais Lidas não repete notícia já exibida em Destaques/Últimas
+  // (incluindo o preenchimento da lateral).
+  const alreadyShown = new Set([...featuredItems, ...allLatestItems].map((item) => item.id))
+  const mostReadItems = (mostReadQuery.data ?? [])
+    .filter((item) => !alreadyShown.has(item.id))
+    .slice(0, MOST_READ_DISPLAY_COUNT)
+
+  // Dispara uma única vez por carregamento bem-sucedido — não a cada
+  // re-render, e não de novo se o usuário só voltou o foco pra aba.
+  const trackedRef = useRef(false)
   useEffect(() => {
-    let isMounted = true
-    setLoading(true)
-    setError(null)
+    if (loading || error || trackedRef.current) return
+    trackedRef.current = true
+    trackPageView({ page: '/', pageType: 'home' })
+  }, [loading, error])
 
-    async function load() {
-      const [featuredResult, latestResult, mostReadResult] = await Promise.all([
-        fetchFeaturedNews(6),
-        fetchLatestNews(LATEST_DISPLAY_COUNT + LATEST_SIDEBAR_FILL_COUNT),
-        // Busca uma folga grande o bastante para sobrar MOST_READ_DISPLAY_COUNT
-        // mesmo no pior caso (todo mundo do topo já está em Destaques/Últimas).
-        fetchWeeklyTopNews(MOST_READ_DISPLAY_COUNT + 15),
-      ])
+  function retry() {
+    featuredQuery.refetch()
+    latestQuery.refetch()
+    mostReadQuery.refetch()
+  }
 
-      if (!isMounted) return
-
-      // Destaques e Últimas são o conteúdo essencial da Home: se qualquer um
-      // falhar, é erro de carregamento, não "não há notícias publicadas".
-      // Mais Lidas é complementar — falha ali degrada em silêncio.
-      const criticalError = featuredResult.error ?? latestResult.error
-      if (criticalError) {
-        setError(criticalError)
-        setLoading(false)
-        return
-      }
-
-      const featuredItems = featuredResult.data ?? []
-      const allLatestItems = latestResult.data ?? []
-      const latestItems = allLatestItems.slice(0, LATEST_DISPLAY_COUNT)
-      const latestFillerItems = allLatestItems.slice(LATEST_DISPLAY_COUNT)
-
-      // Destaques e últimas são seções independentes: uma notícia em
-      // destaque continua aparecendo normalmente aqui se for recente.
-      setFeatured(featuredItems)
-      setLatest(latestItems)
-      setLatestFiller(latestFillerItems)
-
-      // Mais Lidas não repete notícia já exibida em Destaques/Últimas
-      // (incluindo o preenchimento da lateral) — busca uma folga extra
-      // (acima) e corta pro tamanho final aqui.
-      const alreadyShown = new Set([...featuredItems, ...allLatestItems].map((item) => item.id))
-      const mostReadItems = (mostReadResult.data ?? [])
-        .filter((item) => !alreadyShown.has(item.id))
-        .slice(0, MOST_READ_DISPLAY_COUNT)
-      setMostRead(mostReadItems)
-
-      setLoading(false)
-      trackPageView({ page: '/', pageType: 'home' })
-    }
-
-    load()
-
-    return () => {
-      isMounted = false
-    }
-  }, [reloadKey])
-
-  return { featured, latest, latestFiller, mostRead, loading, error, retry }
+  return {
+    featured: featuredItems,
+    latest: latestItems,
+    latestFiller: latestFillerItems,
+    mostRead: mostReadItems,
+    loading,
+    error,
+    retry,
+  }
 }

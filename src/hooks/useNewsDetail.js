@@ -1,67 +1,57 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { fetchNewsBySlug, fetchRelatedNews, incrementNewsViews } from '../services/news'
 import { trackPageView } from '../services/analytics'
 
+async function fetchNewsData(slug) {
+  const { data, error } = await fetchNewsBySlug(slug)
+  if (error) throw error
+  return data // null = notícia inexistente (não é erro de request)
+}
+
+async function fetchRelatedData(categoryId, excludeId) {
+  const { data, error } = await fetchRelatedNews({ categoryId, excludeId })
+  if (error) throw error
+  return data ?? []
+}
+
 export function useNewsDetail(slug) {
-  const [news, setNews] = useState(null)
-  const [related, setRelated] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [notFound, setNotFound] = useState(false)
-  const [error, setError] = useState(null)
-  const [reloadKey, setReloadKey] = useState(0)
+  const newsQuery = useQuery({
+    queryKey: ['news', slug],
+    queryFn: () => fetchNewsData(slug),
+    enabled: !!slug,
+  })
 
-  const retry = useCallback(() => setReloadKey((key) => key + 1), [])
+  const news = newsQuery.data ?? null
+  const notFound = newsQuery.isSuccess && !news
+  const categoryId = news?.category?.id
 
+  // Relacionadas são conteúdo de apoio: sua falha não bloqueia a leitura da
+  // matéria principal (não entra no `error` retornado abaixo).
+  const relatedQuery = useQuery({
+    queryKey: ['news', slug, 'related', categoryId],
+    queryFn: () => fetchRelatedData(categoryId, news.id),
+    enabled: !!categoryId,
+  })
+
+  // Contabiliza view e envia o pageview uma única vez por notícia carregada
+  // — não a cada re-render, e de novo naturalmente se um retry (após erro)
+  // eventualmente tiver sucesso, já que aí é a primeira vez que este id
+  // passa por aqui.
+  const trackedIdRef = useRef(null)
   useEffect(() => {
-    let isMounted = true
-    setLoading(true)
-    setNotFound(false)
-    setError(null)
+    if (!news || trackedIdRef.current === news.id) return
+    trackedIdRef.current = news.id
+    incrementNewsViews(slug)
+    trackPageView({ page: `/noticia/${slug}`, pageType: 'news', newsId: news.id, categoryId: news.category?.id })
+  }, [news, slug])
 
-    async function load() {
-      const { data: newsData, error: fetchError } = await fetchNewsBySlug(slug)
-
-      if (!isMounted) return
-
-      // Falha de rede != notícia inexistente — antes as duas mostravam
-      // "Notícia não encontrada", escondendo um problema de conexão.
-      if (fetchError) {
-        setError(fetchError)
-        setLoading(false)
-        return
-      }
-
-      if (!newsData) {
-        setNotFound(true)
-        setLoading(false)
-        return
-      }
-
-      setNews(newsData)
-      setLoading(false)
-      incrementNewsViews(slug)
-      trackPageView({
-        page: `/noticia/${slug}`,
-        pageType: 'news',
-        newsId: newsData.id,
-        categoryId: newsData.category?.id,
-      })
-
-      if (newsData.category?.id) {
-        const { data: relatedData } = await fetchRelatedNews({
-          categoryId: newsData.category.id,
-          excludeId: newsData.id,
-        })
-        if (isMounted) setRelated(relatedData ?? [])
-      }
-    }
-
-    load()
-
-    return () => {
-      isMounted = false
-    }
-  }, [slug, reloadKey])
-
-  return { news, related, loading, notFound, error, retry }
+  return {
+    news,
+    related: relatedQuery.data ?? [],
+    loading: newsQuery.isLoading,
+    notFound,
+    error: newsQuery.error ?? null,
+    retry: newsQuery.refetch,
+  }
 }

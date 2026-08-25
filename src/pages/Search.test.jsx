@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 vi.mock('../services/news', () => ({ searchNews: vi.fn() }))
 vi.mock('../services/analytics', () => ({ trackPageView: vi.fn() }))
@@ -10,10 +11,17 @@ import { searchNews } from '../services/news'
 import Search from './Search'
 
 function renderSearch(query = 'minas') {
+  // retry:false — sem isso, um mock de erro faz o React Query tentar de
+  // novo (com backoff) antes de assentar no estado de erro, e os testes
+  // de erro estourariam o timeout do waitFor.
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+
   return render(
-    <MemoryRouter initialEntries={[`/busca?q=${query}`]}>
-      <Search />
-    </MemoryRouter>,
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter initialEntries={[`/busca?q=${query}`]}>
+        <Search />
+      </MemoryRouter>
+    </QueryClientProvider>,
   )
 }
 
@@ -59,6 +67,39 @@ describe('Search — estados de erro vs. vazio', () => {
       expect(screen.getByText('Não encontramos nenhuma matéria para sua busca')).toBeInTheDocument()
     })
 
+    expect(screen.queryByText('Não foi possível realizar a busca')).toBeNull()
+  })
+
+  it('retries the request when "Tentar novamente" is clicked, and shows results on success', async () => {
+    searchNews.mockResolvedValueOnce({ data: null, count: null, error: { message: 'FetchError' } })
+
+    renderSearch()
+
+    const retryButton = await screen.findByRole('button', { name: 'Tentar novamente' })
+    expect(searchNews).toHaveBeenCalledTimes(1)
+
+    searchNews.mockResolvedValueOnce({
+      data: [
+        {
+          id: '1',
+          slug: 'a',
+          title: 'Matéria depois do retry',
+          cover_image_url: 'https://example.com/a.png',
+          published_at: '2026-01-01T00:00:00Z',
+          category: { name: 'Cotidiano' },
+        },
+      ],
+      count: 1,
+      error: null,
+    })
+
+    fireEvent.click(retryButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Matéria depois do retry')).toBeInTheDocument()
+    })
+
+    expect(searchNews).toHaveBeenCalledTimes(2)
     expect(screen.queryByText('Não foi possível realizar a busca')).toBeNull()
   })
 

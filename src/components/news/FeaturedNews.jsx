@@ -1,7 +1,14 @@
 import { Link } from 'react-router-dom'
 import { buildPath } from '../../routes/paths'
 import { formatDate } from '../../utils/formatDate'
+import { buildSrcSet } from '../../utils/imageUrl'
 import Eyebrow from '../ui/Eyebrow'
+
+// Hero ocupa 2/3 do container de 1152px no desktop, largura cheia no mobile.
+const HERO_WIDTHS = [640, 960, 1280, 1600]
+const HERO_SIZES = '(min-width: 1024px) 760px, 100vw'
+// Miniatura quadrada fixa (h-20 w-20 = 80px) da lista secundária.
+const THUMB_WIDTHS = [80, 160]
 
 function FeaturedNews({ items }) {
   if (!items.length) return null
@@ -19,6 +26,8 @@ function FeaturedNews({ items }) {
               o browser buscá-la antes das demais. */}
           <img
             src={main.cover_image_url}
+            srcSet={buildSrcSet(main.cover_image_url, HERO_WIDTHS)}
+            sizes={HERO_SIZES}
             alt=""
             fetchPriority="high"
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -59,6 +68,8 @@ function FeaturedListItem({ news }) {
         {/* Decorativa: o título vem ao lado no mesmo link. */}
         <img
           src={news.cover_image_url}
+          srcSet={buildSrcSet(news.cover_image_url, THUMB_WIDTHS)}
+          sizes="80px"
           alt=""
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"

@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom'
 import { buildPath } from '../../routes/paths'
+import { buildSrcSet } from '../../utils/imageUrl'
 import Eyebrow from '../ui/Eyebrow'
 import SectionHeading from '../ui/SectionHeading'
 import LatestNewsCard from './LatestNewsCard'
+
+// Miniatura fixa (h-14 w-14 = 56px).
+const THUMB_WIDTHS = [56, 112]
 
 // Cartão(ões) de preenchimento posicionados explicitamente na linha 4 da
 // grid externa (a mesma linha dos 2 últimos cards de "Últimas notícias") —
@@ -57,6 +61,8 @@ function MostReadRow({ item, rank }) {
         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-ink-100">
           <img
             src={item.cover_image_url}
+            srcSet={buildSrcSet(item.cover_image_url, THUMB_WIDTHS)}
+            sizes="56px"
             alt=""
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"

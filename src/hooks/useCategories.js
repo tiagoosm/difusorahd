@@ -1,48 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { fetchCategories } from '../services/categories'
 
-// Navbar e Footer usam este hook na mesma página, e o StrictMode monta cada
-// um duas vezes em dev — eram 4 requisições idênticas por carregamento para
-// uma lista que praticamente não muda. O cache em memória (mais a promise
-// em voo compartilhada) reduz isso a uma única requisição por sessão.
-let cache = null
-let inFlight = null
-
-function loadCategories() {
-  if (cache) return Promise.resolve(cache)
-  if (inFlight) return inFlight
-
-  inFlight = fetchCategories().then(({ data, error }) => {
-    inFlight = null
-    // Erro não é cacheado: a próxima montagem tenta de novo em vez de ficar
-    // presa numa lista vazia até o usuário recarregar a página.
-    if (error) return []
-    cache = data ?? []
-    return cache
-  })
-
-  return inFlight
+async function fetchCategoriesData() {
+  const { data, error } = await fetchCategories()
+  // Navegação por categoria é conteúdo de apoio, não crítico: falha aqui
+  // degrada para lista vazia em vez de travar Navbar/Footer com um erro.
+  if (error) return []
+  return data ?? []
 }
 
+// Navbar, Footer e NewsForm usam este hook na mesma página — o cache do
+// React Query (chave 'categories' compartilhada) garante uma única
+// requisição de rede por sessão em vez de uma por componente montado.
 export function useCategories() {
-  const [categories, setCategories] = useState(() => cache ?? [])
-  const [loading, setLoading] = useState(() => !cache)
+  const { data, isLoading } = useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategoriesData,
+    staleTime: 5 * 60 * 1000,
+  })
 
-  useEffect(() => {
-    if (cache) return
-
-    let isMounted = true
-
-    loadCategories().then((data) => {
-      if (!isMounted) return
-      setCategories(data)
-      setLoading(false)
-    })
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
-
-  return { categories, loading }
+  return { categories: data ?? [], loading: isLoading }
 }
