@@ -11,7 +11,7 @@ import ErrorState from '../components/ui/ErrorState'
 import HomeSkeleton from '../components/news/HomeSkeleton'
 
 function Home() {
-  const { featured, latest, latestFiller, mostRead, loading, error, retry } = useHomeNews()
+  const { featured, latest, latestMobileExtra, latestFiller, mostRead, loading, error, retry } = useHomeNews()
 
   useSEO({ title: SITE_NAME, description: SITE_DESCRIPTION })
 
@@ -40,7 +40,7 @@ function Home() {
               lista. Ver LatestNewsList/MostReadNews: cada item se posiciona
               explicitamente (linha/coluna) nesta mesma grid. */}
           <div className="grid gap-8 lg:grid-cols-3 lg:items-start lg:gap-10">
-            <LatestNewsList title="Últimas notícias" items={latest} />
+            <LatestNewsList title="Últimas notícias" items={latest} mobileExtraItems={latestMobileExtra} />
             <MostReadNews items={mostRead} moreItems={latestFiller} />
           </div>
         </div>

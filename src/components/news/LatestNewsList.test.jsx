@@ -39,3 +39,28 @@ describe('LatestNewsList — títulos sempre completos', () => {
     }
   })
 })
+
+describe('LatestNewsList — lista contínua de 9 no mobile', () => {
+  it('renders mobileExtraItems marked lg:hidden, so only the desktop grid (lg+) ever hides them', () => {
+    const extra = [
+      { id: '4', slug: 'd', title: 'Extra 1', cover_image_url: 'https://example.com/d.png', published_at: '2026-08-10' },
+      { id: '5', slug: 'e', title: 'Extra 2', cover_image_url: 'https://example.com/e.png', published_at: '2026-08-10' },
+      { id: '6', slug: 'f', title: 'Extra 3', cover_image_url: 'https://example.com/f.png', published_at: '2026-08-10' },
+    ]
+    renderWithRouter(<LatestNewsList title="Últimas notícias" items={ITEMS} mobileExtraItems={extra} />)
+
+    for (const title of ['Extra 1', 'Extra 2', 'Extra 3']) {
+      const link = screen.getByText(title).closest('a')
+      expect(link.className).toMatch(/lg:hidden/)
+    }
+  })
+
+  it('does not mark the first 6 (desktop grid) items lg:hidden', () => {
+    renderWithRouter(<LatestNewsList title="Últimas notícias" items={ITEMS} mobileExtraItems={[]} />)
+
+    for (const title of [SHORT_TITLE, MEDIUM_TITLE, VERY_LONG_TITLE]) {
+      const link = screen.getByText(title).closest('a')
+      expect(link.className).not.toMatch(/lg:hidden/)
+    }
+  })
+})

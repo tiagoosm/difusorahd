@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Search } from 'lucide-react'
+import { Search, Menu, X } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
 import { useCategories } from '../../../hooks/useCategories'
 import logo from '../../../assets/logo-difusora-hd.png'
 import NavbarSearch from './NavbarSearch'
 import CategoryStrip from './CategoryStrip'
+import MobileMenu from './MobileMenu'
 
 function Navbar() {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const { categories, loading } = useCategories()
 
@@ -67,19 +69,45 @@ function Navbar() {
               <div className="w-11 shrink-0">
                 <button
                   type="button"
-                  onClick={() => setIsMobileSearchOpen(true)}
+                  onClick={() => {
+                    setIsMobileMenuOpen(false)
+                    setIsMobileSearchOpen(true)
+                  }}
                   aria-label="Pesquisar"
                   className="rounded-lg p-2 text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none md:invisible"
                 >
                   <Search className="h-5 w-5" />
                 </button>
               </div>
+
+              {/* Botão de menu: só no mobile — no desktop a navegação por
+                  categoria já fica sempre visível na faixa abaixo. */}
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen((open) => !open)}
+                aria-label={isMobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-menu"
+                className="rounded-lg p-2 text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none md:hidden"
+              >
+                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
             </>
           )}
         </div>
       </div>
 
-      <CategoryStrip categories={categories} loading={loading} />
+      {/* Faixa de categorias sempre visível — só a partir de md. Abaixo
+          disso, a navegação vive no menu (botão acima). */}
+      <div className="hidden md:block">
+        <CategoryStrip categories={categories} loading={loading} />
+      </div>
+
+      {isMobileMenuOpen && (
+        <div id="mobile-menu">
+          <MobileMenu categories={categories} loading={loading} onClose={() => setIsMobileMenuOpen(false)} />
+        </div>
+      )}
     </header>
   )
 }

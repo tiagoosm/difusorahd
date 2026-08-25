@@ -55,6 +55,14 @@ describe('MostReadNews', () => {
     expect(title.className).toMatch(/font-semibold/)
   })
 
+  it('hides the ranking thumbnail on mobile (image reappears from sm+), keeping the title as the focus', () => {
+    const { container } = renderWithRouter(<MostReadNews items={ITEMS} />)
+
+    const thumbWrapper = container.querySelector('img[alt=""]').parentElement
+    expect(thumbWrapper.className).toMatch(/(?:^|\s)hidden(?:\s|$)/)
+    expect(thumbWrapper.className).toMatch(/sm:block/)
+  })
+
   it('fills leftover sidebar space with a full news card (same style as Últimas notícias) when moreItems is given', () => {
     const moreItems = [
       {
@@ -71,9 +79,12 @@ describe('MostReadNews', () => {
     expect(screen.getByText('Matéria C')).toBeInTheDocument()
     // Cartão de preenchimento não tem número de ranking (não faz parte do
     // top 5) nem a largura fixa (h-14 w-14) da miniatura do ranking — é o
-    // mesmo cartão grande (aspect-video) usado em "Últimas notícias".
+    // mesmo cartão grande (aspect-video em lg+) usado em "Últimas notícias",
+    // e só aparece a partir do desktop (lg:flex) — no mobile não há espaço
+    // sobrando pra preencher.
     expect(screen.queryByText('03')).toBeNull()
-    expect(container.querySelector('.aspect-video')).not.toBeNull()
+    expect(container.querySelector('.lg\\:aspect-video')).not.toBeNull()
+    expect(container.querySelector('.hidden.lg\\:flex')).not.toBeNull()
   })
 
   it('does not render any filler card when there are no extra items', () => {

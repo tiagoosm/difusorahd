@@ -5,11 +5,17 @@ import { trackPageView } from '../services/analytics'
 
 const MOST_READ_DISPLAY_COUNT = 5
 const LATEST_DISPLAY_COUNT = 6
+// No mobile, "Últimas notícias" é uma lista contínua de 9 (não 6) — a versão
+// mobile é uma lista compacta (linha), não uma grade 2x3, então cabe mais
+// conteúdo útil por rolagem sem os "espaços vazios" de uma grade quebrada.
+// O desktop continua mostrando só os 6 primeiros (ver CARD_POSITION em
+// LatestNewsList.jsx) — os 3 extras ficam ocultos ali via md:hidden.
+const LATEST_MOBILE_EXTRA_COUNT = 3
 // "Mais Lidas" (coluna lateral, 5 itens compactos) termina antes de
 // "Últimas notícias" (coluna larga, 3 linhas de cards), sobrando o
 // equivalente a uma linha vazia na lateral. Busca 1 item a mais para
 // preencher essa última linha com um card no mesmo estilo da grade ao
-// lado, em vez de deixar o espaço em branco.
+// lado, em vez de deixar o espaço em branco. Só aparece no desktop.
 const LATEST_SIDEBAR_FILL_COUNT = 1
 
 async function fetchFeaturedData() {
@@ -19,7 +25,9 @@ async function fetchFeaturedData() {
 }
 
 async function fetchLatestData() {
-  const { data, error } = await fetchLatestNews(LATEST_DISPLAY_COUNT + LATEST_SIDEBAR_FILL_COUNT)
+  const { data, error } = await fetchLatestNews(
+    LATEST_DISPLAY_COUNT + LATEST_MOBILE_EXTRA_COUNT + LATEST_SIDEBAR_FILL_COUNT,
+  )
   if (error) throw error
   return data ?? []
 }
@@ -45,7 +53,11 @@ export function useHomeNews() {
   const featuredItems = featuredQuery.data ?? []
   const allLatestItems = latestQuery.data ?? []
   const latestItems = allLatestItems.slice(0, LATEST_DISPLAY_COUNT)
-  const latestFillerItems = allLatestItems.slice(LATEST_DISPLAY_COUNT)
+  const latestMobileExtraItems = allLatestItems.slice(
+    LATEST_DISPLAY_COUNT,
+    LATEST_DISPLAY_COUNT + LATEST_MOBILE_EXTRA_COUNT,
+  )
+  const latestFillerItems = allLatestItems.slice(LATEST_DISPLAY_COUNT + LATEST_MOBILE_EXTRA_COUNT)
 
   // Mais Lidas não repete notícia já exibida em Destaques/Últimas
   // (incluindo o preenchimento da lateral).
@@ -72,6 +84,7 @@ export function useHomeNews() {
   return {
     featured: featuredItems,
     latest: latestItems,
+    latestMobileExtra: latestMobileExtraItems,
     latestFiller: latestFillerItems,
     mostRead: mostReadItems,
     loading,

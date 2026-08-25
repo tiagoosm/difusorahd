@@ -97,7 +97,11 @@ function NewsDetail() {
             </span>
           </div>
 
-          <div className="border-t border-ink-100 pt-4">
+          {/* No mobile o compartilhar sai daqui e vai pro fim da matéria
+              (depois do texto) — deixa o usuário ler primeiro, e o cabeçalho
+              da matéria fica mais enxuto numa tela pequena. Desktop mantém a
+              posição original. */}
+          <div className="hidden border-t border-ink-100 pt-4 sm:block">
             <ShareButtons title={news.title} url={window.location.href} />
           </div>
         </header>
@@ -139,6 +143,10 @@ function NewsDetail() {
           className="article-prose prose prose-lg mt-10 max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl"
           dangerouslySetInnerHTML={{ __html: news.content }}
         />
+
+        <div className="mt-10 border-t border-ink-100 pt-6 sm:hidden">
+          <ShareButtons title={news.title} url={window.location.href} />
+        </div>
 
         <AdBanner position="ARTICLE_BOTTOM" className="mt-10" />
 

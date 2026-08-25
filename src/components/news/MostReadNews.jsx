@@ -11,7 +11,9 @@ const THUMB_WIDTHS = [56, 112]
 // Cartão(ões) de preenchimento posicionados explicitamente na linha 4 da
 // grid externa (a mesma linha dos 2 últimos cards de "Últimas notícias") —
 // é isso que garante que a borda do cartão encoste exatamente na borda dos
-// cards vizinhos, em vez de só "flutuar" abaixo da lista do ranking.
+// cards vizinhos, em vez de só "flutuar" abaixo da lista do ranking. Existe
+// só pra resolver um problema de alinhamento da grid do desktop — no mobile
+// "Mais Lidas" é uma lista linear simples, sem espaço sobrando pra preencher.
 const FILLER_POSITION = ['lg:col-start-3 lg:row-start-4', 'lg:col-start-3 lg:row-start-5']
 
 // Numeração deliberadamente discreta (texto pequeno, peso médio, cinza
@@ -43,6 +45,7 @@ function MostReadNews({ items, moreItems = [] }) {
         <LatestNewsCard
           key={item.id}
           news={item}
+          mobileVisible={false}
           className={FILLER_POSITION[index] ?? 'lg:col-start-3'}
         />
       ))}
@@ -53,12 +56,15 @@ function MostReadNews({ items, moreItems = [] }) {
 function MostReadRow({ item, rank }) {
   return (
     <li>
-      <Link to={buildPath.news(item.slug)} className="group flex items-start gap-3.5 py-3.5">
+      <Link to={buildPath.news(item.slug)} className="group flex items-start gap-3 py-3.5 sm:gap-3.5">
         <span className="mt-0.5 w-5 shrink-0 text-xs font-medium text-ink-300 tabular-nums transition-colors duration-200 group-hover:text-brand-600">
           {rank ? String(rank).padStart(2, '0') : ''}
         </span>
 
-        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-ink-100">
+        {/* Sem imagem no mobile: a lista fica mais compacta e com foco no
+            título, como pedido — o ranking é sobre o que está sendo lido,
+            não sobre a foto. Volta a aparecer a partir de sm (tablet+). */}
+        <div className="hidden h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-ink-100 sm:block">
           <img
             src={item.cover_image_url}
             srcSet={buildSrcSet(item.cover_image_url, THUMB_WIDTHS)}
