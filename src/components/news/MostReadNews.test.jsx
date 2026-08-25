@@ -55,6 +55,23 @@ describe('MostReadNews', () => {
     expect(title.className).toMatch(/font-semibold/)
   })
 
+  it('fills leftover sidebar space with extra unnumbered items when moreItems is given', () => {
+    const moreItems = [
+      { id: '3', slug: 'c', title: 'Matéria C', cover_image_url: 'https://example.com/c.png', category: { name: 'Rádio' } },
+    ]
+    renderWithRouter(<MostReadNews items={ITEMS} moreItems={moreItems} />)
+
+    expect(screen.getByText('Matéria C')).toBeInTheDocument()
+    // Item de preenchimento não tem número de ranking (é continuação da
+    // lista, não faz parte do top 5).
+    expect(screen.queryByText('03')).toBeNull()
+  })
+
+  it('does not render the filler list when there are no extra items', () => {
+    const { container } = renderWithRouter(<MostReadNews items={ITEMS} />)
+    expect(container.querySelector('ul')).toBeNull()
+  })
+
   it('never truncates a ranking title', () => {
     const longTitle =
       'Prefeitura de Pouso Alegre anuncia investimento histórico de mais de 400 milhões de reais em obras'

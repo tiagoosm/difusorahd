@@ -10,7 +10,7 @@ import EmptyState from '../components/ui/EmptyState'
 import HomeSkeleton from '../components/news/HomeSkeleton'
 
 function Home() {
-  const { featured, latest, mostRead, loading } = useHomeNews()
+  const { featured, latest, latestFiller, mostRead, loading } = useHomeNews()
 
   useSEO({ title: SITE_NAME, description: SITE_DESCRIPTION })
 
@@ -30,8 +30,12 @@ function Home() {
         <div className="flex flex-col gap-12">
           <FeaturedNews items={featured} />
           <AdBanner position="HOME_MIDDLE" />
-          <MostReadNews items={mostRead} />
-          <LatestNewsList title="Últimas notícias" items={latest} />
+          <div className="grid items-start gap-10 lg:grid-cols-3 lg:gap-12">
+            <div className="lg:col-span-2">
+              <LatestNewsList title="Últimas notícias" items={latest} />
+            </div>
+            <MostReadNews items={mostRead} moreItems={latestFiller} />
+          </div>
         </div>
       )}
     </div>
