@@ -6,6 +6,9 @@ import FooterColumn from './FooterColumn'
 const LINKS = [
   { label: 'Início', to: ROUTES.home },
   { label: 'Buscar notícias', to: ROUTES.search },
+  // Acesso permanente ao cadastro do sorteio, pra quem fechou o pop-up e
+  // quer participar depois.
+  { label: '🎁 Participe do sorteio', to: ROUTES.sweepstakes },
 ]
 
 function FooterNavigation() {

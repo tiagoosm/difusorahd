@@ -8,6 +8,7 @@ import {
   Star,
   FolderKanban,
   Megaphone,
+  Gift,
   UserCircle,
   LogOut,
   X,
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
   { to: ROUTES.adminFeatured, label: 'Destaques', icon: Star },
   { to: ROUTES.adminCategories, label: 'Categorias', icon: FolderKanban },
   { to: ROUTES.adminAds, label: 'Anúncios', icon: Megaphone },
+  { to: ROUTES.adminSweepstakes, label: 'Sorteio', icon: Gift },
   { to: ROUTES.adminProfile, label: 'Perfil', icon: UserCircle },
 ]
 

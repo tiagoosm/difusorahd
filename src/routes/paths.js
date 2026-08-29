@@ -4,6 +4,7 @@ export const ROUTES = {
   newsDetail: '/noticia/:slug',
   category: '/categoria/:slug',
   search: '/busca',
+  sweepstakes: '/sorteio',
   adminLogin: '/admin/login',
   adminDashboard: '/admin',
   adminAnalytics: '/admin/analise',
@@ -15,6 +16,7 @@ export const ROUTES = {
   adminAds: '/admin/anuncios',
   adminAdsNew: '/admin/anuncios/novo',
   adminAdsEdit: '/admin/anuncios/:id/editar',
+  adminSweepstakes: '/admin/sorteio',
   adminProfile: '/admin/perfil',
 }
 
