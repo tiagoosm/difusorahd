@@ -3,10 +3,15 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import MostReadNews from './MostReadNews'
 
-const ITEMS = [
-  { id: '1', slug: 'a', title: 'Matéria A', cover_image_url: 'https://example.com/a.png', category: { name: 'Cotidiano' } },
-  { id: '2', slug: 'b', title: 'Matéria B', cover_image_url: 'https://example.com/b.png', category: { name: 'Economia' } },
-]
+function makeItems(count) {
+  return Array.from({ length: count }).map((_, index) => ({
+    id: String(index + 1),
+    slug: `noticia-${index + 1}`,
+    title: `Matéria ${index + 1}`,
+    cover_image_url: `https://example.com/${index + 1}.png`,
+    category: { name: index === 0 ? 'Cotidiano' : 'Economia' },
+  }))
+}
 
 function renderWithRouter(ui) {
   return render(<MemoryRouter>{ui}</MemoryRouter>)
@@ -18,24 +23,25 @@ describe('MostReadNews', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('renders a numbered ranking with one entry per item, without a view count', () => {
-    renderWithRouter(<MostReadNews items={ITEMS} />)
+  it('renders a numbered editorial list with one entry per item, without a view count', () => {
+    renderWithRouter(<MostReadNews items={makeItems(10)} />)
 
     expect(screen.getByText('01')).toBeInTheDocument()
-    expect(screen.getByText('02')).toBeInTheDocument()
-    expect(screen.getByText('Matéria A')).toBeInTheDocument()
-    expect(screen.getByText('Matéria B')).toBeInTheDocument()
+    expect(screen.getByText('10')).toBeInTheDocument()
+    expect(screen.getByText('Matéria 1')).toBeInTheDocument()
+    expect(screen.getByText('Matéria 10')).toBeInTheDocument()
+    expect(screen.getAllByRole('link')).toHaveLength(10)
   })
 
-  it('does not render the removed flame icon (or any decorative icon in the header, to match the rest of the site)', () => {
-    const { container } = renderWithRouter(<MostReadNews items={ITEMS} />)
+  it('does not render a flame icon or any decorative icon (matches the rest of the site)', () => {
+    const { container } = renderWithRouter(<MostReadNews items={makeItems(10)} />)
 
     expect(container.querySelector('svg.lucide-flame')).toBeNull()
     expect(container.querySelector('svg')).toBeNull()
   })
 
   it('uses a plain heading (no colored banner, no "Ranking" label) so the section stays discreet', () => {
-    renderWithRouter(<MostReadNews items={ITEMS} />)
+    renderWithRouter(<MostReadNews items={makeItems(2)} />)
 
     const heading = screen.getByRole('heading', { name: 'Mais Lidas' })
     expect(heading.className).not.toMatch(/bg-brand-600/)
@@ -44,52 +50,36 @@ describe('MostReadNews', () => {
   })
 
   it('keeps the ranking numeral small, neutral and undecorated so it never outweighs the title', () => {
-    renderWithRouter(<MostReadNews items={ITEMS} />)
+    renderWithRouter(<MostReadNews items={makeItems(2)} />)
 
     const numeral = screen.getByText('01')
     expect(numeral.className).toMatch(/text-xs/)
     expect(numeral.className).toMatch(/text-ink-300/)
     expect(numeral.className).not.toMatch(/font-black|font-extrabold|font-bold|bg-brand-600|rounded-full|ring-/)
 
-    const title = screen.getByText('Matéria A')
+    const title = screen.getByText('Matéria 1')
     expect(title.className).toMatch(/font-semibold/)
   })
 
   it('hides the ranking thumbnail on mobile (image reappears from sm+), keeping the title as the focus', () => {
-    const { container } = renderWithRouter(<MostReadNews items={ITEMS} />)
+    const { container } = renderWithRouter(<MostReadNews items={makeItems(2)} />)
 
     const thumbWrapper = container.querySelector('img[alt=""]').parentElement
     expect(thumbWrapper.className).toMatch(/(?:^|\s)hidden(?:\s|$)/)
     expect(thumbWrapper.className).toMatch(/sm:block/)
   })
 
-  it('fills leftover sidebar space with a full news card (same style as Últimas notícias) when moreItems is given', () => {
-    const moreItems = [
-      {
-        id: '3',
-        slug: 'c',
-        title: 'Matéria C',
-        cover_image_url: 'https://example.com/c.png',
-        category: { name: 'Rádio' },
-        published_at: '2026-01-01T00:00:00Z',
-      },
-    ]
-    const { container } = renderWithRouter(<MostReadNews items={ITEMS} moreItems={moreItems} />)
+  // Nova estrutura: 2 colunas de 5 no desktop (01-05 à esquerda, 06-10 à
+  // direita), 1 coluna corrida no mobile — nunca mais um ranking de 5 com
+  // cartão de preenchimento.
+  it('lays out 10 items as 2 columns of 5 (grid-flow-col + grid-rows-5) on sm+', () => {
+    const { container } = renderWithRouter(<MostReadNews items={makeItems(10)} />)
 
-    expect(screen.getByText('Matéria C')).toBeInTheDocument()
-    // Cartão de preenchimento não tem número de ranking (não faz parte do
-    // top 5) nem a largura fixa (h-14 w-14) da miniatura do ranking — é o
-    // mesmo cartão grande (aspect-video em lg+) usado em "Últimas notícias",
-    // e só aparece a partir do desktop (lg:flex) — no mobile não há espaço
-    // sobrando pra preencher.
-    expect(screen.queryByText('03')).toBeNull()
-    expect(container.querySelector('.lg\\:aspect-video')).not.toBeNull()
-    expect(container.querySelector('.hidden.lg\\:flex')).not.toBeNull()
-  })
-
-  it('does not render any filler card when there are no extra items', () => {
-    renderWithRouter(<MostReadNews items={ITEMS} />)
-    expect(screen.getAllByRole('link')).toHaveLength(ITEMS.length)
+    const list = container.querySelector('ol')
+    expect(list.className).toMatch(/sm:grid-cols-2/)
+    expect(list.className).toMatch(/sm:grid-flow-col/)
+    expect(list.className).toMatch(/sm:grid-rows-5/)
+    expect(list.children).toHaveLength(10)
   })
 
   it('never truncates a ranking title', () => {

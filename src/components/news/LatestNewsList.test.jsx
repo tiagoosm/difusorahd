@@ -18,49 +18,52 @@ function renderWithRouter(ui) {
   return render(<MemoryRouter>{ui}</MemoryRouter>)
 }
 
-describe('LatestNewsList — títulos sempre completos', () => {
-  it('renders the full title text for short, medium and very long headlines', () => {
+describe('LatestNewsList', () => {
+  it('renders nothing when there are no items', () => {
+    const { container } = renderWithRouter(<LatestNewsList title="Últimas notícias" items={[]} />)
+    expect(container).toBeEmptyDOMElement()
+  })
+
+  it('renders the heading and one card per item', () => {
     renderWithRouter(<LatestNewsList title="Últimas notícias" items={ITEMS} />)
 
-    expect(screen.getByText(SHORT_TITLE)).toBeInTheDocument()
-    expect(screen.getByText(MEDIUM_TITLE)).toBeInTheDocument()
-    expect(screen.getByText(VERY_LONG_TITLE)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Últimas notícias' })).toBeInTheDocument()
+    expect(screen.getAllByRole('link')).toHaveLength(ITEMS.length)
   })
 
-  it('never applies line-clamp, truncate or overflow-hidden to the title element', () => {
-    renderWithRouter(<LatestNewsList title="Últimas notícias" items={ITEMS} />)
+  // Regra da seção: 9 notícias juntas em sequência (mobile: lista contínua;
+  // lg+: grade 3x3) — nunca uma grade quebrada com itens escondidos.
+  it('lays out items as a single grid (lg:grid-cols-3), with none hidden at any breakpoint', () => {
+    const { container } = renderWithRouter(<LatestNewsList title="Últimas notícias" items={ITEMS} />)
 
-    for (const title of [SHORT_TITLE, MEDIUM_TITLE, VERY_LONG_TITLE]) {
-      const heading = screen.getByText(title)
-      expect(heading.className).not.toMatch(/line-clamp/)
-      expect(heading.className).not.toMatch(/truncate/)
-      expect(heading.className).not.toMatch(/overflow-hidden/)
-      expect(heading.style.maxHeight).toBe('')
-    }
-  })
-})
+    const grid = container.querySelector('.lg\\:grid-cols-3')
+    expect(grid).not.toBeNull()
+    expect(grid.querySelectorAll('a')).toHaveLength(ITEMS.length)
 
-describe('LatestNewsList — lista contínua de 9 no mobile', () => {
-  it('renders mobileExtraItems marked lg:hidden, so only the desktop grid (lg+) ever hides them', () => {
-    const extra = [
-      { id: '4', slug: 'd', title: 'Extra 1', cover_image_url: 'https://example.com/d.png', published_at: '2026-08-10' },
-      { id: '5', slug: 'e', title: 'Extra 2', cover_image_url: 'https://example.com/e.png', published_at: '2026-08-10' },
-      { id: '6', slug: 'f', title: 'Extra 3', cover_image_url: 'https://example.com/f.png', published_at: '2026-08-10' },
-    ]
-    renderWithRouter(<LatestNewsList title="Últimas notícias" items={ITEMS} mobileExtraItems={extra} />)
-
-    for (const title of ['Extra 1', 'Extra 2', 'Extra 3']) {
-      const link = screen.getByText(title).closest('a')
-      expect(link.className).toMatch(/lg:hidden/)
+    for (const link of grid.querySelectorAll('a')) {
+      expect(link.className).not.toMatch(/hidden/)
     }
   })
 
-  it('does not mark the first 6 (desktop grid) items lg:hidden', () => {
-    renderWithRouter(<LatestNewsList title="Últimas notícias" items={ITEMS} mobileExtraItems={[]} />)
+  describe('títulos sempre completos', () => {
+    it('renders the full title text for short, medium and very long headlines', () => {
+      renderWithRouter(<LatestNewsList title="Últimas notícias" items={ITEMS} />)
 
-    for (const title of [SHORT_TITLE, MEDIUM_TITLE, VERY_LONG_TITLE]) {
-      const link = screen.getByText(title).closest('a')
-      expect(link.className).not.toMatch(/lg:hidden/)
-    }
+      expect(screen.getByText(SHORT_TITLE)).toBeInTheDocument()
+      expect(screen.getByText(MEDIUM_TITLE)).toBeInTheDocument()
+      expect(screen.getByText(VERY_LONG_TITLE)).toBeInTheDocument()
+    })
+
+    it('never applies line-clamp, truncate or overflow-hidden to the title element', () => {
+      renderWithRouter(<LatestNewsList title="Últimas notícias" items={ITEMS} />)
+
+      for (const title of [SHORT_TITLE, MEDIUM_TITLE, VERY_LONG_TITLE]) {
+        const heading = screen.getByText(title)
+        expect(heading.className).not.toMatch(/line-clamp/)
+        expect(heading.className).not.toMatch(/truncate/)
+        expect(heading.className).not.toMatch(/overflow-hidden/)
+        expect(heading.style.maxHeight).toBe('')
+      }
+    })
   })
 })

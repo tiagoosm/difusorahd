@@ -10,21 +10,19 @@ import Eyebrow from '../ui/Eyebrow'
 const IMAGE_WIDTHS = [80, 160, 400, 600, 800]
 const IMAGE_SIZES = '(min-width: 1024px) 380px, 80px'
 
-// Abaixo de lg (1024px — o mesmo breakpoint que a grid de "Últimas
-// notícias"/"Mais Lidas" já usa em Home.jsx): linha compacta (miniatura à
-// esquerda + texto), pensada pra uma lista contínua de várias notícias por
-// rolagem. lg+ (desktop, inalterado): imagem em cima, título abaixo
-// ocupando a largura inteira do card — evita título espremido numa coluna
-// estreita, então qualquer tamanho de título quebra em quantas linhas
-// precisar sem forçar corte. Deliberadamente sem line-clamp/max-height/
-// overflow-hidden no título em nenhum dos dois — é a regra da seção.
-function LatestNewsCard({ news, className = '', mobileVisible = true }) {
-  const displayClass = mobileVisible ? 'flex' : 'hidden lg:flex'
-
+// Abaixo de lg (1024px — o breakpoint em que "Últimas notícias" vira grade
+// 3x3, ver LatestNewsList.jsx): linha compacta (miniatura à esquerda +
+// texto), pensada pra uma lista contínua de várias notícias por rolagem.
+// lg+ (desktop): imagem em cima, título abaixo ocupando a largura inteira
+// do card — evita título espremido numa coluna estreita, então qualquer
+// tamanho de título quebra em quantas linhas precisar sem forçar corte.
+// Deliberadamente sem line-clamp/max-height/overflow-hidden no título em
+// nenhum dos dois — é a regra da seção.
+function LatestNewsCard({ news }) {
   return (
     <Link
       to={buildPath.news(news.slug)}
-      className={`group ${displayClass} min-w-0 gap-3 border-b border-ink-100 pb-4 last:border-b-0 last:pb-0 lg:flex-col lg:gap-3 lg:border-0 lg:pb-0 ${className}`}
+      className="group flex min-w-0 gap-3 border-b border-ink-100 pb-4 last:border-b-0 last:pb-0 lg:flex-col lg:gap-3 lg:border-0 lg:pb-0"
     >
       <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-ink-100 lg:h-auto lg:w-full lg:aspect-video lg:rounded-xl">
         {/* alt vazio: a imagem é decorativa aqui — o título logo abaixo já

@@ -1,6 +1,9 @@
-// Esqueleto com a mesma silhueta do layout real (hero + lista + ranking) em
-// vez de um spinner centralizado — evita o "salto" de layout quando os dados
-// chegam e passa uma sensação de carregamento mais premium.
+// Esqueleto com a mesma silhueta do layout real (destaques + últimas +
+// categoria + mais lidas) em vez de um spinner centralizado — evita o
+// "salto" de layout quando os dados chegam e passa uma sensação de
+// carregamento mais premium. O número de seções de categoria é dinâmico no
+// real (uma por categoria existente) — aqui mostramos só 1 como indicativo,
+// já que o esqueleto não sabe quantas categorias existem antes de carregar.
 function HomeSkeleton() {
   return (
     <div className="flex flex-col gap-12" aria-hidden="true">
@@ -13,34 +16,41 @@ function HomeSkeleton() {
         </div>
       </div>
 
-      <div className="grid gap-10 lg:grid-cols-3 lg:gap-12">
-        <div className="flex flex-col gap-5 lg:col-span-2">
-          <div className="h-7 w-44 animate-pulse rounded bg-ink-100" />
-          <div className="grid gap-x-8 gap-y-8 sm:grid-cols-2">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="flex flex-col gap-3">
-                <div className="aspect-video w-full animate-pulse rounded-xl bg-ink-100" />
-                <div className="h-3 w-16 animate-pulse rounded bg-ink-100" />
-                <div className="h-4 w-full animate-pulse rounded bg-ink-100" />
-              </div>
-            ))}
-          </div>
-        </div>
+      <CardGridSectionSkeleton titleWidth="w-44" count={9} />
 
-        <div className="flex flex-col gap-5">
-          <div className="h-7 w-32 animate-pulse rounded bg-ink-100" />
-          <div className="flex flex-col divide-y divide-ink-100">
+      <CardGridSectionSkeleton titleWidth="w-32" count={3} />
+
+      <div className="flex flex-col gap-5">
+        <div className="h-7 w-32 animate-pulse rounded bg-ink-100" />
+        <div className="grid gap-x-10 sm:grid-cols-2">
+          <div className="flex flex-col">
             {Array.from({ length: 5 }).map((_, index) => (
-              <div key={index} className="flex items-start gap-3 py-3.5">
-                <div className="h-12 w-12 shrink-0 animate-pulse rounded-lg bg-ink-100" />
-                <div className="flex flex-1 flex-col gap-2">
-                  <div className="h-3 w-16 animate-pulse rounded bg-ink-100" />
-                  <div className="h-3.5 w-full animate-pulse rounded bg-ink-100" />
-                </div>
-              </div>
+              <RowSkeleton key={index} imageClassName="h-14 w-14" className="py-3.5" />
+            ))}
+          </div>
+          <div className="hidden flex-col sm:flex">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <RowSkeleton key={index} imageClassName="h-14 w-14" className="py-3.5" />
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+function CardGridSectionSkeleton({ titleWidth, count }) {
+  return (
+    <div className="flex flex-col gap-5">
+      <div className={`h-7 animate-pulse rounded bg-ink-100 ${titleWidth}`} />
+      <div className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: count }).map((_, index) => (
+          <div key={index} className="flex flex-col gap-3">
+            <div className="aspect-video w-full animate-pulse rounded-xl bg-ink-100" />
+            <div className="h-3 w-16 animate-pulse rounded bg-ink-100" />
+            <div className="h-4 w-full animate-pulse rounded bg-ink-100" />
+          </div>
+        ))}
       </div>
     </div>
   )

@@ -3,67 +3,49 @@ import { buildPath } from '../../routes/paths'
 import { buildSrcSet } from '../../utils/imageUrl'
 import Eyebrow from '../ui/Eyebrow'
 import SectionHeading from '../ui/SectionHeading'
-import LatestNewsCard from './LatestNewsCard'
 
 // Miniatura fixa (h-14 w-14 = 56px).
 const THUMB_WIDTHS = [56, 112]
+const COLUMN_SIZE = 5
 
-// Cartão(ões) de preenchimento posicionados explicitamente na linha 4 da
-// grid externa (a mesma linha dos 2 últimos cards de "Últimas notícias") —
-// é isso que garante que a borda do cartão encoste exatamente na borda dos
-// cards vizinhos, em vez de só "flutuar" abaixo da lista do ranking. Existe
-// só pra resolver um problema de alinhamento da grid do desktop — no mobile
-// "Mais Lidas" é uma lista linear simples, sem espaço sobrando pra preencher.
-const FILLER_POSITION = ['lg:col-start-3 lg:row-start-4', 'lg:col-start-3 lg:row-start-5']
-
-// Numeração deliberadamente discreta (texto pequeno, peso médio, cinza
-// neutro, alinhada ao topo) — é só um indicador de posição, não pode
-// competir com o título. Cor da marca aparece apenas no hover, na Eyebrow
-// de categoria e no título — nunca como fundo do número ou do cabeçalho.
+// Lista editorial, não mais ranking em cards: numeração deliberadamente
+// discreta (texto pequeno, peso médio, cinza neutro) — é só um indicador de
+// posição, nunca pode competir com o título. Cor da marca aparece apenas no
+// hover e na Eyebrow de categoria — nunca como fundo do número.
 //
-// Heading, lista do ranking e preenchimento são 3 células separadas da
-// MESMA grid externa (ver Home.jsx / LatestNewsList) — não uma coluna
-// própria e independente. A lista ocupa as linhas 2-3 (as 2 primeiras
-// linhas de cards), deixando a linha 4 livre para o preenchimento alinhar
-// com a última linha de "Últimas notícias".
-function MostReadNews({ items, moreItems = [] }) {
+// Desktop (sm+): 2 colunas de 5 (grid-flow-col + grid-rows-5 preenche a
+// coluna esquerda inteira — 01 a 05 — antes de passar pra direita — 06 a
+// 10). Mobile: 1 coluna corrida com as 10, nessa mesma ordem.
+function MostReadNews({ items }) {
   if (!items.length) return null
 
   return (
-    <>
-      <div className="lg:col-start-3 lg:row-start-1">
-        <SectionHeading title="Mais Lidas" />
-      </div>
-
-      <ol className="flex flex-col divide-y divide-ink-100 lg:col-start-3 lg:row-start-2 lg:row-span-2">
+    <section className="flex flex-col gap-5">
+      <SectionHeading title="Mais Lidas" />
+      <ol className="grid grid-cols-1 gap-x-10 sm:grid-cols-2 sm:grid-flow-col sm:grid-rows-5">
         {items.map((item, index) => (
           <MostReadRow key={item.id} item={item} rank={index + 1} />
         ))}
       </ol>
-
-      {moreItems.map((item, index) => (
-        <LatestNewsCard
-          key={item.id}
-          news={item}
-          mobileVisible={false}
-          className={FILLER_POSITION[index] ?? 'lg:col-start-3'}
-        />
-      ))}
-    </>
+    </section>
   )
 }
 
 function MostReadRow({ item, rank }) {
+  // Última linha de cada coluna (5ª e 10ª) não leva divisória embaixo —
+  // mesma regra do "last:border-b-0" de antes, só que agora por coluna.
+  const isColumnEnd = rank % COLUMN_SIZE === 0
+
   return (
-    <li>
+    <li className={isColumnEnd ? '' : 'border-b border-ink-100'}>
       <Link to={buildPath.news(item.slug)} className="group flex items-start gap-3 py-3.5 sm:gap-3.5">
         <span className="mt-0.5 w-5 shrink-0 text-xs font-medium text-ink-300 tabular-nums transition-colors duration-200 group-hover:text-brand-600">
           {rank ? String(rank).padStart(2, '0') : ''}
         </span>
 
         {/* Sem imagem no mobile: a lista fica mais compacta e com foco no
-            título, como pedido — o ranking é sobre o que está sendo lido,
-            não sobre a foto. Volta a aparecer a partir de sm (tablet+). */}
+            título — o foco é o que está sendo lido, não a foto. Volta a
+            aparecer a partir de sm (tablet+), onde já cabem 2 colunas. */}
         <div className="hidden h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-ink-100 sm:block">
           <img
             src={item.cover_image_url}
