@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
 import { useCategories } from '../../../hooks/useCategories'
 import logo from '../../../assets/logo-difusora-hd.png'
@@ -13,7 +13,6 @@ import MobileMenu from './MobileMenu'
 const MOBILE_MENU_TRANSITION_MS = 180
 
 function Navbar() {
-  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
   // "Mounted" controla se o painel existe no DOM; "open" controla a classe
   // CSS que anima. Abrir monta e, no frame seguinte, marca como aberto (pra
   // a transição partir de um estado inicial real). Fechar desmarca primeiro
@@ -64,62 +63,42 @@ function Navbar() {
             isScrolled ? 'py-2.5' : 'py-3.5'
           }`}
         >
-          {isMobileSearchOpen ? (
-            <NavbarSearch
-              autoFocus
-              onSubmitSuccess={() => setIsMobileSearchOpen(false)}
-              onCancel={() => setIsMobileSearchOpen(false)}
+          <Link
+            to={ROUTES.home}
+            className="flex shrink-0 items-center rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none"
+          >
+            <img
+              src={logo}
+              alt="Difusora HD"
+              className={`w-auto transition-[height] duration-200 ${isScrolled ? 'h-7 sm:h-8' : 'h-8 sm:h-10'}`}
             />
-          ) : (
-            <>
-              <Link
-                to={ROUTES.home}
-                className="flex shrink-0 items-center rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none"
-              >
-                <img
-                  src={logo}
-                  alt="Difusora HD"
-                  className={`w-auto transition-[height] duration-200 ${isScrolled ? 'h-7 sm:h-8' : 'h-8 sm:h-10'}`}
-                />
-              </Link>
+          </Link>
 
-              {/* Busca ocupa o espaço central — elemento principal da navegação
-                  no desktop. O espaçador à direita espelha a largura da logo
-                  para que a barra fique realmente centralizada, não deslocada. */}
-              <div className="hidden flex-1 justify-center md:flex">
-                <div className="w-full max-w-xl">
-                  <NavbarSearch />
-                </div>
-              </div>
+          {/* Busca ocupa o espaço central — elemento principal da navegação
+              no desktop. No mobile ela mora dentro do menu (ver MobileMenu),
+              não aqui — o espaçador à direita só existe pra manter a barra
+              de busca do desktop centralizada (espelha a largura da logo),
+              por isso só aparece a partir de md junto com ela. */}
+          <div className="hidden flex-1 justify-center md:flex">
+            <div className="w-full max-w-xl">
+              <NavbarSearch />
+            </div>
+          </div>
 
-              <div className="w-11 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => {
-                    closeMobileMenu()
-                    setIsMobileSearchOpen(true)
-                  }}
-                  aria-label="Pesquisar"
-                  className="rounded-lg p-2 text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none md:invisible"
-                >
-                  <Search className="h-5 w-5" />
-                </button>
-              </div>
+          <div className="hidden w-11 shrink-0 md:block" aria-hidden="true" />
 
-              {/* Botão de menu: só no mobile — no desktop a navegação por
-                  categoria já fica sempre visível na faixa abaixo. */}
-              <button
-                type="button"
-                onClick={() => (isMobileMenuMounted ? closeMobileMenu() : openMobileMenu())}
-                aria-label={isMobileMenuMounted ? 'Fechar menu' : 'Abrir menu'}
-                aria-expanded={isMobileMenuMounted}
-                aria-controls="mobile-menu"
-                className="rounded-lg p-2 text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none md:hidden"
-              >
-                {isMobileMenuMounted ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </button>
-            </>
-          )}
+          {/* Botão de menu: só no mobile — no desktop a navegação por
+              categoria já fica sempre visível na faixa abaixo. */}
+          <button
+            type="button"
+            onClick={() => (isMobileMenuMounted ? closeMobileMenu() : openMobileMenu())}
+            aria-label={isMobileMenuMounted ? 'Fechar menu' : 'Abrir menu'}
+            aria-expanded={isMobileMenuMounted}
+            aria-controls="mobile-menu"
+            className="rounded-lg p-2 text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none md:hidden"
+          >
+            {isMobileMenuMounted ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
 

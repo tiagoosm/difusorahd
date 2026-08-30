@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { ROUTES, buildPath } from '../../../routes/paths'
+import NavbarSearch from './NavbarSearch'
 
 // Painel do menu mobile: substitui a rolagem horizontal de categorias por
 // uma lista vertical organizada, acessível via um botão de menu — o site
@@ -39,6 +40,10 @@ function MobileMenu({ isOpen, categories, loading, onRequestClose }) {
           isOpen ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
         }`}
       >
+        <div className="mx-auto max-w-6xl border-b border-white/10 px-4 py-3">
+          <NavbarSearch onSubmitSuccess={onRequestClose} />
+        </div>
+
         <ul className="mx-auto flex max-w-6xl flex-col divide-y divide-white/10 px-4">
           <MenuLink to={ROUTES.home} end onClick={onRequestClose}>
             Início
