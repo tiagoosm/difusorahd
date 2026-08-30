@@ -64,8 +64,9 @@ function Search() {
       ) : (
         <>
           {/* Abaixo de sm o NewsCard já é uma linha com borda própria (ver
-              NewsCard.jsx) — gap-6 ali só duplicaria o espaçamento. */}
-          <div className="grid items-start gap-1 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              NewsCard.jsx) — gap-6 ali só duplicaria o espaçamento.
+              items-stretch: cards da mesma linha ficam com a mesma altura. */}
+          <div className="grid items-stretch gap-1 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {news.map((item) => (
               <NewsCard key={item.id} news={item} />
             ))}

@@ -16,8 +16,13 @@ function CategorySection({ title, items, viewAllHref, columns = 3 }) {
     <section className="flex flex-col gap-5">
       <SectionHeading title={title} viewAllHref={viewAllHref} />
       {/* Abaixo de sm o NewsCard já é uma linha com borda própria (ver
-          NewsCard.jsx) — gap-6 ali só duplicaria o espaçamento. */}
-      <div className={`grid items-start gap-1 sm:gap-6 ${GRID_COLUMNS[columns]}`}>
+          NewsCard.jsx) — gap-6 ali só duplicaria o espaçamento.
+          items-stretch (não items-start): todo card da mesma linha fica com
+          a mesma altura — NewsCard já é preparado pra isso (texto cresce com
+          flex-1, data fixada embaixo com mt-auto), sem cortar nenhum título;
+          só evita caixas de tamanhos diferentes lado a lado quando os
+          títulos têm números de linhas diferentes. */}
+      <div className={`grid items-stretch gap-1 sm:gap-6 ${GRID_COLUMNS[columns]}`}>
         {items.map((item) => (
           <NewsCard key={item.id} news={item} />
         ))}
