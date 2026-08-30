@@ -12,13 +12,13 @@ const MAX_ATTEMPTS = 5
 const BASE_DELAY_MS = 1500 // 1.5s, 3s, 6s, 12s, 24s
 const STATION_NAME = 'Rádio Difusora HD'
 
-// Player da rádio ao vivo: um único <audio> imperativo (não preso a nenhuma
-// página) com reconexão em backoff exponencial — precisa sobreviver à troca
-// de rota (por isso é montado uma vez em PublicLayout, não numa página).
+// Live radio player: a single imperative <audio> element (not tied to any
+// page) with exponential-backoff reconnection — needs to survive route
+// changes (which is why it's mounted once in PublicLayout, not in a page).
 export function useLiveRadio() {
   const audioRef = useRef(null)
-  // Padrão recomendado pelo React pra criar um valor caro uma única vez sem
-  // useEffect nem useMemo: guarda condicional no corpo do componente.
+  // React's recommended pattern for creating an expensive value once
+  // without useEffect or useMemo: a conditional guard in the component body.
   if (audioRef.current === null) {
     audioRef.current = new Audio()
     audioRef.current.preload = 'none'
@@ -28,8 +28,8 @@ export function useLiveRadio() {
   const attemptRef = useRef(0)
   const reconnectTimerRef = useRef(null)
   const lastVolumeRef = useRef(getStoredRadioVolume())
-  // scheduleReconnect chama a versão mais recente de startStream sem os dois
-  // precisarem depender um do outro como useCallback (dependência circular).
+  // scheduleReconnect calls the latest version of startStream without the
+  // two needing to depend on each other as useCallback (circular dependency).
   const startStreamRef = useRef(() => {})
 
   const [isPlaying, setIsPlaying] = useState(false)
@@ -45,8 +45,9 @@ export function useLiveRadio() {
     setStatusMode(mode)
   }, [])
 
-  // Aplica volume/mudo salvos assim que o <audio> existe — antes da primeira
-  // reprodução, pra já começar no volume que o ouvinte deixou da última vez.
+  // Applies the saved volume/muted state as soon as the <audio> element
+  // exists — before the first playback, so it starts at the volume the
+  // listener left it at last time.
   useEffect(() => {
     const audio = audioRef.current
     audio.volume = isMuted ? 0 : volume
@@ -91,8 +92,8 @@ export function useLiveRadio() {
     setStatus(attemptRef.current > 0 ? 'Reconectando…' : 'Conectando…')
 
     const audio = audioRef.current
-    // Cache-bust: evita que o navegador reuse uma conexão de stream morta
-    // depois de uma queda.
+    // Cache-bust: prevents the browser from reusing a dead stream
+    // connection after a drop.
     audio.src = `${STREAM_URL}${STREAM_URL.includes('?') ? '&' : '?'}_=${Date.now()}`
     audio.load()
 
@@ -137,7 +138,7 @@ export function useLiveRadio() {
     startStream()
   }, [startStream])
 
-  // Eventos do <audio> — registrados uma única vez (o elemento nunca troca).
+  // <audio> events — registered once (the element never changes).
   useEffect(() => {
     const audio = audioRef.current
 
@@ -159,7 +160,7 @@ export function useLiveRadio() {
             artist: 'Ao vivo agora',
           })
         } catch {
-          // MediaMetadata pode não existir em navegadores mais antigos.
+          // MediaMetadata might not exist in older browsers.
         }
       }
     }
@@ -189,8 +190,8 @@ export function useLiveRadio() {
     }
   }, [scheduleReconnect, setStatus])
 
-  // Rede caiu/voltou: pausa as tentativas enquanto offline, retoma sozinho
-  // ao voltar (só se o ouvinte já tinha pedido pra tocar).
+  // Network dropped/came back: pauses retries while offline, resumes on
+  // its own when it's back (only if the listener had already asked to play).
   useEffect(() => {
     function handleOffline() {
       clearTimeout(reconnectTimerRef.current)
@@ -215,8 +216,8 @@ export function useLiveRadio() {
     }
   }, [setStatus])
 
-  // Controles de mídia da tela de bloqueio/notificação (celular): permite
-  // pausar/retomar a rádio sem abrir o site de novo.
+  // Lock-screen/notification media controls (mobile): lets you
+  // pause/resume the radio without opening the site again.
   useEffect(() => {
     if (!('mediaSession' in navigator)) return
     navigator.mediaSession.setActionHandler('play', play)

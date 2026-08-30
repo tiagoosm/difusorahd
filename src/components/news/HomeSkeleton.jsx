@@ -1,9 +1,9 @@
-// Esqueleto com a mesma silhueta do layout real (destaques + últimas +
-// categoria + mais lidas) em vez de um spinner centralizado — evita o
-// "salto" de layout quando os dados chegam e passa uma sensação de
-// carregamento mais premium. O número de seções de categoria é dinâmico no
-// real (uma por categoria existente) — aqui mostramos só 1 como indicativo,
-// já que o esqueleto não sabe quantas categorias existem antes de carregar.
+// Skeleton with the same silhouette as the real layout (featured + latest +
+// category + most read) instead of a centered spinner — avoids the layout
+// "jump" when the data arrives and feels more premium while loading. The
+// number of category sections is dynamic in the real page (one per
+// existing category) — here we show just 1 as an indication, since the
+// skeleton doesn't know how many categories exist before loading.
 function HomeSkeleton() {
   return (
     <div className="flex flex-col gap-12" aria-hidden="true">

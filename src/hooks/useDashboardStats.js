@@ -6,10 +6,10 @@ import { getPeriodRange } from '../utils/analyticsPeriods'
 const EMPTY_NEWS_STATS = { total: 0, published: 0, drafts: 0, publishedThisMonth: 0, totalViews: 0 }
 const EMPTY_SUMMARY = { views: 0, visitors: 0 }
 
-// Reaproveita fetchNewsStats (já usado em ManageNews) para as contagens de
-// conteúdo, e fetchAnalyticsSummary (já usado em /admin/analise) para
-// hoje/7 dias com comparação — nenhuma contagem nova, só reunir o que já
-// existe num único carregamento pro Dashboard.
+// Reuses fetchNewsStats (already used in ManageNews) for the content
+// counts, and fetchAnalyticsSummary (already used in /admin/analise) for
+// today/7 days with comparison — no new counting, just gathering what
+// already exists into a single load for the Dashboard.
 export function useDashboardStats() {
   const [newsStats, setNewsStats] = useState(EMPTY_NEWS_STATS)
   const [today, setToday] = useState(EMPTY_SUMMARY)

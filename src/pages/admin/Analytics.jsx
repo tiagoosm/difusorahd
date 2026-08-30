@@ -31,8 +31,8 @@ function Analytics() {
 
   const viewsGrowth = calcGrowth(current.views, previous.views)
 
-  // Páginas vistas por visitante — mede engajamento, diferente dos outros 3
-  // cards (que são totais). Arredondado: current.visitors=0 evita divisão por zero.
+  // Pages viewed per visitor — measures engagement, unlike the other 3
+  // cards (which are totals). Guarded: current.visitors=0 avoids a division by zero.
   const currentPagesPerVisitor = current.visitors > 0 ? current.views / current.visitors : 0
   const previousPagesPerVisitor = previous.visitors > 0 ? previous.views / previous.visitors : 0
 

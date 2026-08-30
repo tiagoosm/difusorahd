@@ -6,12 +6,12 @@ import { AuthProvider } from './contexts/AuthContext.jsx'
 import './index.css'
 import App from './App.jsx'
 
-// retry:1 (não o padrão 3 do React Query) pra manter o erro aparecendo
-// rápido pro visitante em vez de ficar tentando em silêncio por ~10s antes
-// do ErrorState mostrar o botão de "tentar novamente". refetchOnWindowFocus
-// desligado: um portal de notícias não precisa refazer a query toda vez que
-// o visitante volta pra aba, e isso evitava re-disparar efeitos como
-// incrementNewsViews/trackPageView sem necessidade.
+// retry:1 (not React Query's default of 3) to keep the error showing up
+// fast for the visitor instead of silently retrying for ~10s before
+// ErrorState shows the "try again" button. refetchOnWindowFocus turned
+// off: a news portal doesn't need to redo the query every time the
+// visitor comes back to the tab, and this avoided re-triggering effects
+// like incrementNewsViews/trackPageView unnecessarily.
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

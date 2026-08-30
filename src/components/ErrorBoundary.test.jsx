@@ -23,7 +23,7 @@ describe('ErrorBoundary', () => {
 
   it('renders a fallback (not a blank page) when a descendant throws during render', () => {
     // React logs the error to the console by default even when caught by a
-    // boundary — silenciar aqui pra não poluir a saída do teste.
+    // boundary — silenced here to keep the test output clean.
     vi.spyOn(console, 'error').mockImplementation(() => {})
 
     render(

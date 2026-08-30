@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useLiveRadio } from './useLiveRadio'
 
-// Um <audio> real de verdade (jsdom) não reproduz nem dispara os eventos
-// que o hook escuta de forma controlável — um EventTarget falso, com
-// play()/pause() mockáveis por teste, deixa a reconexão/backoff
-// determinística sob fake timers.
+// A real <audio> element (jsdom) doesn't actually play or fire the events
+// the hook listens to in a controllable way — a fake EventTarget, with
+// play()/pause() mockable per test, makes the reconnect/backoff
+// deterministic under fake timers.
 class FakeAudio extends EventTarget {
   constructor() {
     super()
@@ -112,11 +112,11 @@ describe('useLiveRadio — reconexão em backoff', () => {
 
     act(() => result.current.play())
 
-    // Cada "error" incrementa o contador de tentativas (verificado ANTES de
-    // incrementar) — as 5 primeiras ainda agendam uma nova reconexão; só a
-    // 6ª dispara a desistência (contador já em 5 = MAX_ATTEMPTS). Avança o
-    // relógio além do maior delay (1.5s * 2^4 = 24s) entre cada uma pra
-    // disparar o próximo setTimeout do backoff.
+    // Each "error" increments the attempt counter (checked BEFORE
+    // incrementing) — the first 5 still schedule a new reconnect; only the
+    // 6th triggers giving up (counter already at 5 = MAX_ATTEMPTS). Advances
+    // the clock past the longest delay (1.5s * 2^4 = 24s) between each one
+    // to fire the backoff's next setTimeout.
     for (let i = 0; i < 6; i++) {
       act(() => lastAudio().dispatchEvent(new Event('error')))
       await act(async () => {

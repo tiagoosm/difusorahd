@@ -1,16 +1,16 @@
 -- ============================================================================
--- Migração: remove a posição SIDEBAR por completo (mesma técnica usada para
--- remover ARTICLE_MIDDLE — Postgres não tem "ALTER TYPE ... DROP VALUE").
--- Execute este arquivo no SQL Editor do Supabase.
+-- Migration: removes the SIDEBAR position entirely (same technique used to
+-- remove ARTICLE_MIDDLE — Postgres has no "ALTER TYPE ... DROP VALUE").
+-- Run this file in the Supabase SQL Editor.
 -- ============================================================================
 
--- 1. Remove anúncios que usam a posição que vai deixar de existir.
+-- 1. Removes ads using the position that's about to stop existing.
 delete from public.ads where position = 'SIDEBAR';
 
--- 2. Renomeia o enum atual.
+-- 2. Renames the current enum.
 alter type public.ad_position rename to ad_position_old;
 
--- 3. Cria o novo enum, já sem SIDEBAR.
+-- 3. Creates the new enum, already without SIDEBAR.
 create type public.ad_position as enum (
   'TOP_HOME',
   'HOME_MIDDLE',
@@ -19,10 +19,10 @@ create type public.ad_position as enum (
   'FOOTER'
 );
 
--- 4. Migra a coluna da tabela para o novo tipo.
+-- 4. Migrates the table's column to the new type.
 alter table public.ads
   alter column position type public.ad_position
   using position::text::public.ad_position;
 
--- 5. Remove o enum antigo.
+-- 5. Drops the old enum.
 drop type public.ad_position_old;

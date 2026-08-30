@@ -3,8 +3,8 @@ import { fetchAdsForPosition } from '../services/ads'
 
 async function fetchAdsData(position) {
   const { data, error } = await fetchAdsForPosition(position)
-  // Anúncio nunca bloqueia a página: falha aqui degrada para "sem anúncio"
-  // (AdBanner já trata lista vazia não renderizando nada).
+  // An ad never blocks the page: a failure here degrades to "no ad"
+  // (AdBanner already handles an empty list by rendering nothing).
   if (error) return []
   return data ?? []
 }

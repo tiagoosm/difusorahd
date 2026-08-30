@@ -1,8 +1,8 @@
 import Modal from './Modal'
 import Button from './Button'
 
-// Modal de confirmação (excluir notícia/categoria/anúncio...) reaproveitado
-// no lugar de cada tela do admin montar o próprio Modal + botões do zero.
+// Confirmation modal (delete article/category/ad...) reused instead of
+// every admin screen building its own Modal + buttons from scratch.
 function ConfirmDialog({
   isOpen,
   onClose,
@@ -13,8 +13,8 @@ function ConfirmDialog({
   cancelLabel = 'Cancelar',
   loading = false,
 }) {
-  // Enquanto a ação está em andamento, ignora fechar pelo backdrop/Esc/X —
-  // evita fechar o modal e disparar uma segunda exclusão em cima da primeira.
+  // While the action is in progress, ignores closing via backdrop/Esc/X —
+  // avoids closing the modal and triggering a second deletion on top of the first.
   return (
     <Modal isOpen={isOpen} onClose={loading ? () => {} : onClose} title={title}>
       <p className="text-sm text-ink-600">{description}</p>

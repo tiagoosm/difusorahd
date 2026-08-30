@@ -1,5 +1,5 @@
-// Converte um timestamp ISO (vindo do banco, em UTC) para o formato que o
-// input <input type="datetime-local"> exige: "AAAA-MM-DDTHH:mm", em horário local.
+// Converts an ISO timestamp (coming from the database, in UTC) to the
+// format an <input type="datetime-local"> expects: "YYYY-MM-DDTHH:mm", in local time.
 export function toDatetimeLocalValue(isoString) {
   if (!isoString) return ''
 

@@ -10,9 +10,9 @@ const FORMAT_HINT = {
   audio: 'MP3, WAV, OGG, M4A, AAC, WEBM ou FLAC',
 }
 
-// Traduz o erro cru do Supabase Storage numa mensagem que explica a causa
-// real (formato não suportado, arquivo grande demais, sessão sem permissão)
-// em vez de um "não foi possível enviar" genérico.
+// Translates the raw Supabase Storage error into a message that explains
+// the real cause (unsupported format, file too large, unauthorized
+// session) instead of a generic "couldn't upload".
 function describeUploadError(error, kind) {
   const message = error?.message || ''
 
@@ -63,9 +63,9 @@ function FileUpload({ value, onChange, bucket, folder, accept, kind = 'image', l
 
   function handleRemove() {
     setPlaybackError(false)
-    // null, não '': permite distinguir "sem arquivo" de "campo vazio" no
-    // banco (ex: audio_url is not null passava a contar string vazia como
-    // "tem áudio").
+    // null, not '': lets us distinguish "no file" from "empty field" in
+    // the database (e.g. audio_url is not null used to count an empty
+    // string as "has audio").
     onChange(null)
   }
 

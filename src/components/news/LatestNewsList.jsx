@@ -1,11 +1,11 @@
 import SectionHeading from '../ui/SectionHeading'
 import LatestNewsCard from './LatestNewsCard'
 
-// Seção independente e cheia (não mais dividida com uma barra lateral):
-// abaixo de lg, uma lista contínua empilhada (as 9 notícias em sequência,
-// sem quebra de nenhum outro bloco no meio); em lg+, grade 3x3. Mesmo
-// breakpoint que LatestNewsCard já usa internamente (linha compacta < lg,
-// card cheio lg+), então a troca de layout acontece junto nos dois.
+// Independent, full-width section (no longer split with a sidebar): below
+// lg, a continuous stacked list (the 9 articles in sequence, with no other
+// block breaking them up); at lg+, a 3x3 grid. Same breakpoint
+// LatestNewsCard already uses internally (compact row < lg, full card
+// lg+), so the layout switch happens together in both.
 function LatestNewsList({ title, items, viewAllHref }) {
   if (!items.length) return null
 

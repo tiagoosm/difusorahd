@@ -1,14 +1,14 @@
 -- ============================================================================
--- Etapa 4 do dashboard de Analytics: funções de agregação para os cards.
--- Execute no SQL Editor do Supabase (Dashboard > SQL Editor).
+-- Stage 4 of the Analytics dashboard: aggregation functions for the cards.
+-- Run in the Supabase SQL Editor (Dashboard > SQL Editor).
 -- ============================================================================
 
--- Views + visitantes únicos (count distinct) num intervalo — PostgREST não
--- expõe COUNT(DISTINCT ...) via count=exact, por isso a função. SECURITY
--- INVOKER (padrão, sem "security definer"): roda com o RLS de quem chama,
--- então só admin (via policy analytics_events_select_admin) recebe dados
--- reais — qualquer outro authenticated recebe 0 automaticamente, sem
--- precisar checar is_admin() manualmente aqui.
+-- Views + unique visitors (count distinct) in a range — PostgREST doesn't
+-- expose COUNT(DISTINCT ...) via count=exact, hence the function. SECURITY
+-- INVOKER (default, no "security definer"): runs with the caller's RLS, so
+-- only an admin (via the analytics_events_select_admin policy) gets real
+-- data — any other authenticated user gets 0 automatically, with no need
+-- to check is_admin() manually here.
 create or replace function public.analytics_summary(p_start timestamptz, p_end timestamptz)
 returns table (views bigint, visitors bigint)
 language sql
@@ -22,7 +22,7 @@ $$;
 
 grant execute on function public.analytics_summary(timestamptz, timestamptz) to authenticated;
 
--- Visitantes únicos nos últimos 5 minutos, para o indicador "tempo real".
+-- Unique visitors in the last 5 minutes, for the "real-time" indicator.
 create or replace function public.analytics_realtime_visitors()
 returns bigint
 language sql

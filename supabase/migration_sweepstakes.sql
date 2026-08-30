@@ -1,22 +1,22 @@
 -- ============================================================================
--- Migração: cadastro para sorteios ("Sorteio")
--- Execute este arquivo no SQL Editor do Supabase (projeto já existente).
+-- Migration: sweepstakes registration ("Sorteio")
+-- Run this file in the Supabase SQL Editor (existing project).
 -- ============================================================================
 
 create type public.sweepstakes_participant_status as enum ('registered', 'winner', 'disqualified');
 
--- sweepstakes_participants: dados pessoais de quem se cadastrou pra
--- concorrer. Minimização (LGPD): só os campos necessários pra identificar o
--- participante e contatá-lo/entregar o prêmio, nada além disso.
+-- sweepstakes_participants: personal data of whoever registered to enter.
+-- Minimization (LGPD): only the fields needed to identify the participant
+-- and contact them/deliver the prize, nothing beyond that.
 create table public.sweepstakes_participants (
   id uuid primary key default gen_random_uuid(),
   full_name text not null,
   phone text not null,
-  -- Só dígitos (ex: "35999998888") — usado pra checar duplicidade e buscar
-  -- sem depender de como o telefone foi digitado/formatado.
+  -- Digits only (e.g. "35999998888") — used to check for duplicates and
+  -- search without depending on how the phone was typed/formatted.
   phone_normalized text not null,
   rg text not null,
-  -- Só alfanumérico maiúsculo — mesmo motivo do phone_normalized.
+  -- Uppercase alphanumeric only — same reason as phone_normalized.
   rg_normalized text not null,
   address_street text not null,
   address_number text not null,
@@ -30,16 +30,16 @@ create table public.sweepstakes_participants (
   consent_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  -- Trava em nível de banco: nenhuma linha existe sem consentimento, mesmo
-  -- que algum caminho novo no código esqueça de checar isso no frontend.
+  -- Database-level lock: no row exists without consent, even if some new
+  -- code path forgets to check this on the frontend.
   constraint sweepstakes_participants_consent_check check (consent_accepted = true)
 );
-comment on table public.sweepstakes_participants is 'Cadastros de participantes do sorteio promovido pela Difusora HD. Dados pessoais sensíveis (RG, telefone, endereço) — acesso restrito a administradores via RLS, nunca exposto ao público.';
-comment on column public.sweepstakes_participants.status is 'registered = cadastro padrão; winner = sorteado; disqualified = desclassificado pelo admin (ex: dado inválido encontrado manualmente).';
-comment on column public.sweepstakes_participants.consent_at is 'Data/hora em que o consentimento (LGPD) foi registrado — sempre igual a created_at hoje, mas mantido como coluna própria caso o fluxo de consentimento mude no futuro (ex: reconfirmação).';
+comment on table public.sweepstakes_participants is 'Registrations for the sweepstakes promoted by Difusora HD. Sensitive personal data (ID document, phone, address) — access restricted to admins via RLS, never exposed to the public.';
+comment on column public.sweepstakes_participants.status is 'registered = default registration; winner = drawn as a winner; disqualified = disqualified by the admin (e.g. invalid data found manually).';
+comment on column public.sweepstakes_participants.consent_at is 'Date/time the (LGPD) consent was recorded — always equal to created_at today, but kept as its own column in case the consent flow changes in the future (e.g. reconfirmation).';
 
--- Únicos por versão normalizada: "(35) 99999-8888" e "35999998888" são o
--- mesmo telefone, e não podem gerar dois cadastros.
+-- Unique by normalized version: "(35) 99999-8888" and "35999998888" are
+-- the same phone number, and can't produce two registrations.
 create unique index sweepstakes_participants_phone_normalized_key
   on public.sweepstakes_participants (phone_normalized);
 create unique index sweepstakes_participants_rg_normalized_key
@@ -49,20 +49,21 @@ create index sweepstakes_participants_created_at_idx
 create index sweepstakes_participants_status_idx
   on public.sweepstakes_participants (status);
 
--- Atualiza updated_at automaticamente (reaproveita a função já usada em
--- profiles/news/ads — ver set_updated_at() em schema.sql).
+-- Automatically updates updated_at (reuses the function already used on
+-- profiles/news/ads — see set_updated_at() in schema.sql).
 create trigger set_sweepstakes_participants_updated_at
   before update on public.sweepstakes_participants
   for each row execute function public.set_updated_at();
 
 alter table public.sweepstakes_participants enable row level security;
 
--- Só admin lê, atualiza (ex: mudar status) ou exclui. Não existe policy de
--- INSERT pública nesta tabela — o cadastro é feito só via a função
--- register_sweepstakes_participant() abaixo (SECURITY DEFINER), mesmo
--- padrão de log_analytics_event/increment_news_views: o público nunca tem
--- acesso direto de escrita na tabela, só através de uma função que controla
--- exatamente quais campos podem ser gravados e valida tudo no servidor.
+-- Only admin reads, updates (e.g. changes status) or deletes. There's no
+-- public INSERT policy on this table — registration only happens via the
+-- register_sweepstakes_participant() function below (SECURITY DEFINER),
+-- same pattern as log_analytics_event/increment_news_views: the public
+-- never has direct write access to the table, only through a function
+-- that controls exactly which fields can be written and validates
+-- everything server-side.
 create policy "sweepstakes_participants_select_admin" on public.sweepstakes_participants
   for select using (public.is_admin());
 
@@ -72,10 +73,11 @@ create policy "sweepstakes_participants_update_admin" on public.sweepstakes_part
 create policy "sweepstakes_participants_delete_admin" on public.sweepstakes_participants
   for delete using (public.is_admin());
 
--- Cadastro público. Valida tudo de novo no servidor (nunca confia só no
--- formulário do frontend), normaliza telefone/RG, e traduz a violação de
--- unicidade num erro claro em vez do texto técnico do Postgres. Retorna só
--- o id do novo cadastro — nunca os dados pessoais de volta.
+-- Public registration. Re-validates everything server-side (never trusts
+-- just the frontend form), normalizes phone/ID document, and translates
+-- the uniqueness violation into a clear error instead of Postgres's
+-- technical text. Returns only the new registration's id — never the
+-- personal data back.
 create or replace function public.register_sweepstakes_participant(
   p_full_name text,
   p_phone text,
@@ -103,8 +105,8 @@ begin
     raise exception 'É necessário aceitar os termos para participar.';
   end if;
 
-  -- Heurística simples de "nome obviamente inválido": exige nome e
-  -- sobrenome (pelo menos um espaço) e um tamanho mínimo plausível.
+  -- Simple heuristic for an "obviously invalid name": requires a first
+  -- and last name (at least one space) and a plausible minimum length.
   if p_full_name is null or length(trim(p_full_name)) < 5 or position(' ' in trim(p_full_name)) = 0 then
     raise exception 'Informe seu nome completo.';
   end if;

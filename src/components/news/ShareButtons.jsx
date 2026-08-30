@@ -2,9 +2,9 @@ import { Link as LinkIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { WhatsAppIcon, XIcon } from '../layout/footer/SocialIcons'
 
-// Ícones de marca reais (não genéricos) para cada rede: um balão de chat
-// comum pode ser confundido com "comentários" — inexistente no site — em vez
-// de sinalizar claramente WhatsApp/X, já que não há texto ao lado do ícone.
+// Real brand icons (not generic ones) for each network: a plain chat
+// bubble could be mistaken for "comments" — nonexistent on this site —
+// instead of clearly signaling WhatsApp/X, since there's no text next to the icon.
 function ShareButtons({ title, url }) {
   const shareLinks = [
     {

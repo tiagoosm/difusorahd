@@ -1,11 +1,11 @@
 -- ============================================================================
--- Migração: Módulo de Anúncios
--- Execute este arquivo no SQL Editor do Supabase.
+-- Migration: Ads Module
+-- Run this file in the Supabase SQL Editor.
 -- ============================================================================
 
 -- ----------------------------------------------------------------------------
--- ENUM de posições — fixo no código/banco, preparado para expansão futura
--- (adicionar uma posição nova = 1 linha aqui, sem precisar de tabela própria).
+-- Position ENUM — fixed in code/database, prepared for future expansion
+-- (adding a new position = 1 line here, no need for its own table).
 -- ----------------------------------------------------------------------------
 create type public.ad_position as enum (
   'TOP_HOME',
@@ -34,12 +34,12 @@ create table public.ads (
   updated_at timestamptz not null default now(),
   constraint ads_date_range_check check (end_date >= start_date)
 );
-comment on table public.ads is 'Anúncios exibidos em posições fixas do site (banners de imagem + link).';
-comment on column public.ads.position is 'Onde o anúncio aparece: TOP_HOME, HOME_MIDDLE, ARTICLE_TOP, ARTICLE_MIDDLE, ARTICLE_BOTTOM, SIDEBAR, FOOTER.';
-comment on column public.ads.priority is 'Entre vários anúncios ativos na mesma posição, o de maior prioridade é exibido.';
-comment on column public.ads.active is 'Chave geral liga/desliga, independente do período de exibição.';
+comment on table public.ads is 'Ads shown in fixed positions on the site (image banners + link).';
+comment on column public.ads.position is 'Where the ad appears: TOP_HOME, HOME_MIDDLE, ARTICLE_TOP, ARTICLE_MIDDLE, ARTICLE_BOTTOM, SIDEBAR, FOOTER.';
+comment on column public.ads.priority is 'Among several active ads in the same position, the one with the highest priority is shown.';
+comment on column public.ads.active is 'Overall on/off switch, independent of the display date range.';
 
--- Consulta mais comum: "qual anúncio ativo, dessa posição, com maior prioridade?"
+-- Most common query: "which active ad, in this position, has the highest priority?"
 create index ads_position_active_priority_idx on public.ads (position, active, priority desc);
 
 create trigger set_ads_updated_at
@@ -51,14 +51,15 @@ create trigger set_ads_updated_at
 -- ----------------------------------------------------------------------------
 alter table public.ads enable row level security;
 
--- Público só vê anúncios realmente "no ar" agora — a regra de negócio
--- (ativo + dentro do período) vive no banco, não só checada no frontend.
+-- The public only sees ads that are genuinely "live" right now — the
+-- business rule (active + within date range) lives in the database, not
+-- just checked on the frontend.
 create policy "ads_select_public_valid" on public.ads
   for select using (
     active = true and now() >= start_date and now() <= end_date
   );
 
--- Admin vê tudo (inclusive expirados/futuros/inativos), para poder gerenciar.
+-- Admin sees everything (including expired/future/inactive), to manage them.
 create policy "ads_select_admin" on public.ads
   for select using (public.is_admin());
 
@@ -72,7 +73,7 @@ create policy "ads_delete_admin" on public.ads
   for delete using (public.is_admin());
 
 -- ----------------------------------------------------------------------------
--- STORAGE: bucket para imagens dos anúncios
+-- STORAGE: bucket for ad images
 -- ----------------------------------------------------------------------------
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (

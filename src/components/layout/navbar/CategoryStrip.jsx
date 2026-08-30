@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom'
 import { ROUTES, buildPath } from '../../../routes/paths'
 
-// Faixa de navegação por categorias, sempre visível (desktop e mobile) —
-// é a "seção 2" da Navbar, abaixo do mastro (logo + busca).
+// Category navigation strip, always visible (desktop and mobile) — it's
+// the Navbar's "section 2", below the masthead (logo + search).
 function CategoryStrip({ categories, loading }) {
   return (
     <nav aria-label="Categorias" className="bg-brand-700">

@@ -8,16 +8,17 @@ import NavbarSearch from './NavbarSearch'
 import CategoryStrip from './CategoryStrip'
 import MobileMenu from './MobileMenu'
 
-// Duração da transição de entrada/saída do painel do menu mobile — precisa
-// bater com a classe `duration-[180ms]` usada em MobileMenu.jsx.
+// Duration of the mobile menu panel's enter/exit transition — needs to
+// match the `duration-[180ms]` class used in MobileMenu.jsx.
 const MOBILE_MENU_TRANSITION_MS = 180
 
 function Navbar() {
-  // "Mounted" controla se o painel existe no DOM; "open" controla a classe
-  // CSS que anima. Abrir monta e, no frame seguinte, marca como aberto (pra
-  // a transição partir de um estado inicial real). Fechar desmarca primeiro
-  // e só desmonta depois da transição — sem isso o painel só existia
-  // animado ao ABRIR, e sumia instantaneamente ao fechar.
+  // "Mounted" controls whether the panel exists in the DOM; "open"
+  // controls the CSS class that animates it. Opening mounts it and, on the
+  // next frame, marks it open (so the transition starts from a real
+  // initial state). Closing unmarks it first and only unmounts after the
+  // transition — without this the panel was only ever animated on OPEN,
+  // and vanished instantly on close.
   const [isMobileMenuMounted, setIsMobileMenuMounted] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -33,9 +34,10 @@ function Navbar() {
     setTimeout(() => setIsMobileMenuMounted(false), MOBILE_MENU_TRANSITION_MS)
   }
 
-  // Compacta sutilmente ao rolar — não muda a estrutura, só reduz a
-  // respiração vertical, então a navbar ocupa menos tela numa leitura longa
-  // sem nunca sumir (mantém a busca e as categorias sempre à mão).
+  // Subtly compacts on scroll — doesn't change the structure, just
+  // reduces vertical breathing room, so the navbar takes up less screen
+  // during a long read without ever disappearing (keeps search and
+  // categories always at hand).
   useEffect(() => {
     function handleScroll() {
       setIsScrolled(window.scrollY > 8)
@@ -51,12 +53,12 @@ function Navbar() {
         isScrolled ? 'shadow-lg shadow-black/20' : 'shadow-md shadow-black/10'
       }`}
     >
-      {/* relative z-40: sem isso, o fundo fixed do menu mobile (posicionado,
-          z-30) pinta por cima desta linha inteira mesmo com o <header> tendo
-          z-40 — z-index só compara entre elementos posicionados dentro do
-          mesmo contexto de empilhamento, e nada aqui tinha position até
-          agora. Sem essa camada, o botão de fechar (o próprio ícone que
-          abriu o menu) ficava "atrás" do fundo, inclicável. */}
+      {/* relative z-40: without this, the mobile menu's fixed backdrop
+          (positioned, z-30) paints over this entire row even with the
+          <header> at z-40 — z-index only compares between positioned
+          elements within the same stacking context, and nothing here had
+          a position until now. Without this layer, the close button (the
+          very icon that opened the menu) ended up "behind" the backdrop, unclickable. */}
       <div className="relative z-40 border-b border-white/10">
         <div
           className={`mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 transition-[padding] duration-200 ${
@@ -74,11 +76,11 @@ function Navbar() {
             />
           </Link>
 
-          {/* Busca ocupa o espaço central — elemento principal da navegação
-              no desktop. No mobile ela mora dentro do menu (ver MobileMenu),
-              não aqui — o espaçador à direita só existe pra manter a barra
-              de busca do desktop centralizada (espelha a largura da logo),
-              por isso só aparece a partir de md junto com ela. */}
+          {/* Search takes up the center space — the main navigation
+              element on desktop. On mobile it lives inside the menu (see
+              MobileMenu), not here — the spacer on the right only exists
+              to keep the desktop search bar centered (mirrors the logo's
+              width), which is why it only shows up from md up, alongside it. */}
           <div className="hidden flex-1 justify-center md:flex">
             <div className="w-full max-w-xl">
               <NavbarSearch />
@@ -87,8 +89,8 @@ function Navbar() {
 
           <div className="hidden w-11 shrink-0 md:block" aria-hidden="true" />
 
-          {/* Botão de menu: só no mobile — no desktop a navegação por
-              categoria já fica sempre visível na faixa abaixo. */}
+          {/* Menu button: mobile only — on desktop, category navigation is
+              already always visible in the strip below. */}
           <button
             type="button"
             onClick={() => (isMobileMenuMounted ? closeMobileMenu() : openMobileMenu())}
@@ -102,8 +104,8 @@ function Navbar() {
         </div>
       </div>
 
-      {/* Faixa de categorias sempre visível — só a partir de md. Abaixo
-          disso, a navegação vive no menu (botão acima). */}
+      {/* Always-visible category strip — only from md up. Below that,
+          navigation lives in the menu (button above). */}
       <div className="hidden md:block">
         <CategoryStrip categories={categories} loading={loading} />
       </div>

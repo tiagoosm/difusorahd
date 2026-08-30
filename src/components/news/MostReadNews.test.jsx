@@ -69,9 +69,9 @@ describe('MostReadNews', () => {
     expect(thumbWrapper.className).toMatch(/sm:block/)
   })
 
-  // Nova estrutura: 2 colunas de 5 no desktop (01-05 à esquerda, 06-10 à
-  // direita), 1 coluna corrida no mobile — nunca mais um ranking de 5 com
-  // cartão de preenchimento.
+  // New structure: 2 columns of 5 on desktop (01-05 on the left, 06-10 on
+  // the right), 1 continuous column on mobile — never again a ranking of 5
+  // with a filler card.
   it('lays out 10 items as 2 columns of 5 (grid-flow-col + grid-rows-5) on sm+', () => {
     const { container } = renderWithRouter(<MostReadNews items={makeItems(10)} />)
 

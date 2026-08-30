@@ -18,8 +18,8 @@ export function useSearchNews(query, page) {
     enabled: !!query,
   })
 
-  // Rastreia cada busca nova (termo + página) uma vez, quando os resultados
-  // chegam — não a cada re-render nem de novo por causa de refetch em cache.
+  // Tracks each new search (term + page) once, when the results arrive —
+  // not on every re-render, nor again because of a cached refetch.
   const trackedKeyRef = useRef(null)
   useEffect(() => {
     if (!query || !searchQuery.isSuccess) return

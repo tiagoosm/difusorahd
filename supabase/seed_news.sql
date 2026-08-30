@@ -1,7 +1,7 @@
 -- ============================================================================
--- Notícias de exemplo, só para validação visual das Etapas 8-11.
--- Pode apagar tudo mais tarde pelo painel admin, quando tiver conteúdo real.
--- Execute no SQL Editor do Supabase.
+-- Sample articles, just for visually validating Stages 8-11.
+-- Can all be deleted later through the admin panel, once there's real content.
+-- Run in the Supabase SQL Editor.
 -- ============================================================================
 
 insert into public.news

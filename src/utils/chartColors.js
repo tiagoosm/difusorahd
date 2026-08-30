@@ -1,6 +1,6 @@
-// Paleta enxuta e alinhada à identidade da marca (#961F22) — em vez de uma
-// cor por categoria/origem "arco-íris", usamos tons do vermelho da marca
-// intercalados com neutros, mantendo o dashboard sóbrio.
+// Lean palette aligned with the brand identity (#961F22) — instead of a
+// "rainbow" color per category/source, we use shades of the brand red
+// interleaved with neutrals, keeping the dashboard sober.
 export const CHART_COLORS = [
   'var(--color-brand-600)',
   'var(--color-brand-300)',

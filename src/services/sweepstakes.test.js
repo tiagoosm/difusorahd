@@ -88,8 +88,8 @@ describe('describeSweepstakesError', () => {
     )
   })
 
-  // Regressão: um erro técnico/inesperado (timeout, coluna renomeada, etc.)
-  // não pode vazar texto de banco pro usuário final.
+  // Regression: an unexpected/technical error (timeout, renamed column,
+  // etc.) must never leak database text to the end user.
   it('falls back to a generic message for unexpected/technical errors', () => {
     expect(
       describeSweepstakesError({ message: 'relation "sweepstakes_participants" does not exist' }),

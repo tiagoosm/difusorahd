@@ -4,10 +4,10 @@ import { removeFile } from '../storage'
 const AD_FIELDS =
   'id, title, image_url, link_url, position, active, start_date, end_date, priority, created_at, updated_at'
 
-// Consulta pública: todos os anúncios válidos numa posição, do maior para o
-// menor prioridade (RLS já garante que só anúncios ativos e dentro do
-// período chegam até aqui). Um limite alto evita um carrossel absurdo caso
-// alguém cadastre dezenas de anúncios na mesma posição.
+// Public query: every valid ad in a position, highest to lowest priority
+// (RLS already ensures only active ads within their date range reach this
+// point). A high limit avoids an absurd carousel in case someone registers
+// dozens of ads in the same position.
 export function fetchAdsForPosition(position, limit = 10) {
   return supabase
     .from('ads')
@@ -71,15 +71,15 @@ export function updateAd(id, payload) {
   return supabase.from('ads').update(payload).eq('id', id).select().single()
 }
 
-// Recebe o anúncio inteiro (não só o id) porque precisa da image_url para
-// também limpar o arquivo no Storage.
+// Takes the whole ad (not just the id) because it needs image_url to also
+// clean up the file in Storage.
 //
-// IMPORTANTE: o Supabase/PostgREST retorna sucesso (204, sem "error") mesmo
-// quando um DELETE não afeta nenhuma linha — seja porque o id não existe,
-// seja porque a política de RLS excluiu silenciosamente a linha do escopo do
-// comando. Por isso pedimos a linha de volta (.select()) e conferimos se ela
-// realmente veio: é a única forma de diferenciar "excluiu" de "não achou
-// nada para excluir".
+// IMPORTANT: Supabase/PostgREST returns success (204, no "error") even when
+// a DELETE affects no rows — either because the id doesn't exist, or
+// because the RLS policy silently excluded the row from the command's
+// scope. That's why we ask for the row back (.select()) and check whether
+// it actually came back: it's the only way to tell "deleted" apart from
+// "found nothing to delete".
 export async function deleteAd(ad) {
   const { data, error } = await supabase.from('ads').delete().eq('id', ad.id).select()
 
@@ -94,8 +94,8 @@ export async function deleteAd(ad) {
     }
   }
 
-  // Não falha a operação inteira por isso: o registro já foi excluído com
-  // sucesso, só a limpeza do arquivo não pôde ser confirmada.
+  // Doesn't fail the whole operation over this: the record was already
+  // deleted successfully, only the file cleanup couldn't be confirmed.
   await removeFile('ads-images', ad.image_url)
 
   return { deleted: true, error: null }

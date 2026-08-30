@@ -1,6 +1,6 @@
 -- ============================================================================
--- Difusora HD — Schema inicial
--- Execute este arquivo inteiro no SQL Editor do Supabase (Dashboard > SQL Editor).
+-- Difusora HD — Initial schema
+-- Run this entire file in the Supabase SQL Editor (Dashboard > SQL Editor).
 -- ============================================================================
 
 create extension if not exists pgcrypto;
@@ -22,7 +22,7 @@ create type public.ad_position as enum (
 -- TABLES
 -- ----------------------------------------------------------------------------
 
--- profiles: extensão de auth.users (1:1). Guarda dados públicos + role.
+-- profiles: extension of auth.users (1:1). Holds public data + role.
 create table public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   full_name text,
@@ -31,9 +31,9 @@ create table public.profiles (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-comment on table public.profiles is 'Dados públicos de cada usuário autenticado, incluindo o nível de acesso (role).';
+comment on table public.profiles is 'Public data for each authenticated user, including the access level (role).';
 
--- categories: taxonomia principal das notícias (1 notícia -> 1 categoria).
+-- categories: main taxonomy for articles (1 article -> 1 category).
 create table public.categories (
   id uuid primary key default gen_random_uuid(),
   name text not null unique,
@@ -41,18 +41,18 @@ create table public.categories (
   description text,
   created_at timestamptz not null default now()
 );
-comment on table public.categories is 'Categorias de notícias (Política, Economia, Esportes, etc).';
+comment on table public.categories is 'Article categories (Politics, Economy, Sports, etc).';
 
--- tags: rótulos livres, N:N com notícias via news_tags.
+-- tags: free-form labels, N:N with articles via news_tags.
 create table public.tags (
   id uuid primary key default gen_random_uuid(),
   name text not null unique,
   slug text not null unique,
   created_at timestamptz not null default now()
 );
-comment on table public.tags is 'Rótulos livres para notícias, relação N:N via news_tags.';
+comment on table public.tags is 'Free-form labels for articles, N:N relationship via news_tags.';
 
--- news: entidade central do portal.
+-- news: the portal's central entity.
 create table public.news (
   id uuid primary key default gen_random_uuid(),
   title text not null,
@@ -72,25 +72,25 @@ create table public.news (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-comment on table public.news is 'Notícias do portal. status=draft não é visível publicamente.';
+comment on table public.news is 'Portal articles. status=draft is not publicly visible.';
 
 create index news_category_id_idx on public.news (category_id);
 create index news_author_id_idx on public.news (author_id);
 create index news_status_published_at_idx on public.news (status, published_at desc);
 create index news_is_featured_idx on public.news (is_featured) where is_featured = true;
 create index news_featured_position_idx on public.news (featured_position) where featured_position is not null;
--- (não há mais índice em views_count: "Mais Lidas" ordena por analytics_events,
--- não pelo contador acumulado — ver public_weekly_top_news)
+-- (no more index on views_count: "Most Read" orders by analytics_events,
+-- not by the accumulated counter — see public_weekly_top_news)
 
--- news_tags: tabela de junção N:N entre news e tags.
+-- news_tags: N:N junction table between news and tags.
 create table public.news_tags (
   news_id uuid not null references public.news (id) on delete cascade,
   tag_id uuid not null references public.tags (id) on delete cascade,
   primary key (news_id, tag_id)
 );
-comment on table public.news_tags is 'Junção N:N entre news e tags.';
+comment on table public.news_tags is 'N:N junction between news and tags.';
 
--- ads: banners de imagem + link exibidos em posições fixas do site.
+-- ads: image + link banners shown in fixed positions on the site.
 create table public.ads (
   id uuid primary key default gen_random_uuid(),
   title text not null,
@@ -105,15 +105,15 @@ create table public.ads (
   updated_at timestamptz not null default now(),
   constraint ads_date_range_check check (end_date >= start_date)
 );
-comment on table public.ads is 'Anúncios exibidos em posições fixas do site (banners de imagem + link).';
-comment on column public.ads.position is 'Onde o anúncio aparece: TOP_HOME, HOME_MIDDLE, ARTICLE_TOP, ARTICLE_BOTTOM, FOOTER.';
-comment on column public.ads.priority is 'Entre vários anúncios ativos na mesma posição, o de maior prioridade é exibido.';
-comment on column public.ads.active is 'Chave geral liga/desliga, independente do período de exibição.';
+comment on table public.ads is 'Ads shown in fixed positions on the site (image banners + link).';
+comment on column public.ads.position is 'Where the ad appears: TOP_HOME, HOME_MIDDLE, ARTICLE_TOP, ARTICLE_BOTTOM, FOOTER.';
+comment on column public.ads.priority is 'Among several active ads in the same position, the one with the highest priority is shown.';
+comment on column public.ads.active is 'Overall on/off switch, independent of the display date range.';
 
 create index ads_position_active_priority_idx on public.ads (position, active, priority desc);
 
--- analytics_events: um registro por page view, para o dashboard de analytics
--- do admin. Não deriva de `news` nem mexe em views_count — é aditivo.
+-- analytics_events: one record per page view, for the admin's analytics
+-- dashboard. Doesn't derive from `news` nor touch views_count — it's additive.
 create table public.analytics_events (
   id bigint generated always as identity primary key,
   event_type text not null default 'page_view',
@@ -135,11 +135,11 @@ create table public.analytics_events (
   visitor_hash text,
   created_at timestamptz not null default now()
 );
-comment on table public.analytics_events is 'Eventos de acesso ao portal (page views) para o dashboard de analytics do admin. Escrita apenas via log_analytics_event() (SECURITY DEFINER). Sem dados pessoais: visitor_hash é um hash diário não reversível calculado no servidor — o IP nunca é armazenado, e não há cookies nem armazenamento no navegador.';
-comment on column public.analytics_events.page_type is 'home | news | category | search | other — classificado na coleta, evita parsear `page` nas queries do dashboard.';
-comment on column public.analytics_events.category_id is 'Desnormalizado mesmo em page_type=news (copiado da notícia), para agregar "desempenho por categoria" sem join.';
-comment on column public.analytics_events.source is 'Origem já classificada na coleta: Google, Facebook, Instagram, X, YouTube, WhatsApp, Direto, Referral ou Outros.';
-comment on column public.analytics_events.visitor_hash is 'sha256(ip + user-agent + sal + data), calculado na função serverless. Rotaciona diariamente. Usado só para aproximar "visitantes únicos"; não permite recuperar o IP original.';
+comment on table public.analytics_events is 'Portal access events (page views) for the admin analytics dashboard. Written only via log_analytics_event() (SECURITY DEFINER). No personal data: visitor_hash is a non-reversible daily hash computed server-side — the IP is never stored, and there are no cookies or browser storage involved.';
+comment on column public.analytics_events.page_type is 'home | news | category | search | other — classified at collection time, avoids parsing `page` in the dashboard queries.';
+comment on column public.analytics_events.category_id is 'Denormalized even for page_type=news (copied from the article), to aggregate "performance by category" without a join.';
+comment on column public.analytics_events.source is 'Source already classified at collection time: Google, Facebook, Instagram, X, YouTube, WhatsApp, Direto, Referral or Outros.';
+comment on column public.analytics_events.visitor_hash is 'sha256(ip + user-agent + salt + date), computed in the serverless function. Rotates daily. Used only to approximate "unique visitors"; the original IP cannot be recovered from it.';
 
 create index analytics_events_created_at_idx on public.analytics_events (created_at desc);
 create index analytics_events_page_type_created_at_idx on public.analytics_events (page_type, created_at desc);
@@ -152,7 +152,7 @@ create index analytics_events_visitor_hash_created_at_idx on public.analytics_ev
 -- FUNCTIONS & TRIGGERS
 -- ----------------------------------------------------------------------------
 
--- Mantém updated_at sempre atualizado.
+-- Keeps updated_at always current.
 create or replace function public.set_updated_at()
 returns trigger as $$
 begin
@@ -173,7 +173,7 @@ create trigger set_ads_updated_at
   before update on public.ads
   for each row execute function public.set_updated_at();
 
--- Cria automaticamente um profile (role='reader') quando um usuário se cadastra no Supabase Auth.
+-- Automatically creates a profile (role='reader') when a user signs up via Supabase Auth.
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
@@ -187,7 +187,7 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
--- Helper usado nas policies de RLS: o usuário logado é admin?
+-- Helper used in RLS policies: is the logged-in user an admin?
 create or replace function public.is_admin()
 returns boolean as $$
   select exists (
@@ -196,9 +196,9 @@ returns boolean as $$
   );
 $$ language sql security definer stable set search_path = public;
 
--- Impede que o próprio usuário se promova a admin via update no profile.
--- auth.uid() is null quando o comando roda fora do PostgREST (ex: SQL Editor do
--- Supabase) — nesse caso confiamos no acesso direto ao banco e permitimos a troca.
+-- Prevents a user from promoting themselves to admin via a profile update.
+-- auth.uid() is null when the command runs outside PostgREST (e.g. the
+-- Supabase SQL Editor) — in that case we trust direct database access and allow the change.
 create or replace function public.prevent_role_escalation()
 returns trigger as $$
 begin
@@ -213,7 +213,7 @@ create trigger enforce_role_escalation
   before update on public.profiles
   for each row execute function public.prevent_role_escalation();
 
--- Incrementa o contador de visualizações de forma segura (sem dar UPDATE público na tabela news).
+-- Safely increments the view counter (without giving public UPDATE access to the news table).
 create or replace function public.increment_news_views(news_slug text)
 returns void as $$
 begin
@@ -225,10 +225,10 @@ $$ language plpgsql security definer set search_path = public;
 
 grant execute on function public.increment_news_views(text) to anon, authenticated;
 
--- Escrita de eventos de analytics, seguindo o mesmo padrão de
--- increment_news_views: função SECURITY DEFINER, sem policy pública de
--- INSERT na tabela. Payload em jsonb porque o evento tem muitos campos
--- opcionais e a estrutura deve crescer com o tempo.
+-- Writes analytics events, following the same pattern as
+-- increment_news_views: a SECURITY DEFINER function, no public INSERT
+-- policy on the table. Payload as jsonb because the event has many
+-- optional fields and the structure is expected to grow over time.
 create or replace function public.log_analytics_event(payload jsonb)
 returns void as $$
 begin
@@ -260,10 +260,9 @@ $$ language plpgsql security definer set search_path = public;
 
 grant execute on function public.log_analytics_event(jsonb) to anon, authenticated;
 
--- Views + visitantes únicos (count distinct) num intervalo, para os cards do
--- dashboard de analytics. SECURITY INVOKER (padrão): roda com o RLS de quem
--- chama, então só admin (via policy analytics_events_select_admin) recebe
--- dados reais.
+-- Views + unique visitors (count distinct) in a range, for the analytics
+-- dashboard's cards. SECURITY INVOKER (default): runs with the caller's
+-- RLS, so only admin (via the analytics_events_select_admin policy) gets real data.
 create or replace function public.analytics_summary(p_start timestamptz, p_end timestamptz)
 returns table (views bigint, visitors bigint)
 language sql
@@ -277,7 +276,7 @@ $$;
 
 grant execute on function public.analytics_summary(timestamptz, timestamptz) to authenticated;
 
--- Visitantes únicos nos últimos 5 minutos, para o indicador "tempo real".
+-- Unique visitors in the last 5 minutes, for the "real-time" indicator.
 create or replace function public.analytics_realtime_visitors()
 returns bigint
 language sql
@@ -291,8 +290,8 @@ $$;
 
 grant execute on function public.analytics_realtime_visitors() to authenticated;
 
--- Série temporal de views/visitantes, agrupada por hora ou por dia, para o
--- gráfico de evolução dos acessos.
+-- Time series of views/visitors, grouped by hour or by day, for the
+-- traffic evolution chart.
 create or replace function public.analytics_timeseries(p_start timestamptz, p_end timestamptz, p_bucket text default 'day')
 returns table (bucket timestamptz, views bigint, visitors bigint)
 language sql
@@ -311,7 +310,7 @@ $$;
 
 grant execute on function public.analytics_timeseries(timestamptz, timestamptz, text) to authenticated;
 
--- Origem do tráfego (já classificada na coleta), ordenada por volume.
+-- Traffic source (already classified at collection time), ordered by volume.
 create or replace function public.analytics_by_source(p_start timestamptz, p_end timestamptz)
 returns table (source text, views bigint)
 language sql
@@ -327,7 +326,7 @@ $$;
 
 grant execute on function public.analytics_by_source(timestamptz, timestamptz) to authenticated;
 
--- Desempenho por categoria (nome já resolvido, evita join no cliente).
+-- Performance by category (name already resolved, avoids a join on the client).
 create or replace function public.analytics_by_category(p_start timestamptz, p_end timestamptz)
 returns table (category_id uuid, category_name text, views bigint)
 language sql
@@ -344,8 +343,8 @@ $$;
 
 grant execute on function public.analytics_by_category(timestamptz, timestamptz) to authenticated;
 
--- Ranking de notícias mais lidas no período, com os dados já resolvidos
--- (título, capa, categoria, publicação) para não precisar de join no cliente.
+-- Ranking of the most-read articles in the period, with the data already
+-- resolved (title, cover, category, publication) so no join is needed on the client.
 create or replace function public.analytics_top_news(p_start timestamptz, p_end timestamptz, p_limit int default 10)
 returns table (
   news_id uuid,
@@ -372,7 +371,7 @@ $$;
 
 grant execute on function public.analytics_top_news(timestamptz, timestamptz, int) to authenticated;
 
--- Páginas mais acessadas (qualquer page_type, não só notícias).
+-- Most visited pages (any page_type, not just articles).
 create or replace function public.analytics_top_pages(p_start timestamptz, p_end timestamptz, p_limit int default 10)
 returns table (page text, views bigint, visitors bigint)
 language sql
@@ -434,8 +433,8 @@ $$;
 
 grant execute on function public.analytics_by_browser(timestamptz, timestamptz) to authenticated;
 
--- Cidade é o nível principal pedido (portal de foco regional); estado/país
--- ficam disponíveis para quem quiser agregar diferente no futuro.
+-- City is the main level requested (regionally-focused portal); state/country
+-- stay available for anyone who wants to aggregate differently in the future.
 create or replace function public.analytics_by_location(p_start timestamptz, p_end timestamptz)
 returns table (city text, region text, country text, views bigint)
 language sql
@@ -451,9 +450,9 @@ $$;
 
 grant execute on function public.analytics_by_location(timestamptz, timestamptz) to authenticated;
 
--- Hora do dia (0-23) no fuso de Brasília — created_at é UTC, e agrupar sem
--- converter deslocaria o gráfico em 3h, mostrando o pico de audiência na
--- hora errada para um portal regional brasileiro.
+-- Hour of day (0-23) in the Brasília timezone — created_at is UTC, and
+-- grouping without converting would shift the chart by 3h, showing the
+-- audience peak at the wrong hour for a Brazilian regional portal.
 create or replace function public.analytics_by_hour(p_start timestamptz, p_end timestamptz)
 returns table (hour int, views bigint)
 language sql
@@ -469,18 +468,18 @@ $$;
 
 grant execute on function public.analytics_by_hour(timestamptz, timestamptz) to authenticated;
 
--- Ranking semanal de "Mais Lidas" para a Home — público (anon), diferente das
--- funções analytics_* acima (admin-only). analytics_events tem RLS restrita a
--- admin, então esta função precisa ser SECURITY DEFINER (mesmo padrão de
--- increment_news_views/log_analytics_event) para poder ler os eventos da
--- semana e devolver só o ranking agregado — sem contagem de views, sem
--- nenhum dado bruto de analytics.
+-- Weekly "Most Read" ranking for the Home page — public (anon), unlike the
+-- analytics_* functions above (admin-only). analytics_events has RLS
+-- restricted to admin, so this function needs to be SECURITY DEFINER
+-- (same pattern as increment_news_views/log_analytics_event) to be able
+-- to read the week's events and return only the aggregated ranking — no
+-- view counts, no raw analytics data.
 --
--- Fallback em cascata pra nunca devolver menos que p_limit (enquanto houver
--- notícia publicada suficiente): semana atual -> semana a semana pra trás
--- (até 12 semanas) -> ranking geral de analytics_events (todo o histórico)
--- -> views_count acumulado. Sempre prioriza o período mais recente e nunca
--- repete uma notícia já escolhida num estágio anterior.
+-- Cascading fallback so it never returns less than p_limit (as long as
+-- there are enough published articles): current week -> week by week
+-- going back (up to 12 weeks) -> general analytics_events ranking (the
+-- whole history) -> accumulated views_count. Always prioritizes the most
+-- recent period and never repeats an article already chosen in an earlier stage.
 create or replace function public.public_weekly_top_news(p_limit int default 5)
 returns table (
   news_id uuid,
@@ -504,8 +503,8 @@ declare
   weeks_checked int := 0;
   max_weeks_back constant int := 12;
 begin
-  -- Início da semana atual (segunda-feira 00:00, fuso de Brasília) — mesmo
-  -- cálculo de antes, só que agora repetido semana a semana pra trás.
+  -- Start of the current week (Monday 00:00, Brasília timezone) — same
+  -- calculation as before, just now repeated week by week going back.
   week_start := (date_trunc('week', now() at time zone 'America/Sao_Paulo')) at time zone 'America/Sao_Paulo';
   week_end := now();
 
@@ -533,8 +532,8 @@ begin
     weeks_checked := weeks_checked + 1;
   end loop;
 
-  -- Ranking geral de analytics_events (sem filtro de semana), pra quem
-  -- ainda não foi escolhido.
+  -- General analytics_events ranking (no week filter), for whoever
+  -- hasn't been chosen yet.
   if coalesce(array_length(chosen_ids, 1), 0) < p_limit then
     select coalesce(array_agg(x.id order by x.views desc), '{}')
     into new_ids
@@ -553,8 +552,8 @@ begin
     chosen_ids := chosen_ids || new_ids;
   end if;
 
-  -- Último fallback: views_count acumulado da notícia (cobre notícias sem
-  -- nenhum evento em analytics_events ainda, ou um site muito novo).
+  -- Last fallback: the article's accumulated views_count (covers articles
+  -- with no analytics_events yet, or a very new site).
   if coalesce(array_length(chosen_ids, 1), 0) < p_limit then
     select coalesce(array_agg(x.id order by x.views_count desc, x.published_at desc), '{}')
     into new_ids
@@ -581,9 +580,9 @@ $$;
 
 grant execute on function public.public_weekly_top_news(int) to anon, authenticated;
 
--- Retenção de analytics_events: 26 meses cobre a comparação "Este ano vs.
--- ano anterior" em qualquer mês do ano, sem reter eventos indefinidamente
--- (minimização de dados / LGPD) nem deixar a tabela crescer sem limite.
+-- analytics_events retention: 26 months covers the "This year vs. last
+-- year" comparison in any month of the year, without retaining events
+-- indefinitely (data minimization / LGPD) or letting the table grow without limit.
 create extension if not exists pg_cron;
 
 create or replace function public.purge_old_analytics_events()
@@ -596,7 +595,7 @@ $$;
 
 select cron.schedule(
   'purge-old-analytics-events',
-  '0 4 1 * *', -- dia 1 de cada mês, 04:00 UTC
+  '0 4 1 * *', -- 1st of every month, 04:00 UTC
   $$select public.purge_old_analytics_events();$$
 );
 
@@ -611,20 +610,20 @@ alter table public.news enable row level security;
 alter table public.news_tags enable row level security;
 alter table public.analytics_events enable row level security;
 
--- profiles: leitura pública (nome/avatar aparecem como autor nas notícias);
--- e-mail e senha nunca são expostos aqui, continuam só em auth.users.
+-- profiles: public read (name/avatar show up as the author on articles);
+-- email and password are never exposed here, they stay only in auth.users.
 create policy "profiles_select_all" on public.profiles
   for select using (true);
 
--- (select auth.uid()) em vez de auth.uid() direto: avaliado uma vez por
--- query, não uma vez por linha (mesmo resultado, mais barato em escala).
+-- (select auth.uid()) instead of auth.uid() directly: evaluated once per
+-- query, not once per row (same result, cheaper at scale).
 create policy "profiles_update_own" on public.profiles
   for update using ((select auth.uid()) = id) with check ((select auth.uid()) = id);
 
 create policy "profiles_update_admin" on public.profiles
   for update using (public.is_admin()) with check (public.is_admin());
 
--- categories: leitura pública, escrita só admin
+-- categories: public read, admin-only write
 create policy "categories_select_all" on public.categories
   for select using (true);
 
@@ -637,7 +636,7 @@ create policy "categories_update_admin" on public.categories
 create policy "categories_delete_admin" on public.categories
   for delete using (public.is_admin());
 
--- tags: leitura pública, escrita só admin
+-- tags: public read, admin-only write
 create policy "tags_select_all" on public.tags
   for select using (true);
 
@@ -650,7 +649,7 @@ create policy "tags_update_admin" on public.tags
 create policy "tags_delete_admin" on public.tags
   for delete using (public.is_admin());
 
--- news: público só vê publicadas; admin vê e gerencia tudo
+-- news: the public only sees published ones; admin sees and manages everything
 create policy "news_select_published" on public.news
   for select using (status = 'published');
 
@@ -666,7 +665,7 @@ create policy "news_update_admin" on public.news
 create policy "news_delete_admin" on public.news
   for delete using (public.is_admin());
 
--- news_tags: segue a visibilidade da notícia relacionada; escrita só admin
+-- news_tags: follows the related article's visibility; admin-only write
 create policy "news_tags_select" on public.news_tags
   for select using (
     exists (
@@ -681,8 +680,8 @@ create policy "news_tags_insert_admin" on public.news_tags
 create policy "news_tags_delete_admin" on public.news_tags
   for delete using (public.is_admin());
 
--- ads: público só vê os "no ar" agora (regra de ativo + período aplicada no banco);
--- admin vê e gerencia tudo.
+-- ads: the public only sees ones "live" right now (active + date-range
+-- rule enforced in the database); admin sees and manages everything.
 alter table public.ads enable row level security;
 
 create policy "ads_select_public_valid" on public.ads
@@ -702,28 +701,28 @@ create policy "ads_update_admin" on public.ads
 create policy "ads_delete_admin" on public.ads
   for delete using (public.is_admin());
 
--- analytics_events: só admin lê (nem "authenticated" comum); leitores nunca
--- veem eventos crus. Sem policy de INSERT — a única porta de entrada é a
--- função log_analytics_event().
+-- analytics_events: only admin reads (not even regular "authenticated");
+-- readers never see raw events. No INSERT policy — the only way in is the
+-- log_analytics_event() function.
 create policy "analytics_events_select_admin" on public.analytics_events
   for select using (public.is_admin());
 
 -- ----------------------------------------------------------------------------
--- SWEEPSTAKES: cadastro de participantes do sorteio ("Sorteio")
+-- SWEEPSTAKES: participant registration ("Sorteio")
 -- ----------------------------------------------------------------------------
 create type public.sweepstakes_participant_status as enum ('registered', 'winner', 'disqualified');
 
--- Dados pessoais de quem se cadastrou pra concorrer. Minimização (LGPD): só
--- os campos necessários pra identificar o participante e entregar o prêmio.
+-- Personal data of whoever registered to enter. Minimization (LGPD): only
+-- the fields needed to identify the participant and deliver the prize.
 create table public.sweepstakes_participants (
   id uuid primary key default gen_random_uuid(),
   full_name text not null,
   phone text not null,
-  -- Só dígitos (ex: "35999998888") — usado pra checar duplicidade e buscar
-  -- sem depender de como o telefone foi digitado/formatado.
+  -- Digits only (e.g. "35999998888") — used to check for duplicates and
+  -- search without depending on how the phone was typed/formatted.
   phone_normalized text not null,
   rg text not null,
-  -- Só alfanumérico maiúsculo — mesmo motivo do phone_normalized.
+  -- Uppercase alphanumeric only — same reason as phone_normalized.
   rg_normalized text not null,
   address_street text not null,
   address_number text not null,
@@ -737,16 +736,16 @@ create table public.sweepstakes_participants (
   consent_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  -- Trava em nível de banco: nenhuma linha existe sem consentimento, mesmo
-  -- que algum caminho novo no código esqueça de checar isso no frontend.
+  -- Database-level lock: no row exists without consent, even if some new
+  -- code path forgets to check this on the frontend.
   constraint sweepstakes_participants_consent_check check (consent_accepted = true)
 );
-comment on table public.sweepstakes_participants is 'Cadastros de participantes do sorteio promovido pela Difusora HD. Dados pessoais sensíveis (RG, telefone, endereço) — acesso restrito a administradores via RLS, nunca exposto ao público.';
-comment on column public.sweepstakes_participants.status is 'registered = cadastro padrão; winner = sorteado; disqualified = desclassificado pelo admin (ex: dado inválido encontrado manualmente).';
-comment on column public.sweepstakes_participants.consent_at is 'Data/hora em que o consentimento (LGPD) foi registrado.';
+comment on table public.sweepstakes_participants is 'Registrations for the sweepstakes promoted by Difusora HD. Sensitive personal data (ID document, phone, address) — access restricted to admins via RLS, never exposed to the public.';
+comment on column public.sweepstakes_participants.status is 'registered = default registration; winner = drawn as a winner; disqualified = disqualified by the admin (e.g. invalid data found manually).';
+comment on column public.sweepstakes_participants.consent_at is 'Date/time the (LGPD) consent was recorded.';
 
--- Únicos por versão normalizada: "(35) 99999-8888" e "35999998888" são o
--- mesmo telefone, e não podem gerar dois cadastros.
+-- Unique by normalized version: "(35) 99999-8888" and "35999998888" are
+-- the same phone number, and can't produce two registrations.
 create unique index sweepstakes_participants_phone_normalized_key
   on public.sweepstakes_participants (phone_normalized);
 create unique index sweepstakes_participants_rg_normalized_key
@@ -762,12 +761,12 @@ create trigger set_sweepstakes_participants_updated_at
 
 alter table public.sweepstakes_participants enable row level security;
 
--- Só admin lê, atualiza (ex: mudar status) ou exclui. Sem policy de INSERT
--- pública — o cadastro é feito só via register_sweepstakes_participant()
--- (SECURITY DEFINER), mesmo padrão de log_analytics_event/
--- increment_news_views: o público nunca tem acesso direto de escrita na
--- tabela, só através de uma função que controla exatamente quais campos
--- podem ser gravados e valida tudo no servidor.
+-- Only admin reads, updates (e.g. changes status) or deletes. No public
+-- INSERT policy — registration only happens via
+-- register_sweepstakes_participant() (SECURITY DEFINER), same pattern as
+-- log_analytics_event/increment_news_views: the public never has direct
+-- write access to the table, only through a function that controls
+-- exactly which fields can be written and validates everything server-side.
 create policy "sweepstakes_participants_select_admin" on public.sweepstakes_participants
   for select using (public.is_admin());
 
@@ -777,10 +776,11 @@ create policy "sweepstakes_participants_update_admin" on public.sweepstakes_part
 create policy "sweepstakes_participants_delete_admin" on public.sweepstakes_participants
   for delete using (public.is_admin());
 
--- Cadastro público. Valida tudo de novo no servidor (nunca confia só no
--- formulário do frontend), normaliza telefone/RG, e traduz a violação de
--- unicidade num erro claro em vez do texto técnico do Postgres. Retorna só
--- o id do novo cadastro — nunca os dados pessoais de volta.
+-- Public registration. Re-validates everything server-side (never trusts
+-- just the frontend form), normalizes phone/ID document, and translates
+-- the uniqueness violation into a clear error instead of Postgres's
+-- technical text. Returns only the new registration's id — never the
+-- personal data back.
 create or replace function public.register_sweepstakes_participant(
   p_full_name text,
   p_phone text,
@@ -808,8 +808,8 @@ begin
     raise exception 'É necessário aceitar os termos para participar.';
   end if;
 
-  -- Heurística simples de "nome obviamente inválido": exige nome e
-  -- sobrenome (pelo menos um espaço) e um tamanho mínimo plausível.
+  -- Simple heuristic for an "obviously invalid name": requires a first
+  -- and last name (at least one space) and a plausible minimum length.
   if p_full_name is null or length(trim(p_full_name)) < 5 or position(' ' in trim(p_full_name)) = 0 then
     raise exception 'Informe seu nome completo.';
   end if;
@@ -858,18 +858,18 @@ grant execute on function public.register_sweepstakes_participant(
 ) to anon, authenticated;
 
 -- ----------------------------------------------------------------------------
--- STORAGE: bucket único para imagem de capa e áudio das notícias
+-- STORAGE: single bucket for article cover images and audio
 -- ----------------------------------------------------------------------------
--- Lista de MIME types de áudio cobre as variações que navegadores/SO
--- diferentes reportam para o mesmo formato (ex: M4A como audio/mp4,
--- audio/x-m4a ou audio/m4a; WAV como audio/wav, audio/x-wav ou audio/wave) —
--- o Storage rejeita silenciosamente qualquer variação fora da lista.
+-- The audio MIME type list covers the variations different browsers/OSes
+-- report for the same format (e.g. M4A as audio/mp4, audio/x-m4a or
+-- audio/m4a; WAV as audio/wav, audio/x-wav or audio/wave) — Storage
+-- silently rejects any variation outside the list.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
   'news-media',
   'news-media',
   true,
-  52428800, -- 50 MB (áudio de narração sem compressão/WAV passa fácil dos 20 MB antigos)
+  52428800, -- 50 MB (uncompressed/WAV narration audio easily passes the old 20 MB)
   array[
     'image/jpeg', 'image/png', 'image/webp', 'image/gif',
     'audio/mpeg', 'audio/mp3',
@@ -898,7 +898,7 @@ create policy "news_media_delete_admin" on storage.objects
   for delete using (bucket_id = 'news-media' and public.is_admin());
 
 -- ----------------------------------------------------------------------------
--- STORAGE: bucket para imagens dos anúncios
+-- STORAGE: bucket for ad images
 -- ----------------------------------------------------------------------------
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
@@ -925,7 +925,7 @@ create policy "ads_images_delete_admin" on storage.objects
   for delete using (bucket_id = 'ads-images' and public.is_admin());
 
 -- ----------------------------------------------------------------------------
--- SEED: categorias iniciais (opcional, ajuda a testar as próximas etapas)
+-- SEED: initial categories (optional, helps test the next stages)
 -- ----------------------------------------------------------------------------
 insert into public.categories (name, slug, description) values
   ('Política', 'politica', 'Notícias sobre política nacional e internacional'),

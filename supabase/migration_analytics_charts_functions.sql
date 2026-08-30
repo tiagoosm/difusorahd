@@ -1,10 +1,10 @@
 -- ============================================================================
--- Etapa 5 do dashboard de Analytics: funções de agregação para os gráficos.
--- Todas SECURITY INVOKER (padrão) — respeitam a RLS de quem chama, só admin
--- recebe dados reais. Execute no SQL Editor do Supabase.
+-- Stage 5 of the Analytics dashboard: aggregation functions for the charts.
+-- All SECURITY INVOKER (default) — respect the caller's RLS, only admin
+-- gets real data. Run in the Supabase SQL Editor.
 -- ============================================================================
 
--- Série temporal de views/visitantes, agrupada por hora ou por dia.
+-- Time series of views/visitors, grouped by hour or by day.
 create or replace function public.analytics_timeseries(p_start timestamptz, p_end timestamptz, p_bucket text default 'day')
 returns table (bucket timestamptz, views bigint, visitors bigint)
 language sql
@@ -23,7 +23,7 @@ $$;
 
 grant execute on function public.analytics_timeseries(timestamptz, timestamptz, text) to authenticated;
 
--- Origem do tráfego (já classificada na coleta), ordenada por volume.
+-- Traffic source (already classified at collection time), ordered by volume.
 create or replace function public.analytics_by_source(p_start timestamptz, p_end timestamptz)
 returns table (source text, views bigint)
 language sql
@@ -39,7 +39,7 @@ $$;
 
 grant execute on function public.analytics_by_source(timestamptz, timestamptz) to authenticated;
 
--- Desempenho por categoria (nome já resolvido, evita join no cliente).
+-- Performance by category (name already resolved, avoids a join on the client).
 create or replace function public.analytics_by_category(p_start timestamptz, p_end timestamptz)
 returns table (category_id uuid, category_name text, views bigint)
 language sql
@@ -56,8 +56,8 @@ $$;
 
 grant execute on function public.analytics_by_category(timestamptz, timestamptz) to authenticated;
 
--- Ranking de notícias mais lidas no período, com os dados já resolvidos
--- (título, capa, categoria, publicação) para não precisar de join no cliente.
+-- Ranking of the most-read articles in the period, with the data already
+-- resolved (title, cover, category, publication) so no join is needed on the client.
 create or replace function public.analytics_top_news(p_start timestamptz, p_end timestamptz, p_limit int default 10)
 returns table (
   news_id uuid,
@@ -84,7 +84,7 @@ $$;
 
 grant execute on function public.analytics_top_news(timestamptz, timestamptz, int) to authenticated;
 
--- Páginas mais acessadas (qualquer page_type, não só notícias).
+-- Most visited pages (any page_type, not just articles).
 create or replace function public.analytics_top_pages(p_start timestamptz, p_end timestamptz, p_limit int default 10)
 returns table (page text, views bigint, visitors bigint)
 language sql

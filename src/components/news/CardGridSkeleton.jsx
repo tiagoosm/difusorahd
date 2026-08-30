@@ -1,7 +1,7 @@
-// Esqueleto com a silhueta do NewsCard, para as grades de Categoria e Busca.
-// Abaixo de sm reproduz a linha compacta (miniatura + texto); em sm+, o card
-// vertical — mesma dualidade responsiva do NewsCard real, pra não "saltar"
-// de formato quando os dados chegam.
+// Skeleton with NewsCard's silhouette, for the Category and Search grids.
+// Below sm it reproduces the compact row (thumbnail + text); at sm+, the
+// vertical card — same responsive duality as the real NewsCard, so it
+// doesn't "jump" shape when the data arrives.
 function CardGridSkeleton({ count = 9, withHeader = false }) {
   return (
     <div className="flex flex-col gap-8" aria-hidden="true">

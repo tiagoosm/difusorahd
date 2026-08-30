@@ -9,7 +9,7 @@ const PAGE_SIZE = 9
 async function fetchCategoryData(slug) {
   const { data, error } = await fetchCategoryBySlug(slug)
   if (error) throw error
-  return data // null = categoria inexistente (não é erro de request)
+  return data // null = category doesn't exist (not a request error)
 }
 
 async function fetchCategoryNewsData(categoryId, page) {
@@ -26,8 +26,8 @@ export function useCategoryNews(slug, page) {
   })
 
   const category = categoryQuery.data ?? null
-  // isSuccess (não só "!loading") garante que só declaramos notFound depois
-  // de uma resposta real da API — nunca durante o estado inicial/pending.
+  // isSuccess (not just "!loading") guarantees we only declare notFound
+  // after a real API response — never during the initial/pending state.
   const notFound = categoryQuery.isSuccess && !category
 
   const newsQuery = useQuery({

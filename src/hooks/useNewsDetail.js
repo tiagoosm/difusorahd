@@ -6,7 +6,7 @@ import { trackPageView } from '../services/analytics'
 async function fetchNewsData(slug) {
   const { data, error } = await fetchNewsBySlug(slug)
   if (error) throw error
-  return data // null = notícia inexistente (não é erro de request)
+  return data // null = article doesn't exist (not a request error)
 }
 
 async function fetchRelatedData(categoryId, excludeId) {
@@ -26,18 +26,17 @@ export function useNewsDetail(slug) {
   const notFound = newsQuery.isSuccess && !news
   const categoryId = news?.category?.id
 
-  // Relacionadas são conteúdo de apoio: sua falha não bloqueia a leitura da
-  // matéria principal (não entra no `error` retornado abaixo).
+  // Related articles are supporting content: their failure doesn't block
+  // reading the main article (doesn't feed into the `error` returned below).
   const relatedQuery = useQuery({
     queryKey: ['news', slug, 'related', categoryId],
     queryFn: () => fetchRelatedData(categoryId, news.id),
     enabled: !!categoryId,
   })
 
-  // Contabiliza view e envia o pageview uma única vez por notícia carregada
-  // — não a cada re-render, e de novo naturalmente se um retry (após erro)
-  // eventualmente tiver sucesso, já que aí é a primeira vez que este id
-  // passa por aqui.
+  // Counts the view and sends the pageview once per loaded article — not
+  // on every re-render, and naturally again if a retry (after an error)
+  // eventually succeeds, since that's the first time this id passes through here.
   const trackedIdRef = useRef(null)
   useEffect(() => {
     if (!news || trackedIdRef.current === news.id) return

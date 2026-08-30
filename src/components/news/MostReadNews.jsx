@@ -4,18 +4,19 @@ import { buildSrcSet } from '../../utils/imageUrl'
 import Eyebrow from '../ui/Eyebrow'
 import SectionHeading from '../ui/SectionHeading'
 
-// Miniatura fixa (h-14 w-14 = 56px).
+// Fixed thumbnail (h-14 w-14 = 56px).
 const THUMB_WIDTHS = [56, 112]
 const COLUMN_SIZE = 5
 
-// Lista editorial, não mais ranking em cards: numeração deliberadamente
-// discreta (texto pequeno, peso médio, cinza neutro) — é só um indicador de
-// posição, nunca pode competir com o título. Cor da marca aparece apenas no
-// hover e na Eyebrow de categoria — nunca como fundo do número.
+// Editorial list, no longer a ranking in cards: numbering is deliberately
+// discreet (small text, medium weight, neutral gray) — it's just a
+// position indicator, it can never compete with the title. Brand color
+// only shows up on hover and in the category Eyebrow — never as the
+// number's background.
 //
-// Desktop (sm+): 2 colunas de 5 (grid-flow-col + grid-rows-5 preenche a
-// coluna esquerda inteira — 01 a 05 — antes de passar pra direita — 06 a
-// 10). Mobile: 1 coluna corrida com as 10, nessa mesma ordem.
+// Desktop (sm+): 2 columns of 5 (grid-flow-col + grid-rows-5 fills the
+// entire left column — 01 to 05 — before moving to the right one — 06 to
+// 10). Mobile: 1 continuous column with all 10, in that same order.
 function MostReadNews({ items }) {
   if (!items.length) return null
 
@@ -32,8 +33,8 @@ function MostReadNews({ items }) {
 }
 
 function MostReadRow({ item, rank }) {
-  // Última linha de cada coluna (5ª e 10ª) não leva divisória embaixo —
-  // mesma regra do "last:border-b-0" de antes, só que agora por coluna.
+  // The last row of each column (5th and 10th) doesn't get a divider
+  // below it — same "last:border-b-0" rule as before, just per column now.
   const isColumnEnd = rank % COLUMN_SIZE === 0
 
   return (
@@ -43,9 +44,9 @@ function MostReadRow({ item, rank }) {
           {rank ? String(rank).padStart(2, '0') : ''}
         </span>
 
-        {/* Sem imagem no mobile: a lista fica mais compacta e com foco no
-            título — o foco é o que está sendo lido, não a foto. Volta a
-            aparecer a partir de sm (tablet+), onde já cabem 2 colunas. */}
+        {/* No image on mobile: the list stays more compact and focused on
+            the title — the focus is what's being read, not the photo. It
+            reappears from sm (tablet+) up, where 2 columns already fit. */}
         <div className="hidden h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-ink-100 sm:block">
           <img
             src={item.cover_image_url}

@@ -1,28 +1,28 @@
 -- ============================================================================
--- Migração: "Mais Lidas" sempre completa (fallback em cascata)
--- Execute este arquivo no SQL Editor do Supabase (projeto já existente).
+-- Migration: "Most Read" is always full (cascading fallback)
+-- Run this file in the Supabase SQL Editor (existing project).
 -- ============================================================================
 
--- Problema: public_weekly_top_news só olhava a semana atual (segunda 00h
--- até agora) e cortava no limit — se menos de p_limit notícias tivessem
--- visualização essa semana (comum logo após a virada de semana, quando o
--- tráfego ainda não se acumulou), a Home mostrava só 1, 2, 3 ou 4 notícias
--- em "Mais Lidas" em vez de 5.
+-- Problem: public_weekly_top_news only looked at the current week (Monday
+-- 00h until now) and cut off at the limit — if fewer than p_limit articles
+-- had views this week (common right after the week rolls over, when
+-- traffic hasn't accumulated yet), the Home page showed only 1, 2, 3 or 4
+-- articles in "Most Read" instead of 5.
 --
--- Fallback em cascata, sempre priorizando o período mais recente e nunca
--- repetindo uma notícia já escolhida:
---   1) visualizações da semana atual;
---   2) se não completou, semana anterior, depois a anterior a essa, até
---      12 semanas pra trás (retenção de analytics_events é 26 meses —
---      12 semanas cobre a esmagadora maioria dos casos reais sem manter
---      um loop caro rodando quase 2 anos pra trás toda vez que a Home
---      carrega);
---   3) se ainda faltar, ranking geral de analytics_events (todo o
---      histórico, sem filtro de semana);
---   4) último recurso: views_count acumulado da notícia (published_at
---      desc como desempate) — cobre o caso de um site novo, sem histórico
---      de analytics suficiente, mas ainda assim só notícias reais e
---      publicadas, nunca dado mockado.
+-- Cascading fallback, always prioritizing the most recent period and
+-- never repeating an already-chosen article:
+--   1) views from the current week;
+--   2) if not enough, the previous week, then the one before that, up to
+--      12 weeks back (analytics_events retention is 26 months — 12 weeks
+--      covers the overwhelming majority of real cases without keeping an
+--      expensive loop running almost 2 years back every time the Home
+--      page loads);
+--   3) if still short, the general analytics_events ranking (the whole
+--      history, no week filter);
+--   4) last resort: the article's accumulated views_count (published_at
+--      desc as a tiebreak) — covers the case of a brand-new site, without
+--      enough analytics history, but still only real, published articles,
+--      never mocked data.
 create or replace function public.public_weekly_top_news(p_limit int default 5)
 returns table (
   news_id uuid,
@@ -46,8 +46,8 @@ declare
   weeks_checked int := 0;
   max_weeks_back constant int := 12;
 begin
-  -- Início da semana atual (segunda-feira 00:00, fuso de Brasília) — mesmo
-  -- cálculo de antes, só que agora repetido semana a semana pra trás.
+  -- Start of the current week (Monday 00:00, Brasília timezone) — same
+  -- calculation as before, just now repeated week by week going back.
   week_start := (date_trunc('week', now() at time zone 'America/Sao_Paulo')) at time zone 'America/Sao_Paulo';
   week_end := now();
 
@@ -75,8 +75,8 @@ begin
     weeks_checked := weeks_checked + 1;
   end loop;
 
-  -- Ranking geral de analytics_events (sem filtro de semana), pra quem
-  -- ainda não foi escolhido.
+  -- General analytics_events ranking (no week filter), for whoever
+  -- hasn't been chosen yet.
   if coalesce(array_length(chosen_ids, 1), 0) < p_limit then
     select coalesce(array_agg(x.id order by x.views desc), '{}')
     into new_ids
@@ -95,8 +95,8 @@ begin
     chosen_ids := chosen_ids || new_ids;
   end if;
 
-  -- Último fallback: views_count acumulado da notícia (cobre notícias sem
-  -- nenhum evento em analytics_events ainda, ou um site muito novo).
+  -- Last fallback: the article's accumulated views_count (covers articles
+  -- with no analytics_events yet, or a very new site).
   if coalesce(array_length(chosen_ids, 1), 0) < p_limit then
     select coalesce(array_agg(x.id order by x.views_count desc, x.published_at desc), '{}')
     into new_ids

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { fetchAnalyticsTimeseries } from '../services/analytics'
 
-// Agrupar por hora só faz sentido pra períodos curtos (Hoje/Ontem) — pra
-// qualquer coisa maior, o gráfico ficaria ilegível com centenas de pontos.
+// Grouping by hour only makes sense for short periods (Today/Yesterday) —
+// for anything longer, the chart would become unreadable with hundreds of
+// points.
 function pickBucket(start, end) {
   const spanHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60)
   return spanHours <= 48 ? 'hour' : 'day'

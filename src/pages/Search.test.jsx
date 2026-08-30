@@ -11,9 +11,9 @@ import { searchNews } from '../services/news'
 import Search from './Search'
 
 function renderSearch(query = 'minas') {
-  // retry:false — sem isso, um mock de erro faz o React Query tentar de
-  // novo (com backoff) antes de assentar no estado de erro, e os testes
-  // de erro estourariam o timeout do waitFor.
+  // retry:false — without this, a mocked error makes React Query try
+  // again (with backoff) before settling into the error state, and the
+  // error tests would blow past waitFor's timeout.
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
   return render(
@@ -25,14 +25,15 @@ function renderSearch(query = 'minas') {
   )
 }
 
-describe('Search — estados de erro vs. vazio', () => {
+describe('Search — error state vs. empty state', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  // Regressão do bug principal: o Supabase resolve (não rejeita) com
-  // { data: null, error } em falha de rede. Como o erro era descartado, a
-  // busca caía no estado vazio e dizia que o termo não existia no site.
+  // Regression on the main bug: Supabase resolves (doesn't reject) with
+  // { data: null, error } on a network failure. Since the error was being
+  // discarded, the search fell into the empty state and claimed the term
+  // didn't exist on the site.
   it('shows a load-failure message — not "no results" — when the request errors', async () => {
     searchNews.mockResolvedValue({ data: null, count: null, error: { message: 'FetchError' } })
 

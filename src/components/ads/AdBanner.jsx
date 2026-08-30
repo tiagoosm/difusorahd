@@ -7,8 +7,8 @@ const LABEL_TONE = {
   dark: 'text-white/70',
 }
 
-// Anúncios precisam se diferenciar claramente de conteúdo editorial na
-// hierarquia visual — daí o rótulo "Publicidade" acima do banner.
+// Ads need to be clearly distinguishable from editorial content in the
+// visual hierarchy — hence the "Advertising" label above the banner.
 function AdBanner({ position, className = '', variant = 'light' }) {
   const { ads, loading } = useAdsForPosition(position)
   const height = AD_POSITION_LABELS[position]?.height ?? 'h-[180px]'
@@ -17,8 +17,8 @@ function AdBanner({ position, className = '', variant = 'light' }) {
     return <div className={`w-full animate-pulse rounded-xl bg-ink-100 ${height} ${className}`} />
   }
 
-  // Sem anúncio válido para essa posição: não reserva espaço, o layout
-  // ao redor se reorganiza normalmente (decisão de produto).
+  // No valid ad for this position: doesn't reserve any space, the
+  // surrounding layout reflows normally (product decision).
   if (ads.length === 0) return null
 
   return (
@@ -27,7 +27,7 @@ function AdBanner({ position, className = '', variant = 'light' }) {
         Publicidade
       </span>
 
-      {/* Um único anúncio não precisa da máquina do carrossel. */}
+      {/* A single ad doesn't need the carousel machinery. */}
       {ads.length === 1 ? (
         <a
           href={ads[0].link_url}

@@ -3,9 +3,9 @@ import { fetchRealtimeVisitors } from '../services/analytics'
 
 const POLL_INTERVAL_MS = 30_000
 
-// "Tempo real" aqui é poll a cada 30s (não uma subscription via websocket) —
-// simples o suficiente para um indicador auxiliar, sem a complexidade extra
-// do Supabase Realtime para um número que não precisa atualizar no segundo.
+// "Real-time" here means polling every 30s (not a websocket subscription) —
+// simple enough for a secondary indicator, without the extra complexity of
+// Supabase Realtime for a number that doesn't need to update by the second.
 export function useRealtimeVisitors() {
   const [count, setCount] = useState(null)
 

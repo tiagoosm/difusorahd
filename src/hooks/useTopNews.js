@@ -24,8 +24,8 @@ function rangeFor(period) {
   return { start, end: now }
 }
 
-// Seção "Notícias mais lidas" tem controle de período próprio (item 5),
-// independente do período global do dashboard.
+// The "Most read articles" section has its own period control (item 5),
+// independent from the dashboard's global period.
 export function useTopNews(initialPeriod = 'last7') {
   const [period, setPeriod] = useState(initialPeriod)
   const [news, setNews] = useState([])

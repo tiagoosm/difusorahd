@@ -1,9 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'node:crypto'
 
-// Padroniza a origem do acesso a partir de utm_source (prioridade) ou do
-// hostname do referrer. Só cobre os canais que o dashboard mostra como
-// categorias fixas — qualquer outra coisa cai em "Referral"/"Outros".
+// Standardizes the traffic source from utm_source (priority) or the
+// referrer's hostname. Only covers the channels the dashboard shows as
+// fixed categories — anything else falls into "Referral"/"Other".
 const KNOWN_SOURCES = [
   { match: /google/, label: 'Google' },
   { match: /facebook|fb\.com/, label: 'Facebook' },
@@ -33,8 +33,8 @@ function parseUserAgent(ua = '') {
   const isMobile = !isTablet && /Mobi|Android|iPhone/i.test(ua)
   const deviceType = isTablet ? 'tablet' : isMobile ? 'mobile' : 'desktop'
 
-  // iPhone/iPad UAs contêm "like Mac OS X" — precisam ser checados antes do
-  // macOS, senão todo iOS seria classificado como desktop Mac.
+  // iPhone/iPad UAs contain "like Mac OS X" — they need to be checked
+  // before macOS, otherwise every iOS device would be classified as a Mac desktop.
   let os = 'Outro'
   if (/Windows/i.test(ua)) os = 'Windows'
   else if (/iPhone|iPad|iOS/i.test(ua)) os = 'iOS'
@@ -83,9 +83,9 @@ export default async function handler(req, res) {
       return
     }
 
-    // Geolocalização e IP nunca chegam ao navegador: só existem aqui, na
-    // function serverless. O IP é usado só para calcular o hash abaixo e
-    // nunca é persistido.
+    // Geolocation and IP never reach the browser: they only exist here, in
+    // the serverless function. The IP is used only to compute the hash
+    // below and is never persisted.
     const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim()
     const userAgent = req.headers['user-agent'] || ''
     const country = req.headers['x-vercel-ip-country'] || null
@@ -93,15 +93,15 @@ export default async function handler(req, res) {
     const city = req.headers['x-vercel-ip-city'] ? decodeURIComponent(req.headers['x-vercel-ip-city']) : null
 
     const referrerHost = referrer ? extractHostname(referrer) : null
-    // SITE_URL não está configurada no Vercel — sem esse fallback, navegação
-    // interna com referrer preenchido (ex: recarregar a página) era
-    // classificada como "Referral" em vez de "Direto".
+    // SITE_URL isn't configured on Vercel — without this fallback,
+    // internal navigation with a referrer set (e.g. reloading the page)
+    // was classified as "Referral" instead of "Direto".
     const siteHost = extractHostname(process.env.SITE_URL || 'https://difusorahd.com.br')
     const source = classifySource({ utmSource, referrerHost, siteHost })
     const { deviceType, browser, os } = parseUserAgent(userAgent)
 
-    // Hash diário (não reversível): identifica "o mesmo visitante hoje" sem
-    // guardar o IP em lugar nenhum, e sem cookie/armazenamento no navegador.
+    // Daily (non-reversible) hash: identifies "the same visitor today"
+    // without storing the IP anywhere, and without a cookie/browser storage.
     const today = new Date().toISOString().slice(0, 10)
     const visitorHash = crypto
       .createHash('sha256')

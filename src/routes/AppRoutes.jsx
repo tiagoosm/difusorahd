@@ -13,8 +13,8 @@ import Search from '../pages/Search'
 import Sweepstakes from '../pages/Sweepstakes'
 import NotFound from '../pages/NotFound'
 
-// Área administrativa carregada sob demanda: leitores comuns nunca baixam esse
-// código (editor de texto rico, formulários, etc.), só quem acessa /admin.
+// Admin area loaded on demand: regular readers never download this code
+// (rich text editor, forms, etc.), only whoever visits /admin.
 const Login = lazy(() => import('../pages/admin/Login'))
 const Dashboard = lazy(() => import('../pages/admin/Dashboard'))
 const Analytics = lazy(() => import('../pages/admin/Analytics'))
@@ -40,7 +40,7 @@ function AdminFallback() {
 function AppRoutes() {
   return (
     <Routes>
-      {/* Área pública */}
+      {/* Public area */}
       <Route element={<PublicLayout />}>
         <Route path={ROUTES.home} element={<Home />} />
         <Route path={ROUTES.newsDetail} element={<NewsDetail />} />
@@ -49,7 +49,7 @@ function AppRoutes() {
         <Route path={ROUTES.sweepstakes} element={<Sweepstakes />} />
       </Route>
 
-      {/* Login (fora do layout protegido) */}
+      {/* Login (outside the protected layout) */}
       <Route
         path={ROUTES.adminLogin}
         element={
@@ -59,7 +59,7 @@ function AppRoutes() {
         }
       />
 
-      {/* Área administrativa protegida */}
+      {/* Protected admin area */}
       <Route
         element={
           <ProtectedRoute>
@@ -83,7 +83,7 @@ function AppRoutes() {
         <Route path={ROUTES.adminProfile} element={<Profile />} />
       </Route>
 
-      {/* Fallback */}
+      {/* Catch-all */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   )

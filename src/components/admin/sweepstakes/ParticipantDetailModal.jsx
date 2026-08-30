@@ -27,10 +27,10 @@ function formatAddress(participant) {
   return [line1, line2, line3, line4].filter(Boolean)
 }
 
-// Detalhe completo de um participante (RG, endereço, consentimento) — só
-// carregado quando o admin abre este modal, nunca junto da lista (ver
-// LIST_FIELDS x DETAIL_FIELDS em services/sweepstakes.js). Fechado
-// automaticamente sempre que participantId volta a ser null.
+// A participant's full detail (ID document, address, consent) — only
+// loaded when the admin opens this modal, never along with the list (see
+// LIST_FIELDS vs DETAIL_FIELDS in services/sweepstakes.js). Closes
+// automatically whenever participantId becomes null again.
 function ParticipantDetailModal({ participantId, onClose, onDeleteRequest, onStatusChanged }) {
   const [participant, setParticipant] = useState(null)
   const [loading, setLoading] = useState(false)

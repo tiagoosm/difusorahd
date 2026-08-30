@@ -4,20 +4,20 @@ import { formatDate } from '../../utils/formatDate'
 import { buildSrcSet } from '../../utils/imageUrl'
 import Eyebrow from '../ui/Eyebrow'
 
-// Mesma <img> serve os dois formatos (miniatura 80px abaixo de lg, card de
-// até 800px em lg+) — um único srcset/sizes cobrindo as duas larguras reais,
-// em vez de escolher um dos dois e servir a imagem errada num dos formatos.
+// The same <img> serves both formats (80px thumbnail below lg, card up to
+// 800px at lg+) — a single srcset/sizes covering both real widths, instead
+// of picking one of the two and serving the wrong image in one of the formats.
 const IMAGE_WIDTHS = [80, 160, 400, 600, 800]
 const IMAGE_SIZES = '(min-width: 1024px) 380px, 80px'
 
-// Abaixo de lg (1024px — o breakpoint em que "Últimas notícias" vira grade
-// 3x3, ver LatestNewsList.jsx): linha compacta (miniatura à esquerda +
-// texto), pensada pra uma lista contínua de várias notícias por rolagem.
-// lg+ (desktop): imagem em cima, título abaixo ocupando a largura inteira
-// do card — evita título espremido numa coluna estreita, então qualquer
-// tamanho de título quebra em quantas linhas precisar sem forçar corte.
-// Deliberadamente sem line-clamp/max-height/overflow-hidden no título em
-// nenhum dos dois — é a regra da seção.
+// Below lg (1024px — the breakpoint where "Latest News" turns into a 3x3
+// grid, see LatestNewsList.jsx): compact row (thumbnail on the left +
+// text), meant for a continuous list of several articles while scrolling.
+// lg+ (desktop): image on top, title below taking up the card's full
+// width — avoids a title squeezed into a narrow column, so any title
+// length wraps to as many lines as needed without forcing a cut.
+// Deliberately no line-clamp/max-height/overflow-hidden on the title in
+// either case — that's the section's rule.
 function LatestNewsCard({ news }) {
   return (
     <Link
@@ -25,8 +25,9 @@ function LatestNewsCard({ news }) {
       className="group flex min-w-0 gap-3 border-b border-ink-100 pb-4 last:border-b-0 last:pb-0 lg:flex-col lg:gap-3 lg:border-0 lg:pb-0"
     >
       <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-ink-100 lg:h-auto lg:w-full lg:aspect-video lg:rounded-xl">
-        {/* alt vazio: a imagem é decorativa aqui — o título logo abaixo já
-            é lido pelo leitor de tela, e repeti-lo no alt duplica o anúncio. */}
+        {/* Empty alt: the image is decorative here — the title right below
+            is already read by the screen reader, and repeating it in alt
+            would duplicate the announcement. */}
         <img
           src={news.cover_image_url}
           srcSet={buildSrcSet(news.cover_image_url, IMAGE_WIDTHS)}

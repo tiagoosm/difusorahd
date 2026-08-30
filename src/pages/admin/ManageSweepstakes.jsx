@@ -28,9 +28,9 @@ const STATUS_OPTIONS = [
 const STATUS_TONE = { registered: 'gray', winner: 'green', disqualified: 'red' }
 const STATUS_LABEL = { registered: 'Cadastrado', winner: 'Sorteado', disqualified: 'Desclassificado' }
 
-// Gera e baixa o CSV localmente, no navegador do admin — os dados nunca
-// passam por um servidor nem ficam hospedados numa URL (ver
-// fetchAllSweepstakesParticipantsForExport em services/sweepstakes.js).
+// Generates and downloads the CSV locally, in the admin's browser — the
+// data never goes through a server nor gets hosted at a URL (see
+// fetchAllSweepstakesParticipantsForExport in services/sweepstakes.js).
 function downloadParticipantsCsv(participants) {
   const headers = [
     'Nome completo',
@@ -72,7 +72,7 @@ function downloadParticipantsCsv(participants) {
   )
 
   const csvContent = [headers.join(','), ...rows].join('\n')
-  // BOM (﻿): sem isso o Excel abre acentos em português quebrados.
+  // BOM (﻿): without this, Excel opens Portuguese accented characters garbled.
   const blob = new Blob(['﻿' + csvContent], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
 

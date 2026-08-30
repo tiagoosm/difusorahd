@@ -1,20 +1,20 @@
 -- ============================================================================
--- Migração: Ordem dos destaques (Etapa 3 — refatoração do portal)
--- Execute este arquivo no SQL Editor do Supabase (projeto já existente).
+-- Migration: Featured order (Stage 3 — portal refactor)
+-- Run this file in the Supabase SQL Editor (existing project).
 -- ============================================================================
 
--- Define a ordem entre as notícias marcadas como destaque (is_featured = true).
--- 1 = destaque principal, 2+ = destaques secundários, em ordem. Nulo = a
--- notícia não está entre os destaques atuais ou ainda não foi ordenada
--- manualmente na página /admin/destaques.
+-- Defines the order among articles marked as featured (is_featured = true).
+-- 1 = main feature, 2+ = secondary features, in order. Null = the article
+-- isn't among the current featured ones, or hasn't been manually ordered
+-- on the /admin/destaques page yet.
 alter table public.news add column if not exists featured_position integer;
 
 create index if not exists news_featured_position_idx
   on public.news (featured_position)
   where featured_position is not null;
 
--- Backfill: preserva a ordem atual (mais recente primeiro) para quem já
--- estava marcado como destaque antes desta migração.
+-- Backfill: preserves the current order (most recent first) for whoever
+-- was already marked as featured before this migration.
 with ranked as (
   select id, row_number() over (order by published_at desc) as rn
   from public.news

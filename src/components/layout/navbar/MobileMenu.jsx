@@ -3,16 +3,16 @@ import { NavLink } from 'react-router-dom'
 import { ROUTES, buildPath } from '../../../routes/paths'
 import NavbarSearch from './NavbarSearch'
 
-// Painel do menu mobile: substitui a rolagem horizontal de categorias por
-// uma lista vertical organizada, acessível via um botão de menu — o site
-// tem 9 categorias, rolar todas na horizontal numa tela de 375px exige
-// vários swipes só pra ver as últimas opções.
+// Mobile menu panel: replaces horizontal category scrolling with an
+// organized vertical list, accessible via a menu button — the site has 9
+// categories, scrolling through all of them horizontally on a 375px
+// screen takes several swipes just to see the last options.
 //
-// Puramente controlado por `isOpen` (a transição de entrada/saída e o
-// timing de desmontagem ficam no Navbar, que é quem sabe quando o painel
-// realmente precisa sair do DOM) — todo caminho de fechar (botão do menu,
-// clique fora, Esc, clicar num link) passa pelo mesmo `onRequestClose` e
-// portanto pela mesma animação.
+// Purely controlled by `isOpen` (the enter/exit transition and the
+// unmount timing live in Navbar, which is what knows when the panel
+// actually needs to leave the DOM) — every way of closing it (menu
+// button, clicking outside, Esc, clicking a link) goes through the same
+// `onRequestClose` and therefore the same animation.
 function MobileMenu({ isOpen, categories, loading, onRequestClose }) {
   useEffect(() => {
     function handleKeyDown(event) {
@@ -24,7 +24,7 @@ function MobileMenu({ isOpen, categories, loading, onRequestClose }) {
 
   return (
     <>
-      {/* Fundo clicável: fecha o menu ao tocar fora dele. */}
+      {/* Clickable backdrop: closes the menu when tapped outside it. */}
       <button
         type="button"
         aria-label="Fechar menu"
@@ -74,8 +74,8 @@ function MenuLink({ to, end, onClick, children }) {
         end={end}
         onClick={onClick}
         className={({ isActive }) =>
-          // py-3.5 (~24px + fonte) mantém a área de toque confortável — nada
-          // de links espremidos numa lista que já precisa caber 10 itens.
+          // py-3.5 (~24px + font) keeps the tap target comfortable — no
+          // cramped links in a list that already needs to fit 10 items.
           `block py-3.5 text-base font-medium transition-colors ${isActive ? 'text-white' : 'text-white/80 active:text-white'}`
         }
       >

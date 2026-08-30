@@ -1,9 +1,9 @@
 import SectionHeading from '../ui/SectionHeading'
 import NewsCard from './NewsCard'
 
-// columns=3 (padrão): grade densa, usada em listagens de largura cheia
-// (Relacionadas). columns=2: cards maiores, usada quando a seção divide
-// espaço com uma barra lateral (Últimas notícias, na Home).
+// columns=3 (default): dense grid, used in full-width listings (Related
+// articles, Home category sections). columns=2: larger cards, for a
+// section that needs more breathing room per card.
 const GRID_COLUMNS = {
   2: 'sm:grid-cols-2',
   3: 'sm:grid-cols-2 lg:grid-cols-3',
@@ -15,13 +15,13 @@ function CategorySection({ title, items, viewAllHref, columns = 3 }) {
   return (
     <section className="flex flex-col gap-5">
       <SectionHeading title={title} viewAllHref={viewAllHref} />
-      {/* Abaixo de sm o NewsCard já é uma linha com borda própria (ver
-          NewsCard.jsx) — gap-6 ali só duplicaria o espaçamento.
-          items-stretch (não items-start): todo card da mesma linha fica com
-          a mesma altura — NewsCard já é preparado pra isso (texto cresce com
-          flex-1, data fixada embaixo com mt-auto), sem cortar nenhum título;
-          só evita caixas de tamanhos diferentes lado a lado quando os
-          títulos têm números de linhas diferentes. */}
+      {/* Below sm, NewsCard is already a row with its own border (see
+          NewsCard.jsx) — gap-6 there would just duplicate the spacing.
+          items-stretch (not items-start): every card in the same row ends
+          up the same height — NewsCard is already built for this (text
+          grows with flex-1, date pinned to the bottom with mt-auto),
+          without cutting off any title; it just avoids differently-sized
+          boxes side by side when titles wrap to a different number of lines. */}
       <div className={`grid items-stretch gap-1 sm:gap-6 ${GRID_COLUMNS[columns]}`}>
         {items.map((item) => (
           <NewsCard key={item.id} news={item} />

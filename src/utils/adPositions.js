@@ -1,8 +1,8 @@
-// `height` é uma string de classes Tailwind responsivas (mobile -> desktop),
-// usada por AdBanner/AdCarousel/AdPreview para manter o tamanho do banner
-// sempre igual, não importa as dimensões da imagem enviada. Os valores em
-// lg: batem com os exemplos pedidos (320/220/180px); os menores escalam
-// proporcionalmente para telas estreitas.
+// `height` is a string of responsive Tailwind classes (mobile -> desktop),
+// used by AdBanner/AdCarousel/AdPreview to keep the banner size consistent
+// no matter the dimensions of the uploaded image. The lg: values match the
+// requested examples (320/220/180px); the smaller ones scale proportionally
+// for narrow screens.
 export const AD_POSITIONS = [
   {
     value: 'TOP_HOME',

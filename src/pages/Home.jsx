@@ -32,11 +32,11 @@ function Home() {
           description="Assim que novas notícias forem publicadas, elas aparecem aqui."
         />
       ) : (
-        // Ordem editorial: Destaques → Últimas notícias (9) → uma seção por
-        // categoria existente (dinâmico, ver useHomeNews) → Mais Lidas, por
-        // último. Mesma largura/grid/espaçamento em todas as seções (este
-        // container único), pra Home inteira parecer construída sobre a
-        // mesma grade visual em vez de blocos independentes.
+        // Editorial order: Featured → Latest News (9) → one section per
+        // existing category (dynamic, see useHomeNews) → Most Read, last.
+        // Same width/grid/spacing across every section (this single
+        // container), so the whole Home page feels built on the same
+        // visual grid instead of independent blocks.
         <div className="flex flex-col gap-12">
           <FeaturedNews items={featured} />
           <AdBanner position="HOME_MIDDLE" />

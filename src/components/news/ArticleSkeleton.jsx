@@ -1,6 +1,6 @@
-// Esqueleto com a silhueta da página de notícia (kicker, título, linha fina,
-// capa, corpo). Substitui o Spinner centralizado, que não dava nenhuma pista
-// do formato do conteúdo e causava um salto grande quando o texto chegava.
+// Skeleton with the article page's silhouette (kicker, title, thin line,
+// cover, body). Replaces the centered Spinner, which gave no hint of the
+// content's shape and caused a big jump when the text arrived.
 function ArticleSkeleton() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:py-10 lg:py-12" aria-hidden="true">

@@ -10,16 +10,17 @@ import {
 
 const SHOW_DELAY_MS = 1200
 
-// Convite automático pro sorteio — aparece uma vez por sessão (sessionStorage),
-// nunca mais depois de um cadastro concluído (localStorage, ver
-// utils/sweepstakesStorage.js). Fica fora do fluxo de Modal.jsx de propósito:
-// é uma peça de campanha, não um diálogo do sistema, então tem um tratamento
-// visual mais forte (gradiente da marca) em vez do modal branco padrão.
+// Automatic invitation to the sweepstakes — shows up once per session
+// (sessionStorage), never again after a completed registration
+// (localStorage, see utils/sweepstakesStorage.js). Deliberately stays
+// outside Modal.jsx's flow: it's a campaign piece, not a system dialog, so
+// it gets a stronger visual treatment (brand gradient) instead of the
+// standard white modal.
 function SweepstakesPopup() {
   const [isVisible, setIsVisible] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
-  // Não convida quem já está na própria página de cadastro.
+  // Doesn't invite someone who's already on the registration page itself.
   const isOnSweepstakesPage = location.pathname === ROUTES.sweepstakes
 
   useEffect(() => {

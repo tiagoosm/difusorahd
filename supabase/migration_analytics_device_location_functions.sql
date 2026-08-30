@@ -1,7 +1,7 @@
 -- ============================================================================
--- Etapa 6 do dashboard de Analytics: dispositivos, localização e horários.
--- Todas SECURITY INVOKER (padrão) — respeitam a RLS de quem chama.
--- Execute no SQL Editor do Supabase.
+-- Stage 6 of the Analytics dashboard: devices, location and time of day.
+-- All SECURITY INVOKER (default) — respect the caller's RLS.
+-- Run in the Supabase SQL Editor.
 -- ============================================================================
 
 create or replace function public.analytics_by_device(p_start timestamptz, p_end timestamptz)
@@ -49,8 +49,8 @@ $$;
 
 grant execute on function public.analytics_by_browser(timestamptz, timestamptz) to authenticated;
 
--- Cidade é o nível principal pedido (portal de foco regional); estado/país
--- ficam disponíveis para quem quiser agregar diferente no futuro.
+-- City is the main level requested (regionally-focused portal); state/country
+-- stay available for anyone who wants to aggregate differently in the future.
 create or replace function public.analytics_by_location(p_start timestamptz, p_end timestamptz)
 returns table (city text, region text, country text, views bigint)
 language sql
@@ -66,9 +66,9 @@ $$;
 
 grant execute on function public.analytics_by_location(timestamptz, timestamptz) to authenticated;
 
--- Hora do dia (0-23) no fuso de Brasília — created_at é UTC, e agrupar sem
--- converter deslocaria o gráfico em 3h, mostrando o pico de audiência na
--- hora errada para um portal regional brasileiro.
+-- Hour of day (0-23) in the Brasília timezone — created_at is UTC, and
+-- grouping without converting would shift the chart by 3h, showing the
+-- audience peak at the wrong hour for a Brazilian regional portal.
 create or replace function public.analytics_by_hour(p_start timestamptz, p_end timestamptz)
 returns table (hour int, views bigint)
 language sql

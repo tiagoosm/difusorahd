@@ -1,13 +1,13 @@
 -- ============================================================================
--- Migração: Storage para upload de imagem de capa e áudio (Etapa 14)
--- Execute este arquivo no SQL Editor do Supabase (projeto já existente).
+-- Migration: Storage for cover image and audio upload (Stage 14)
+-- Run this file in the Supabase SQL Editor (existing project).
 -- ============================================================================
 
--- Nova coluna para o áudio (narração) opcional da notícia.
+-- New column for the article's optional (narration) audio.
 alter table public.news add column if not exists audio_url text;
 
--- Bucket único para os dois tipos de mídia, com limite de tamanho e
--- tipos de arquivo aceitos garantidos pelo próprio Storage (não só no frontend).
+-- Single bucket for both media types, with size limit and accepted file
+-- types enforced by Storage itself (not just on the frontend).
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
   'news-media',
@@ -23,8 +23,8 @@ on conflict (id) do update set
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
 
--- Leitura pública (as mídias aparecem no site para qualquer visitante);
--- escrita só para admins autenticados — mesmo padrão de RLS usado em "news".
+-- Public read (media shows up on the site for any visitor); write only
+-- for authenticated admins — same RLS pattern used on "news".
 create policy "news_media_select_all" on storage.objects
   for select using (bucket_id = 'news-media');
 

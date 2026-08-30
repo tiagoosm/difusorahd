@@ -61,9 +61,9 @@ function Category() {
     )
   }
 
-  // Só a primeira página abre com um item em destaque (imagem+texto maior) —
-  // em páginas seguintes isso não seria "o assunto do momento" e sim só
-  // paginação, então tudo entra na grade normal.
+  // Only the first page opens with a featured item (bigger image+text) —
+  // on later pages that wouldn't be "what's happening now", just
+  // pagination, so everything goes into the normal grid.
   const featuredItem = page === 1 ? news[0] : null
   const gridItems = page === 1 ? news.slice(1) : news
 
@@ -91,9 +91,9 @@ function Category() {
           )}
 
           {gridItems.length > 0 && (
-            // Abaixo de sm o NewsCard já é uma linha com borda própria (ver
-            // NewsCard.jsx) — gap-6 ali só duplicaria o espaçamento.
-            // items-stretch: cards da mesma linha ficam com a mesma altura.
+            // Below sm, NewsCard is already a row with its own border (see
+            // NewsCard.jsx) — gap-6 there would just duplicate the spacing.
+            // items-stretch: cards in the same row end up the same height.
             <div className="grid items-stretch gap-1 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {gridItems.map((item) => (
                 <NewsCard key={item.id} news={item} />

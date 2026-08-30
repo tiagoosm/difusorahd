@@ -4,15 +4,15 @@ import { formatDate } from '../../utils/formatDate'
 import { buildSrcSet } from '../../utils/imageUrl'
 import Eyebrow from '../ui/Eyebrow'
 
-// Larguras reais da miniatura em cada breakpoint (ver classes h-*/w-*
-// abaixo): lg vai de 112px (mobile) a 224px (sm+); md vai de 80px a 128px.
+// Real thumbnail widths at each breakpoint (see h-*/w-* classes below): lg
+// goes from 112px (mobile) to 224px (sm+); md goes from 80px to 128px.
 const THUMB_WIDTHS = { lg: [112, 224, 448], md: [80, 128, 256] }
 const THUMB_SIZES = { lg: '(min-width: 640px) 224px, 112px', md: '(min-width: 640px) 128px, 80px' }
 
-// Linha editorial (imagem + texto lado a lado) — a unidade da lista de
-// "Últimas notícias" e do item em destaque de uma categoria. Deliberadamente
-// diferente do NewsCard vertical usado em grades (Relacionadas, Categoria,
-// Busca): aqui o objetivo é ler uma sequência, não escanear uma grade.
+// Editorial row (image + text side by side) — the unit for the "Latest
+// News" list and a category's featured item. Deliberately different from
+// the vertical NewsCard used in grids (Related, Category, Search): here
+// the goal is reading a sequence, not scanning a grid.
 function NewsRow({ news, size = 'md' }) {
   const isLarge = size === 'lg'
   const sizeKey = isLarge ? 'lg' : 'md'
@@ -24,7 +24,7 @@ function NewsRow({ news, size = 'md' }) {
           isLarge ? 'h-28 w-28 sm:h-40 sm:w-56' : 'h-20 w-20 sm:h-24 sm:w-32'
         }`}
       >
-        {/* Decorativa: o título vem ao lado no mesmo link. */}
+        {/* Decorative: the title comes right next to it in the same link. */}
         <img
           src={news.cover_image_url}
           srcSet={buildSrcSet(news.cover_image_url, THUMB_WIDTHS[sizeKey])}

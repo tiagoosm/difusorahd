@@ -1,10 +1,11 @@
 import { supabase } from './supabase'
 
-// Fallback só para quando o navegador/SO não consegue identificar o tipo do
-// arquivo (file.type vem vazio) — muito comum com M4A/AAC no Windows, que
-// não tem associação de MIME registrada para essas extensões. Sem isso, o
-// upload vai com content-type genérico (application/octet-stream), que o
-// bucket rejeita mesmo o formato sendo suportado.
+// Fallback only for when the browser/OS can't identify the file type
+// (file.type comes back empty) — very common with M4A/AAC on Windows,
+// which has no registered MIME association for those extensions. Without
+// this, the upload goes out with a generic content-type
+// (application/octet-stream), which the bucket rejects even though the
+// format is supported.
 const MIME_BY_EXTENSION = {
   mp3: 'audio/mpeg',
   wav: 'audio/wav',
@@ -15,8 +16,8 @@ const MIME_BY_EXTENSION = {
   flac: 'audio/flac',
 }
 
-// Extrai o caminho interno do arquivo (ex: "covers/abc.png") a partir da
-// URL pública que o Storage retorna, para poder chamar .remove() nele.
+// Extracts the file's internal path (e.g. "covers/abc.png") from the
+// public URL Storage returns, so .remove() can be called on it.
 export function extractStoragePath(publicUrl, bucket) {
   if (!publicUrl) return null
   const marker = `/object/public/${bucket}/`
@@ -24,9 +25,10 @@ export function extractStoragePath(publicUrl, bucket) {
   return index === -1 ? null : publicUrl.slice(index + marker.length)
 }
 
-// Remove um arquivo do Storage a partir da URL pública salva no banco.
-// Best-effort: quem chama decide se uma falha aqui deve bloquear a operação
-// principal (em geral não deve — o registro em si já foi salvo/excluído).
+// Removes a file from Storage from the public URL saved in the database.
+// Best-effort: the caller decides whether a failure here should block the
+// main operation (in general it shouldn't — the record itself has already
+// been saved/deleted).
 export async function removeFile(bucket, publicUrl) {
   const path = extractStoragePath(publicUrl, bucket)
   if (!path) return

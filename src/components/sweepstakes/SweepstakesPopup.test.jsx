@@ -11,9 +11,9 @@ function renderPopup(initialPath = '/') {
   )
 }
 
-// act() (não waitFor) porque waitFor faz polling com setTimeout real, que
-// trava para sempre sob fake timers sem ninguém avançando o relógio de
-// novo — act() já flusha o setState disparado dentro do advanceTimersByTime.
+// act() (not waitFor) because waitFor polls with a real setTimeout, which
+// hangs forever under fake timers with nobody advancing the clock again —
+// act() already flushes the setState triggered inside advanceTimersByTime.
 function advance(ms) {
   act(() => {
     vi.advanceTimersByTime(ms)
@@ -42,8 +42,8 @@ describe('SweepstakesPopup', () => {
     expect(screen.getByText('Participe do nosso sorteio!')).toBeInTheDocument()
   })
 
-  // Regressão do requisito principal: fechar o pop-up não pode deixá-lo
-  // reaparecendo a cada navegação/remontagem dentro da mesma sessão.
+  // Regression on the main requirement: closing the pop-up must not leave
+  // it reappearing on every navigation/remount within the same session.
   it('does not reappear after being closed once, on a later mount in the same session', () => {
     const { unmount } = renderPopup()
     advance(1500)

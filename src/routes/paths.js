@@ -1,4 +1,4 @@
-// Padrões de rota, usados nas definições <Route path="...">
+// Route patterns, used in <Route path="..."> definitions
 export const ROUTES = {
   home: '/',
   newsDetail: '/noticia/:slug',
@@ -20,7 +20,7 @@ export const ROUTES = {
   adminProfile: '/admin/perfil',
 }
 
-// URLs concretas, usadas em <Link to="..."> e navigate()
+// Concrete URLs, used in <Link to="..."> and navigate()
 export const buildPath = {
   news: (slug) => `/noticia/${slug}`,
   category: (slug) => `/categoria/${slug}`,

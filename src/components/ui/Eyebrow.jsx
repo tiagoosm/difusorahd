@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
 
-// "Kicker" editorial: rótulo de categoria acima de um título, com uma
-// marca (barrinha) em vez de pílula — é o padrão de grandes portais de
-// notícia, e o que diferencia o destaque/artigo de um card de dashboard.
-// Vira link para a categoria quando `to` é passado (ex: página da notícia).
+// Editorial "kicker": category label above a title, with a small bar
+// marker instead of a pill — this is the pattern major news outlets use,
+// and what sets a featured item/article apart from a dashboard card.
+// Becomes a link to the category when `to` is passed (e.g. article page).
 function Eyebrow({ children, to, tone = 'brand', className = '' }) {
   if (!children) return null
 

@@ -1,8 +1,8 @@
-// Máscaras de telefone/CEP brasileiros — sem biblioteca, só formatação de
-// texto conforme o usuário digita. Sempre progressivas (funcionam com
-// qualquer quantidade parcial de dígitos, não só o valor final completo).
+// Brazilian phone/CEP (postal code) masks — no library, just text
+// formatting as the user types. Always progressive (works with any partial
+// number of digits, not only the final complete value).
 
-// (35) 99999-9999 (celular, 11 dígitos) ou (35) 9999-9999 (fixo, 10 dígitos).
+// (35) 99999-9999 (mobile, 11 digits) or (35) 9999-9999 (landline, 10 digits).
 export function formatPhoneBR(value) {
   const digits = (value || '').replace(/\D/g, '').slice(0, 11)
   if (digits.length === 0) return ''
@@ -13,8 +13,8 @@ export function formatPhoneBR(value) {
   if (digits.length <= 2) return `(${ddd}`
   if (rest.length <= 4) return `(${ddd}) ${rest}`
 
-  // Fixo (8 dígitos no corpo) vs celular (9 dígitos, primeiro é o 9): decide
-  // pelo tamanho do que já foi digitado, não por um formato fixo.
+  // Landline (8-digit body) vs mobile (9 digits, first one is the 9):
+  // decided by how much has already been typed, not by a fixed format.
   const splitAt = rest.length <= 8 ? 4 : 5
   return `(${ddd}) ${rest.slice(0, splitAt)}-${rest.slice(splitAt)}`
 }

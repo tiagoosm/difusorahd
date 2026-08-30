@@ -7,10 +7,10 @@ const STATUS_COLOR = {
   error: 'text-red-600',
 }
 
-// Mini-player flutuante da rádio ao vivo — fica fora do fluxo das páginas
-// (montado uma vez em PublicLayout) pra sobreviver à troca de rota sem
-// reiniciar o áudio. Recolhido por padrão: só o play/pause + indicador "no
-// ar" ficam sempre visíveis; volume/status abrem num painel ao expandir.
+// Floating mini-player for the live radio — lives outside the pages' flow
+// (mounted once in PublicLayout) to survive route changes without
+// restarting the audio. Collapsed by default: only play/pause + the "on
+// air" indicator stay always visible; volume/status open in a panel when expanded.
 function RadioBar() {
   const {
     isPlaying,
@@ -89,9 +89,9 @@ function RadioBar() {
         </div>
       )}
 
-      {/* Dois <button> irmãos, não um dentro do outro: um botão de verdade
-          dentro de outro quebra o foco por teclado e a leitura por leitor de
-          tela — por isso o "pill" é um <div>, não um <button>. */}
+      {/* Two sibling <button>s, not one nested inside the other: a real
+          button inside another breaks keyboard focus and screen reader
+          reading — that's why the "pill" is a <div>, not a <button>. */}
       <div className="flex items-center gap-1 rounded-full bg-brand-700 p-1 pr-4 text-white shadow-card-hover">
         <button
           type="button"

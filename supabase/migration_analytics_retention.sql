@@ -1,13 +1,13 @@
 -- ============================================================================
--- Etapa 7 do dashboard de Analytics: retenção de dados (performance + LGPD).
--- Execute no SQL Editor do Supabase.
+-- Stage 7 of the Analytics dashboard: data retention (performance + LGPD).
+-- Run in the Supabase SQL Editor.
 -- ============================================================================
 
 create extension if not exists pg_cron;
 
--- 26 meses cobre a comparação "Este ano vs. ano anterior" em qualquer mês do
--- ano (item 12), sem reter eventos indefinidamente (minimização de dados,
--- item 16) nem deixar a tabela crescer sem limite (item 15).
+-- 26 months covers the "This year vs. last year" comparison in any month
+-- of the year (item 12), without retaining events indefinitely (data
+-- minimization, item 16) or letting the table grow without limit (item 15).
 create or replace function public.purge_old_analytics_events()
 returns void
 language sql
@@ -18,6 +18,6 @@ $$;
 
 select cron.schedule(
   'purge-old-analytics-events',
-  '0 4 1 * *', -- dia 1 de cada mês, 04:00 UTC (baixo tráfego)
+  '0 4 1 * *', -- 1st of every month, 04:00 UTC (low traffic)
   $$select public.purge_old_analytics_events();$$
 );

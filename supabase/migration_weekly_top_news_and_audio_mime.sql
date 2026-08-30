@@ -1,13 +1,13 @@
 -- ============================================================================
--- Migração: ranking semanal público de "Mais Lidas" + formatos de áudio
+-- Migration: public weekly "Most Read" ranking + audio formats
 -- ============================================================================
 
--- "Mais Lidas" da Home precisa ser por semana atual (não all-time via
--- views_count) e é lida por qualquer visitante (anon), não só admin.
--- analytics_events já tem RLS restrita a admin (analytics_events_select_admin),
--- então uma função SECURITY DEFINER — mesmo padrão de increment_news_views e
--- log_analytics_event — expõe só o ranking agregado (sem contagem de views,
--- sem dados de analytics crus) para o público.
+-- The Home page's "Most Read" needs to be based on the current week (not
+-- all-time via views_count) and is read by any visitor (anon), not just
+-- admins. analytics_events already has RLS restricted to admin
+-- (analytics_events_select_admin), so a SECURITY DEFINER function — same
+-- pattern as increment_news_views and log_analytics_event — exposes only
+-- the aggregated ranking (no view counts, no raw analytics data) to the public.
 create or replace function public.public_weekly_top_news(p_limit int default 5)
 returns table (
   news_id uuid,
@@ -29,8 +29,8 @@ as $$
   left join public.categories c on c.id = n.category_id
   where e.page_type = 'news'
     and e.news_id is not null
-    -- Início da semana atual (segunda-feira 00:00, fuso de Brasília) até agora.
-    -- Views de semanas anteriores nunca entram nessa janela.
+    -- Start of the current week (Monday 00:00, Brasília timezone) until now.
+    -- Views from previous weeks never enter this window.
     and e.created_at >= (date_trunc('week', now() at time zone 'America/Sao_Paulo')) at time zone 'America/Sao_Paulo'
     and e.created_at < now()
   group by n.id, n.title, n.slug, n.cover_image_url, c.id, c.name, c.slug
@@ -40,11 +40,11 @@ $$;
 
 grant execute on function public.public_weekly_top_news(int) to anon, authenticated;
 
--- Bucket de mídia das notícias aceitava só um subconjunto estreito de MIME
--- types de áudio. Navegadores/SO reportam variações para os mesmos formatos
--- (ex: M4A pode chegar como audio/mp4, audio/x-m4a ou audio/m4a; WAV como
--- audio/wav, audio/x-wav ou audio/wave) — o Storage rejeitava silenciosamente
--- qualquer variação fora da lista, com um erro genérico no upload.
+-- The news media bucket only accepted a narrow subset of audio MIME
+-- types. Browsers/OSes report variations for the same formats (e.g. M4A
+-- can arrive as audio/mp4, audio/x-m4a or audio/m4a; WAV as audio/wav,
+-- audio/x-wav or audio/wave) — Storage silently rejected any variation
+-- outside the list, with a generic upload error.
 update storage.buckets
 set allowed_mime_types = array[
   'image/jpeg', 'image/png', 'image/webp', 'image/gif',

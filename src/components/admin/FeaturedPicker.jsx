@@ -4,8 +4,8 @@ import { fetchFeaturableNews } from '../../services/news'
 import Modal from '../ui/Modal'
 import Spinner from '../ui/Spinner'
 
-// Busca notícias publicadas que ainda não são destaque, para o admin
-// escolher o que adicionar em /admin/destaques.
+// Searches published articles that aren't featured yet, for the admin to
+// pick what to add on /admin/destaques.
 function FeaturedPicker({ isOpen, onClose, onSelect, excludeIds }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])

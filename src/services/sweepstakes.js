@@ -1,22 +1,23 @@
 import { supabase } from './supabase'
 
-// Sem RG/telefone/endereço aqui: a listagem do admin não precisa desses
-// dados sensíveis pra exibir a tabela — só a visão de detalhe (fetchById)
-// carrega o registro completo. Minimiza o que trafega mesmo pra quem já é
-// admin autenticado.
+// No ID/phone/address here: the admin listing doesn't need that sensitive
+// data to render the table — only the detail view (fetchById) loads the
+// full record. Minimizes what's transferred even for an already
+// authenticated admin.
 const LIST_FIELDS = 'id, full_name, phone, address_city, status, created_at'
 const DETAIL_FIELDS =
   'id, full_name, phone, rg, address_street, address_number, address_complement, address_neighborhood, address_city, address_state, address_zip_code, status, consent_accepted, consent_at, created_at, updated_at'
 
-// Mesmo cuidado de sanitizeSearchTerm em services/news.js: remove caracteres
-// com significado especial na sintaxe de filtro do PostgREST (.or()).
+// Same care as sanitizeSearchTerm in services/news.js: strips characters
+// with special meaning in PostgREST's filter syntax (.or()).
 function sanitizeSearchTerm(term) {
   return term.replace(/[,()]/g, ' ').trim()
 }
 
-// Cadastro público — única forma de escrever nesta tabela (ver RLS/migração:
-// não existe policy de INSERT direta, só esta função SECURITY DEFINER).
-// Retorna só o id do novo cadastro, nunca os dados enviados de volta.
+// Public registration — the only way to write to this table (see
+// RLS/migration: there's no direct INSERT policy, only this SECURITY
+// DEFINER function). Returns only the new registration's id, never the
+// submitted data back.
 export async function registerSweepstakesParticipant({ fullName, phone, rg, address, consentAccepted }) {
   const { data, error } = await supabase.rpc('register_sweepstakes_participant', {
     p_full_name: fullName,
@@ -35,9 +36,9 @@ export async function registerSweepstakesParticipant({ fullName, phone, rg, addr
   return { id: data ?? null, error }
 }
 
-// As mensagens de erro do banco (ver register_sweepstakes_participant) já
-// vêm prontas pro usuário final — só protege contra um erro inesperado
-// (rede, etc.) vazar texto técnico.
+// The database's error messages (see register_sweepstakes_participant)
+// already come ready for the end user — this only guards against an
+// unexpected error (network, etc.) leaking technical text.
 const KNOWN_ERROR_PATTERN =
   /já está cadastrado|nome completo|telefone válido|RG válido|endereço completo|aceitar os termos/i
 
@@ -66,9 +67,9 @@ export function fetchSweepstakesParticipantsAdmin({
 
   if (status) query = query.eq('status', status)
   if (dateFrom) query = query.gte('created_at', dateFrom)
-  // Datas vêm de <input type="date"> (sem horário) — sem isso, "até
-  // 2026-07-26" excluiria cadastros feitos naquele próprio dia depois da
-  // meia-noite (mesmo ajuste já usado em fetchAllNewsAdmin).
+  // Dates come from <input type="date"> (no time) — without this, "until
+  // 2026-07-26" would exclude registrations made that same day after
+  // midnight (same adjustment already used in fetchAllNewsAdmin).
   if (dateTo) query = query.lte('created_at', `${dateTo}T23:59:59`)
 
   if (search) {
@@ -97,9 +98,9 @@ export function updateSweepstakesParticipantStatus(id, status) {
   return supabase.from('sweepstakes_participants').update({ status }).eq('id', id).select().single()
 }
 
-// Mesmo cuidado de deleteNews/deleteAd: PostgREST não retorna erro quando o
-// DELETE é silenciosamente esvaziado pela RLS (sessão expirada, etc.) — só
-// pedindo a linha de volta dá pra confirmar que realmente excluiu.
+// Same care as deleteNews/deleteAd: PostgREST doesn't return an error when
+// the DELETE is silently emptied out by RLS (expired session, etc.) — only
+// asking for the row back can confirm it actually deleted something.
 export async function deleteSweepstakesParticipant(id) {
   const { data, error } = await supabase.from('sweepstakes_participants').delete().eq('id', id).select('id')
 
@@ -117,11 +118,11 @@ export async function deleteSweepstakesParticipant(id) {
   return { deleted: true, error: null }
 }
 
-// Exportação: só para quem já está autenticado como admin (a própria RLS
-// barra isso pra qualquer outra sessão) — busca tudo de uma vez, sem
-// paginação, pra gerar o CSV inteiro no navegador do admin. O arquivo nunca
-// passa por um servidor nem fica hospedado em URL nenhuma — é gerado e
-// baixado localmente (ver ManageSweepstakes.jsx).
+// Export: only for an already-authenticated admin (RLS itself blocks this
+// for any other session) — fetches everything at once, no pagination, to
+// generate the whole CSV in the admin's browser. The file never goes
+// through a server nor gets hosted at any URL — it's generated and
+// downloaded locally (see ManageSweepstakes.jsx).
 export function fetchAllSweepstakesParticipantsForExport() {
   return supabase
     .from('sweepstakes_participants')

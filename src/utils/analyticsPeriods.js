@@ -20,9 +20,9 @@ function daysAgo(days, from = new Date()) {
   return result
 }
 
-// Para cada período, devolve o intervalo atual [start, end) e o intervalo
-// anterior equivalente (mesma duração, imediatamente antes) — usado nos
-// cards de comparação (item 12). `end` é sempre exclusivo.
+// For each period, returns the current interval [start, end) and the
+// equivalent previous interval (same duration, immediately before) — used
+// by the comparison cards (item 12). `end` is always exclusive.
 export function getPeriodRange(period, custom = {}) {
   const now = new Date()
 

@@ -22,8 +22,8 @@ export function fetchFeaturedNews(limit = 3) {
     .limit(limit)
 }
 
-// Lista completa e ordenada dos destaques atuais, para a página
-// /admin/destaques (sem limite — o admin precisa ver e reordenar todos).
+// Full, ordered list of current featured items, for the /admin/destaques
+// page (no limit — the admin needs to see and reorder all of them).
 export function fetchFeaturedNewsAdmin() {
   return supabase
     .from('news')
@@ -34,8 +34,8 @@ export function fetchFeaturedNewsAdmin() {
     .order('published_at', { ascending: false })
 }
 
-// Notícias publicadas que ainda não são destaque, para o buscador de
-// "adicionar destaque". Busca opcional por título.
+// Published articles that aren't featured yet, for the "add featured"
+// search. Optional search by title.
 export function fetchFeaturableNews(search = '') {
   let query = supabase
     .from('news')
@@ -50,10 +50,11 @@ export function fetchFeaturableNews(search = '') {
   return query
 }
 
-// Persiste a ordem final dos destaques: quem está em `orderedIds` vira
-// destaque na posição correspondente; quem estava marcado antes e saiu da
-// lista é desmarcado. Chamado só quando o admin clica em "Salvar destaques"
-// — até lá, a reordenação/adição/remoção acontece só no estado local (preview).
+// Persists the final featured order: whoever is in `orderedIds` becomes
+// featured at the corresponding position; whoever was previously marked
+// and dropped out of the list gets unmarked. Only called when the admin
+// clicks "Save featured" — until then, reordering/adding/removing only
+// happens in local state (preview).
 export async function saveFeaturedNews(orderedIds) {
   const { data: current } = await supabase.from('news').select('id').eq('is_featured', true)
   const removedIds = (current ?? [])
@@ -73,9 +74,9 @@ export async function saveFeaturedNews(orderedIds) {
     )
   }
 
-  // Promise.all nunca rejeita por erro de request do Supabase (só por falha
-  // de rede) — cada resultado tem seu próprio {error}, que precisa ser
-  // checado manualmente, senão uma falha de permissão passa despercebida.
+  // Promise.all never rejects on a Supabase request error (only on a
+  // network failure) — each result has its own {error}, which must be
+  // checked manually, otherwise a permission failure goes unnoticed.
   const results = await Promise.all(updates)
   const failed = results.find((result) => result.error)
   return { error: failed?.error ?? null }
@@ -90,12 +91,13 @@ export function fetchLatestNews(limit = 6) {
     .limit(limit)
 }
 
-// Ranking da semana atual (segunda a agora), via analytics_events — não
-// views_count (esse é acumulado desde sempre e não reflete "essa semana").
-// RPC pública (SECURITY DEFINER), não expõe contagem de views nem dados
-// crus de analytics. Busca um pouco mais que o exibido (limit) porque quem
-// chama filtra fora IDs já mostrados em Destaques/Últimas antes de cortar
-// pro tamanho final — evita repetir a mesma notícia na Home.
+// Current week's ranking (Monday to now), via analytics_events — not
+// views_count (that one accumulates since forever and doesn't reflect
+// "this week"). Public RPC (SECURITY DEFINER), doesn't expose view counts
+// or raw analytics data. Fetches a bit more than what's shown (limit)
+// because the caller filters out IDs already shown in Featured/Latest
+// before trimming to the final size — avoids repeating the same article
+// on the Home page.
 export async function fetchWeeklyTopNews(limit = 20) {
   const { data, error } = await supabase.rpc('public_weekly_top_news', { p_limit: limit })
   if (error) return { data: null, error }
@@ -145,8 +147,8 @@ export function fetchNewsByCategory({ categoryId, page = 1, pageSize = 9 }) {
     .range(from, to)
 }
 
-// Remove caracteres com significado especial na sintaxe de filtro do PostgREST (.or()),
-// evitando que a busca do usuário quebre ou altere a query.
+// Strips characters with special meaning in PostgREST's filter syntax
+// (.or()), preventing the user's search from breaking or altering the query.
 function sanitizeSearchTerm(term) {
   return term.replace(/[,()]/g, ' ').trim()
 }
@@ -165,8 +167,8 @@ export function searchNews({ query, page = 1, pageSize = 9 }) {
     .range(from, to)
 }
 
-// Notícias publicadas num intervalo, para o card "Notícias" do dashboard de
-// analytics (período + comparação com o anterior).
+// Articles published within a range, for the "News" card on the analytics
+// dashboard (period + comparison with the previous one).
 export function fetchPublishedNewsCount(start, end) {
   return supabase
     .from('news')
@@ -209,8 +211,8 @@ export function fetchAllNewsAdmin({
   if (status) query = query.eq('status', status)
   if (categoryId) query = query.eq('category_id', categoryId)
   if (publishedFrom) query = query.gte('published_at', publishedFrom)
-  // Datas vêm de <input type="date"> (sem horário) — sem isso, "até 2026-07-26"
-  // excluiria notícias publicadas naquele próprio dia depois da meia-noite.
+  // Dates come from <input type="date"> (no time) — without this, "until
+  // 2026-07-26" would exclude articles published that same day after midnight.
   if (publishedTo) query = query.lte('published_at', `${publishedTo}T23:59:59`)
 
   if (search) {
@@ -229,8 +231,8 @@ export function fetchAllNewsAdmin({
   return query.order('created_at', { ascending: false })
 }
 
-// Estatísticas para os cards do painel "Gerenciar Notícias". Feito em
-// paralelo com queries head-only (sem baixar linhas) para manter leve.
+// Stats for the "Manage News" panel's cards. Done in parallel with
+// head-only queries (no rows downloaded) to keep it light.
 export async function fetchNewsStats() {
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
 
@@ -255,11 +257,11 @@ export async function fetchNewsStats() {
   }
 }
 
-// O Supabase/PostgREST retorna sucesso (sem "error") mesmo quando o DELETE
-// não afeta nenhuma linha — seja porque o id não existe, seja porque a
-// sessão expirou e a policy de RLS excluiu a linha do escopo do comando.
-// Pedir a linha de volta (.select()) é a única forma de diferenciar
-// "excluiu" de "não achou nada para excluir" (ex: sem permissão).
+// Supabase/PostgREST returns success (no "error") even when the DELETE
+// affects no rows — either because the id doesn't exist, or because the
+// session expired and the RLS policy excluded the row from the command's
+// scope. Asking for the row back (.select()) is the only way to tell
+// "deleted" apart from "found nothing to delete" (e.g. no permission).
 export async function deleteNews(id) {
   const { data, error } = await supabase
     .from('news')
@@ -276,8 +278,8 @@ export async function deleteNews(id) {
     }
   }
 
-  // Não falha a operação inteira por isso: o registro já foi excluído com
-  // sucesso, só a limpeza dos arquivos não pôde ser confirmada.
+  // Doesn't fail the whole operation over this: the record was already
+  // deleted successfully, only the file cleanup couldn't be confirmed.
   const deletedNews = data[0]
   await Promise.all([
     removeFile('news-media', deletedNews.cover_image_url),

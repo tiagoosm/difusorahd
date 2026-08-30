@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-// Reordenação por arrastar (HTML5 drag and drop nativo) para uma lista de
-// itens com `id`. Reaproveitável em qualquer lista arrastável do admin.
+// Drag-to-reorder (native HTML5 drag and drop) for a list of items with an
+// `id`. Reusable across any draggable list in the admin.
 export function useDragReorder(items, setItems) {
   const [draggedId, setDraggedId] = useState(null)
 

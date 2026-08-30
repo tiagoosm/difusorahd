@@ -2,9 +2,9 @@ import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { getPeriodRange } from '../utils/analyticsPeriods'
 
-// Estado do período fica na URL (?period=last30&from=...&to=...), seguindo o
-// mesmo padrão de filtros já usado em ManageNews/ManageAds — permite
-// recarregar/compartilhar o link com o período selecionado.
+// Period state lives in the URL (?period=last30&from=...&to=...), following
+// the same filter pattern already used in ManageNews/ManageAds — allows
+// reloading/sharing the link with the selected period.
 export function useAnalyticsPeriod() {
   const [searchParams, setSearchParams] = useSearchParams()
   const period = searchParams.get('period') || 'last7'

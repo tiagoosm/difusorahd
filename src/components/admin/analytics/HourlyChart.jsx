@@ -2,8 +2,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { formatNumber } from '../../../utils/formatNumber'
 import { CHART_GRID_COLOR, CHART_AXIS_COLOR } from '../../../utils/chartColors'
 
-// A função SQL só devolve horas com pelo menos 1 view — preenche as demais
-// com 0 para o eixo sempre mostrar as 24h corridas.
+// The SQL function only returns hours with at least 1 view — fills in the
+// rest with 0 so the axis always shows the full 24 hours.
 function fillHours(byHour) {
   const map = new Map(byHour.map((row) => [row.hour, Number(row.views)]))
   return Array.from({ length: 24 }, (_, hour) => ({ hour, views: map.get(hour) ?? 0 }))

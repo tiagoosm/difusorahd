@@ -1,6 +1,6 @@
 # Difusora HD
 
-Portal de notícias e rádio ao vivo da **Rádio Difusora HD** (Pouso Alegre – MG), com painel administrativo completo para gestão de conteúdo editorial, publicidade e o cadastro de sorteios da emissora.
+News portal and live radio for **Rádio Difusora HD** (Pouso Alegre – MG, Brazil), with a full admin panel for managing editorial content, advertising, and the station's sweepstakes sign-ups.
 
 [![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)](https://vitejs.dev)
@@ -9,154 +9,154 @@ Portal de notícias e rádio ao vivo da **Rádio Difusora HD** (Pouso Alegre –
 [![Vitest](https://img.shields.io/badge/tests-vitest-6e9f18?logo=vitest&logoColor=white)](https://vitest.dev)
 [![Vercel](https://img.shields.io/badge/deploy-Vercel-black?logo=vercel&logoColor=white)](https://vercel.com)
 
-🌐 **Site em produção:** [difusorahd.com.br](https://difusorahd.com.br/)
+🌐 **Live site:** [difusorahd.com.br](https://difusorahd.com.br/)
 
 ---
 
-## Sumário
+## Table of contents
 
-- [Visão geral](#visão-geral)
-- [Funcionalidades](#funcionalidades)
-- [Stack tecnológica](#stack-tecnológica)
-- [Estrutura do projeto](#estrutura-do-projeto)
-- [Banco de dados (Supabase)](#banco-de-dados-supabase)
-- [Como rodar localmente](#como-rodar-localmente)
-- [Variáveis de ambiente](#variáveis-de-ambiente)
-- [Testes](#testes)
+- [Overview](#overview)
+- [Features](#features)
+- [Tech stack](#tech-stack)
+- [Project structure](#project-structure)
+- [Database (Supabase)](#database-supabase)
+- [Running locally](#running-locally)
+- [Environment variables](#environment-variables)
+- [Tests](#tests)
 - [Deploy](#deploy)
-- [Licença](#licença)
+- [License](#license)
 
 ---
 
-## Visão geral
+## Overview
 
-O projeto é composto por duas frentes que compartilham a mesma base de código:
+The project is made up of two fronts sharing the same codebase:
 
-- **Portal público** — leitura de notícias, navegação por categorias 100% dinâmicas (criadas/editadas no admin, sem nada fixo no código), busca, player de rádio ao vivo e cadastro para sorteios.
-- **Painel administrativo** (`/admin`) — autenticação restrita, CRUD de notícias com editor rich text, gestão de destaques, categorias, anúncios, participantes de sorteio e um dashboard de analytics próprio (sem depender de Google Analytics ou similar).
+- **Public portal** — reading articles, browsing 100% dynamic categories (created/edited in the admin panel, nothing hardcoded in the code), search, a live radio player, and sweepstakes sign-up.
+- **Admin panel** (`/admin`) — restricted authentication, article CRUD with a rich text editor, management of featured items, categories, ads, sweepstakes participants, and a self-built analytics dashboard (no dependency on Google Analytics or similar).
 
-## Funcionalidades
+## Features
 
-### Portal público
+### Public portal
 
-- **Home editorial**: Destaques → Últimas Notícias (grade 3×3) → uma seção por categoria existente → Mais Lidas — tudo construído dinamicamente a partir do banco, sem seção hardcoded por categoria.
-- **Mais Lidas com fallback em cascata**: ranking da semana atual via eventos de analytics; se não houver dados suficientes, cai para semanas anteriores, depois para o histórico geral e, por fim, para o contador acumulado de visualizações — nunca deixa a seção vazia nem usa dado fictício.
-- **Notícia individual**: conteúdo em rich text, narração em áudio opcional, notícias relacionadas da mesma categoria, botões de compartilhamento e Open Graph dinâmico — bots de redes sociais (Facebook, WhatsApp, Twitter/X, LinkedIn, Telegram etc.) recebem uma versão pré-renderizada da página com título, imagem e descrição corretos (`api/share/[slug].js`, roteado via `vercel.json`).
-- **Busca e páginas de categoria** com paginação.
-- **`sitemap.xml` dinâmico**, gerado a partir das notícias publicadas (`api/sitemap.xml.js`).
-- **Player de rádio ao vivo**: mini-player flutuante, reconexão automática com backoff exponencial em caso de queda do stream, resposta a eventos online/offline, controles na tela de bloqueio via Media Session API, volume persistido localmente.
-- **Cadastro de sorteios**: pop-up + formulário completo (nome, telefone, RG, endereço) com máscaras de input, consentimento LGPD registrado e RPC `SECURITY DEFINER` no banco para não expor a tabela de participantes publicamente.
-- **Banners de anúncio** por posição, gerenciáveis pelo admin.
-- Layout **mobile-first** com navegação por menu próprio no celular, imagens responsivas (`srcset`), cache de dados e tratamento de erro de carregamento.
-- Acessibilidade: link de pular para o conteúdo, `focus-visible` consistente, alvos de toque ≥ 24px, sem cortes de título nem `line-clamp` onde o conteúdo precisa ser lido por completo.
+- **Editorial Home page**: Featured → Latest News (3×3 grid) → one section per existing category → Most Read — all built dynamically from the database, with no hardcoded per-category section.
+- **Most Read with a cascading fallback**: current week's ranking via analytics events; if there isn't enough data, it falls back to previous weeks, then to the overall history, and finally to the accumulated view counter — never leaves the section empty nor uses fake data.
+- **Article page**: rich text content, optional audio narration, related articles from the same category, share buttons, and dynamic Open Graph tags — social media bots (Facebook, WhatsApp, Twitter/X, LinkedIn, Telegram, etc.) get a pre-rendered version of the page with the correct title, image and description (`api/share/[slug].js`, routed via `vercel.json`).
+- **Search and category pages** with pagination.
+- **Dynamic `sitemap.xml`**, generated from published articles (`api/sitemap.xml.js`).
+- **Live radio player**: floating mini-player, automatic reconnection with exponential backoff on stream drops, responds to online/offline events, lock-screen controls via the Media Session API, volume persisted locally.
+- **Sweepstakes sign-up**: pop-up + full form (name, phone, ID document, address) with input masks, recorded LGPD consent, and a `SECURITY DEFINER` database RPC so the participants table is never publicly exposed.
+- **Ad banners** per position, manageable from the admin panel.
+- **Mobile-first** layout with its own mobile menu navigation, responsive images (`srcset`), data caching, and load-error handling.
+- Accessibility: skip-to-content link, consistent `focus-visible`, tap targets ≥ 24px, no title truncation or `line-clamp` where content needs to be read in full.
 
-### Painel administrativo
+### Admin panel
 
-- Autenticação via Supabase Auth, com perfis (`profiles`) controlando acesso.
-- CRUD completo de notícias com editor rich text (Tiptap), upload de imagem de capa e áudio.
-- Gestão de destaques da Home com reordenação.
-- Gestão de categorias (criação, edição e exclusão protegida por integridade referencial — não é possível remover uma categoria com notícias vinculadas).
-- Gestão de anúncios por posição.
-- Gestão de participantes do sorteio (status: cadastrado / sorteado / desclassificado, detalhes de cadastro, exclusão).
-- **Analytics próprio**: visitantes únicos (hash diário sem guardar IP), páginas mais vistas, dispositivos, localização, retenção e comparação com período anterior — tudo via funções SQL dedicadas no Supabase.
+- Authentication via Supabase Auth, with profiles (`profiles`) controlling access.
+- Full article CRUD with a rich text editor (Tiptap), cover image and audio upload.
+- Home page featured-items management with reordering.
+- Category management (create, edit, and delete protected by referential integrity — a category with linked articles can't be removed).
+- Ad management per position.
+- Sweepstakes participant management (status: registered / winner / disqualified, registration details, deletion).
+- **Self-built analytics**: unique visitors (daily hash, no IP stored), top pages, devices, location, retention, and comparison with the previous period — all via dedicated SQL functions in Supabase.
 
-## Stack tecnológica
+## Tech stack
 
-| Camada | Tecnologias |
+| Layer | Technologies |
 | --- | --- |
 | Frontend | React 19, React Router 7, Vite 8, Tailwind CSS 4 |
-| Dados / estado remoto | TanStack Query, Supabase JS |
-| Formulários e conteúdo rico | React Hook Form, Tiptap |
+| Data / remote state | TanStack Query, Supabase JS |
+| Forms and rich content | React Hook Form, Tiptap |
 | UI | Lucide Icons, Embla Carousel, Recharts, React Hot Toast |
-| Backend | Supabase (Postgres, Auth, Storage, RPCs `SECURITY DEFINER`, RLS) |
-| Funções serverless | Vercel Functions (`api/`) — sitemap, share previews para bots e tracking de analytics |
-| Testes | Vitest, Testing Library, jsdom |
+| Backend | Supabase (Postgres, Auth, Storage, `SECURITY DEFINER` RPCs, RLS) |
+| Serverless functions | Vercel Functions (`api/`) — sitemap, bot share previews, and analytics tracking |
+| Tests | Vitest, Testing Library, jsdom |
 | Lint | oxlint |
-| Hospedagem | Vercel |
+| Hosting | Vercel |
 
-## Estrutura do projeto
+## Project structure
 
 ```
-api/                      Funções serverless (Vercel): sitemap, share preview, tracking
-public/                   Assets estáticos
+api/                      Serverless functions (Vercel): sitemap, share preview, tracking
+public/                   Static assets
 src/
-├── assets/                Imagens/logos importados pelo bundle
+├── assets/                Images/logos imported by the bundle
 ├── components/
-│   ├── admin/              Componentes exclusivos do painel admin (analytics, sorteio)
-│   ├── ads/                 Banners de anúncio
-│   ├── categories/          Componentes ligados a categorias
-│   ├── layout/               Navbar, Footer, layouts público e admin
-│   ├── news/                  Cards, seções e listagens de notícia
-│   ├── radio/                  Player de rádio ao vivo
-│   ├── sweepstakes/            Pop-up e formulário de cadastro do sorteio
-│   └── ui/                      Componentes de UI genéricos e reutilizáveis
-├── contexts/               Contextos React (autenticação)
-├── hooks/                  Hooks customizados (dados, categorias, rádio, SEO...)
+│   ├── admin/              Components exclusive to the admin panel (analytics, sweepstakes)
+│   ├── ads/                 Ad banners
+│   ├── categories/          Category-related components
+│   ├── layout/               Navbar, Footer, public and admin layouts
+│   ├── news/                  Article cards, sections and listings
+│   ├── radio/                  Live radio player
+│   ├── sweepstakes/            Sweepstakes sign-up pop-up and form
+│   └── ui/                      Generic, reusable UI components
+├── contexts/               React contexts (authentication)
+├── hooks/                  Custom hooks (data, categories, radio, SEO...)
 ├── pages/
-│   └── admin/                Páginas do painel administrativo
-├── routes/                 Definição centralizada de rotas
-├── services/               Camada de acesso ao Supabase (uma função por operação)
-├── test/                   Setup global dos testes
-└── utils/                  Formatação, máscaras, storage, SEO
+│   └── admin/                Admin panel pages
+├── routes/                 Centralized route definitions
+├── services/               Supabase access layer (one function per operation)
+├── test/                   Global test setup
+└── utils/                  Formatting, input masks, storage, SEO
 supabase/
-├── schema.sql               Schema completo (tabelas, RLS, funções)
-├── migration_*.sql           Migrações incrementais aplicadas ao projeto
-└── seed_*.sql                 Dados de exemplo para desenvolvimento
+├── schema.sql               Full schema (tables, RLS, functions)
+├── migration_*.sql           Incremental migrations applied to the project
+└── seed_*.sql                 Sample data for development
 ```
 
-## Banco de dados (Supabase)
+## Database (Supabase)
 
-O schema vive em [`supabase/schema.sql`](supabase/schema.sql), com evoluções registradas como migrações incrementais (`supabase/migration_*.sql`) — não há uma pasta `migrations/` versionada pela CLI do Supabase; cada arquivo é aplicado manualmente ao projeto conforme necessário.
+The schema lives in [`supabase/schema.sql`](supabase/schema.sql), with changes tracked as incremental migrations (`supabase/migration_*.sql`) — there's no `migrations/` folder versioned by the Supabase CLI; each file is applied to the project manually as needed.
 
-Tabelas principais: `news`, `categories`, `ads`, `sweepstakes_participants`, `analytics_events`, `profiles`.
+Main tables: `news`, `categories`, `ads`, `sweepstakes_participants`, `analytics_events`, `profiles`.
 
-Lógica de negócio sensível vive no banco como funções `SECURITY DEFINER`, não no frontend — por exemplo:
+Sensitive business logic lives in the database as `SECURITY DEFINER` functions, not in the frontend — for example:
 
-- `public_weekly_top_news` — ranking de mais lidas com o fallback em cascata descrito acima.
-- `register_sweepstakes_participant` — valida e insere um participante sem expor a tabela via API pública.
-- `increment_news_views` — contabiliza visualizações de forma atômica.
+- `public_weekly_top_news` — the Most Read ranking with the cascading fallback described above.
+- `register_sweepstakes_participant` — validates and inserts a participant without exposing the table via a public API.
+- `increment_news_views` — counts views atomically.
 
-## Como rodar localmente
+## Running locally
 
-**Pré-requisitos:** Node.js `^20.19.0` ou `>=22.12.0`, e acesso a um projeto Supabase (próprio ou de desenvolvimento).
+**Prerequisites:** Node.js `^20.19.0` or `>=22.12.0`, and access to a Supabase project (your own or a development one).
 
 ```bash
 git clone https://github.com/tiagoosm/difusorahd.git
 cd difusorahd
 npm install
-cp .env.example .env   # preencha com suas credenciais (veja a seção abaixo)
+cp .env.example .env   # fill in your credentials (see the section below)
 npm run dev
 ```
 
-Scripts disponíveis:
+Available scripts:
 
-| Comando | Descrição |
+| Command | Description |
 | --- | --- |
-| `npm run dev` | Servidor de desenvolvimento (Vite) |
-| `npm run build` | Build de produção em `dist/` |
-| `npm run preview` | Serve o build de produção localmente |
-| `npm run lint` | Lint com oxlint |
-| `npm test` | Roda a suíte de testes uma vez |
-| `npm run test:watch` | Testes em modo watch |
+| `npm run dev` | Development server (Vite) |
+| `npm run build` | Production build in `dist/` |
+| `npm run preview` | Serves the production build locally |
+| `npm run lint` | Lint with oxlint |
+| `npm test` | Runs the test suite once |
+| `npm run test:watch` | Tests in watch mode |
 
-## Variáveis de ambiente
+## Environment variables
 
-Veja [`.env.example`](.env.example) para o arquivo completo e comentado. Resumo:
+See [`.env.example`](.env.example) for the full, commented file. Summary:
 
-| Variável | Onde é usada | Descrição |
+| Variable | Where it's used | Description |
 | --- | --- | --- |
-| `VITE_SUPABASE_URL` | Frontend | URL do projeto Supabase |
-| `VITE_SUPABASE_ANON_KEY` | Frontend | Chave pública/anônima do Supabase |
-| `VITE_RADIO_STREAM_URL` | Frontend | URL do stream de áudio ao vivo (Shoutcast/Icecast/Centova) |
-| `SUPABASE_URL` / `SUPABASE_ANON_KEY` | Funções serverless (`api/`) | Mesmas credenciais, sem prefixo `VITE_` porque rodam no servidor |
-| `SITE_URL` | Funções serverless | Domínio de produção, sem barra final |
-| `ANALYTICS_SALT` | `api/track.js` | Sal para o hash diário de visitante único — **não trocar em produção** (reinicia a contagem) |
+| `VITE_SUPABASE_URL` | Frontend | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Frontend | Supabase public/anonymous key |
+| `VITE_RADIO_STREAM_URL` | Frontend | Live audio stream URL (Shoutcast/Icecast/Centova) |
+| `SUPABASE_URL` / `SUPABASE_ANON_KEY` | Serverless functions (`api/`) | Same credentials, without the `VITE_` prefix because they run server-side |
+| `SITE_URL` | Serverless functions | Production domain, no trailing slash |
+| `ANALYTICS_SALT` | `api/track.js` | Salt for the daily unique-visitor hash — **don't change it in production** (resets the count) |
 
-Em produção (Vercel), essas variáveis precisam ser cadastradas em **Project Settings → Environment Variables**; o `.env` local nunca é commitado.
+In production (Vercel), these variables need to be registered under **Project Settings → Environment Variables**; the local `.env` is never committed.
 
-## Testes
+## Tests
 
-A suíte usa Vitest + Testing Library, com os arquivos de teste ao lado do código que testam (`Componente.jsx` + `Componente.test.jsx`). Cobre desde utilitários puros até fluxos completos de componentes (formulários, pop-ups, players com reconexão simulada via fake timers).
+The suite uses Vitest + Testing Library, with test files next to the code they test (`Component.jsx` + `Component.test.jsx`). Coverage ranges from pure utilities to full component flows (forms, pop-ups, players with reconnection simulated via fake timers).
 
 ```bash
 npm test
@@ -164,16 +164,16 @@ npm test
 
 ## Deploy
 
-Hospedado na **Vercel**, com deploy automático a partir da branch `main`. O `vercel.json` define:
+Hosted on **Vercel**, with automatic deploys from the `main` branch. `vercel.json` defines:
 
-- reescrita de `/sitemap.xml` para a função serverless que o gera dinamicamente;
-- reescrita de `/noticia/:slug` para uma versão pré-renderizada quando a requisição vem de um bot de rede social (Open Graph correto em compartilhamentos);
-- fallback padrão de SPA para todas as demais rotas.
+- a rewrite of `/sitemap.xml` to the serverless function that generates it dynamically;
+- a rewrite of `/noticia/:slug` to a pre-rendered version when the request comes from a social media bot (correct Open Graph tags on shares);
+- the default SPA fallback for every other route.
 
-## Licença
+## License
 
-Projeto privado. Todos os direitos reservados © Fundação São José do Paraíso – Rádio Difusora HD.
+Private project. All rights reserved © Fundação São José do Paraíso – Rádio Difusora HD.
 
 ---
 
-Desenvolvido para a **Rádio Difusora HD**.
+Built for **Rádio Difusora HD**.

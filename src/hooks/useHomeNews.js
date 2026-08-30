@@ -8,13 +8,13 @@ const LATEST_DISPLAY_COUNT = 9
 const MOST_READ_DISPLAY_COUNT = 10
 const CATEGORY_SECTION_COUNT = 3
 
-// Pool compartilhado por TODAS as seções de categoria: 1 única requisição
-// (as N notícias mais recentes do site inteiro), agrupada por categoria no
-// cliente — em vez de 1 requisição por categoria existente (ver item 9 do
-// pedido: "não faça uma requisição individual para cada categoria"). O
-// tamanho do pool escala com o número de categorias (mais categorias =
-// pool maior, pra manter ~3 notícias recentes por categoria), com um piso e
-// um teto pra nunca virar 1 request nem excessivamente pesada.
+// Pool shared by ALL category sections: a single request (the N most
+// recent articles site-wide), grouped by category on the client — instead
+// of one request per existing category (see request item 9: "don't make
+// an individual request for each category"). The pool size scales with
+// the number of categories (more categories = bigger pool, to keep ~3
+// recent articles per category), with a floor and a ceiling so it never
+// becomes 1 request nor excessively heavy.
 const CATEGORY_POOL_PER_CATEGORY = 15
 const CATEGORY_POOL_MIN = 60
 const CATEGORY_POOL_MAX = 300
@@ -32,8 +32,8 @@ async function fetchLatestData() {
 }
 
 async function fetchMostReadData() {
-  // Busca uma folga grande o bastante para sobrar MOST_READ_DISPLAY_COUNT
-  // mesmo no pior caso (todo mundo do topo já está em Destaques/Últimas).
+  // Fetches enough slack to still have MOST_READ_DISPLAY_COUNT left even
+  // in the worst case (everyone at the top is already in Featured/Latest).
   const { data, error } = await fetchWeeklyTopNews(MOST_READ_DISPLAY_COUNT + 20)
   if (error) throw error
   return data ?? []
@@ -48,9 +48,9 @@ function makeFetchCategoryPool(poolSize) {
 }
 
 export function useHomeNews() {
-  // Categorias são 100% dinâmicas (tabela `categories`) — nunca hardcoded
-  // aqui. Se uma categoria for criada/removida, a lista muda e as seções
-  // abaixo acompanham automaticamente, sem alterar este hook.
+  // Categories are 100% dynamic (`categories` table) — never hardcoded
+  // here. If a category is created/removed, the list changes and the
+  // sections below follow automatically, without touching this hook.
   const { categories } = useCategories()
   const poolSize = Math.min(
     CATEGORY_POOL_MAX,
@@ -59,8 +59,8 @@ export function useHomeNews() {
 
   const featuredQuery = useQuery({ queryKey: ['home', 'featured'], queryFn: fetchFeaturedData })
   const latestQuery = useQuery({ queryKey: ['home', 'latest'], queryFn: fetchLatestData })
-  // Mais Lidas é complementar: sua própria falha não bloqueia a Home (ver
-  // `error` abaixo, que só olha featured/latest).
+  // Most Read is complementary: its own failure doesn't block the Home
+  // page (see `error` below, which only looks at featured/latest).
   const mostReadQuery = useQuery({ queryKey: ['home', 'mostRead'], queryFn: fetchMostReadData })
   const categoryPoolQuery = useQuery({
     queryKey: ['home', 'categoryPool', poolSize],
@@ -74,18 +74,19 @@ export function useHomeNews() {
   const featuredItems = featuredQuery.data ?? []
   const latestItems = latestQuery.data ?? []
 
-  // Mais Lidas não repete notícia já exibida em Destaques/Últimas. Isso é
-  // deliberado (evita repetir a mesma notícia duas vezes acima da dobra) —
-  // já as seções de categoria PODEM repetir notícias de Últimas/Mais Lidas,
-  // porque são contextos diferentes (ver pedido original, item 3.4).
+  // Most Read never repeats an article already shown in Featured/Latest.
+  // This is deliberate (avoids showing the same article twice above the
+  // fold) — category sections CAN repeat articles from Latest/Most Read
+  // though, because they're different contexts (see original request, item 3.4).
   const alreadyShown = new Set([...featuredItems, ...latestItems].map((item) => item.id))
   const mostReadItems = (mostReadQuery.data ?? [])
     .filter((item) => !alreadyShown.has(item.id))
     .slice(0, MOST_READ_DISPLAY_COUNT)
 
-  // Uma seção por categoria existente, na mesma ordem de useCategories()
-  // (alfabética), com as 3 notícias mais recentes daquela categoria.
-  // Categoria sem nenhuma notícia publicada não gera seção (sem bloco vazio).
+  // One section per existing category, in the same order as
+  // useCategories() (alphabetical), with that category's 3 most recent
+  // articles. A category with no published articles doesn't produce a
+  // section (no empty block).
   const categoryPool = categoryPoolQuery.data ?? []
   const categorySections = categories
     .map((category) => ({
@@ -94,8 +95,8 @@ export function useHomeNews() {
     }))
     .filter((section) => section.items.length > 0)
 
-  // Dispara uma única vez por carregamento bem-sucedido — não a cada
-  // re-render, e não de novo se o usuário só voltou o foco pra aba.
+  // Fires once per successful load — not on every re-render, and not
+  // again if the user just refocused the tab.
   const trackedRef = useRef(false)
   useEffect(() => {
     if (loading || error || trackedRef.current) return

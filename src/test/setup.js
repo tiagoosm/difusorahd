@@ -2,10 +2,10 @@ import '@testing-library/jest-dom/vitest'
 import { afterEach } from 'vitest'
 import { cleanup } from '@testing-library/react'
 
-// Sem `globals: true` no vite.config.js, o cleanup automático do Testing
-// Library não se registra sozinho — sem isso, o DOM de um teste vaza pro
-// próximo dentro do mesmo arquivo (screen.getByRole encontra elementos
-// duplicados de renders anteriores).
+// Without `globals: true` in vite.config.js, Testing Library's automatic
+// cleanup doesn't register itself — without this, one test's DOM leaks
+// into the next within the same file (screen.getByRole finds duplicate
+// elements from previous renders).
 afterEach(() => {
   cleanup()
 })

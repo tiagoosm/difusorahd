@@ -1,11 +1,11 @@
 -- ============================================================================
--- Etapa 2 do dashboard de Analytics: tabela de eventos de acesso.
--- Execute no SQL Editor do Supabase (Dashboard > SQL Editor).
+-- Stage 2 of the Analytics dashboard: access events table.
+-- Run in the Supabase SQL Editor (Dashboard > SQL Editor).
 -- ============================================================================
 
--- analytics_events: um registro por page view. Não mexe em `news` — contador
--- de views_count e increment_news_views continuam existindo e funcionando
--- exatamente como antes; isso é aditivo.
+-- analytics_events: one record per page view. Doesn't touch `news` — the
+-- views_count counter and increment_news_views keep existing and working
+-- exactly as before; this is additive.
 create table public.analytics_events (
   id bigint generated always as identity primary key,
   event_type text not null default 'page_view',
@@ -27,11 +27,11 @@ create table public.analytics_events (
   visitor_hash text,
   created_at timestamptz not null default now()
 );
-comment on table public.analytics_events is 'Eventos de acesso ao portal (page views) para o dashboard de analytics do admin. Escrita apenas via log_analytics_event() (SECURITY DEFINER). Sem dados pessoais: visitor_hash é um hash diário não reversível calculado no servidor — o IP nunca é armazenado, e não há cookies nem armazenamento no navegador.';
-comment on column public.analytics_events.page_type is 'home | news | category | search | other — classificado na coleta, evita parsear `page` nas queries do dashboard.';
-comment on column public.analytics_events.category_id is 'Desnormalizado mesmo em page_type=news (copiado da notícia), para agregar "desempenho por categoria" sem join.';
-comment on column public.analytics_events.source is 'Origem já classificada na coleta: Google, Facebook, Instagram, X, YouTube, WhatsApp, Direto, Referral ou Outros.';
-comment on column public.analytics_events.visitor_hash is 'sha256(ip + user-agent + sal + data), calculado na função serverless. Rotaciona diariamente. Usado só para aproximar "visitantes únicos"; não permite recuperar o IP original.';
+comment on table public.analytics_events is 'Portal access events (page views) for the admin analytics dashboard. Written only via log_analytics_event() (SECURITY DEFINER). No personal data: visitor_hash is a non-reversible daily hash computed server-side — the IP is never stored, and there are no cookies or browser storage involved.';
+comment on column public.analytics_events.page_type is 'home | news | category | search | other — classified at collection time, avoids parsing `page` in the dashboard queries.';
+comment on column public.analytics_events.category_id is 'Denormalized even for page_type=news (copied from the article), to aggregate "performance by category" without a join.';
+comment on column public.analytics_events.source is 'Source already classified at collection time: Google, Facebook, Instagram, X, YouTube, WhatsApp, Direto, Referral or Outros.';
+comment on column public.analytics_events.visitor_hash is 'sha256(ip + user-agent + salt + date), computed in the serverless function. Rotates daily. Used only to approximate "unique visitors"; the original IP cannot be recovered from it.';
 
 create index analytics_events_created_at_idx on public.analytics_events (created_at desc);
 create index analytics_events_page_type_created_at_idx on public.analytics_events (page_type, created_at desc);
@@ -40,9 +40,9 @@ create index analytics_events_category_id_idx on public.analytics_events (catego
 create index analytics_events_source_idx on public.analytics_events (source);
 create index analytics_events_visitor_hash_created_at_idx on public.analytics_events (visitor_hash, created_at);
 
--- Escrita seguindo o mesmo padrão de increment_news_views: função
--- SECURITY DEFINER, sem policy pública de INSERT na tabela. Payload em jsonb
--- porque o evento tem muitos campos opcionais e vai crescer com o tempo.
+-- Writes follow the same pattern as increment_news_views: a SECURITY
+-- DEFINER function, no public INSERT policy on the table. Payload as
+-- jsonb because the event has many optional fields and will grow over time.
 create or replace function public.log_analytics_event(payload jsonb)
 returns void as $$
 begin
@@ -76,8 +76,8 @@ grant execute on function public.log_analytics_event(jsonb) to anon, authenticat
 
 alter table public.analytics_events enable row level security;
 
--- Só admin lê (nem "authenticated" comum) — leitores nunca veem eventos crus.
+-- Only admin reads (not even regular "authenticated") — readers never see raw events.
 create policy "analytics_events_select_admin" on public.analytics_events
   for select using (public.is_admin());
 
--- Sem policy de INSERT: a única porta de entrada é log_analytics_event().
+-- No INSERT policy: the only way in is log_analytics_event().

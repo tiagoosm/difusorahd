@@ -3,9 +3,9 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Search, X } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
 
-// Única barra de pesquisa do site (sem duplicata na página de resultados).
-// Sempre ocupa 100% do espaço do wrapper — a Navbar controla a largura
-// (centralizada e larga no desktop, full-width no toggle mobile).
+// The site's only search bar (no duplicate on the results page). Always
+// takes up 100% of the wrapper's space — the caller controls the width
+// (centered and wide on the desktop navbar, full-width inside the mobile menu).
 function NavbarSearch({ autoFocus = false, onSubmitSuccess, onCancel }) {
   const location = useLocation()
   const [searchParams] = useSearchParams()
@@ -16,9 +16,10 @@ function NavbarSearch({ autoFocus = false, onSubmitSuccess, onCancel }) {
   const inputRef = useRef(null)
   const navigate = useNavigate()
 
-  // Mantém o campo refletindo o termo da URL: entrar direto em /busca?q=...,
-  // navegar com o botão voltar/avançar, etc. Não interfere na digitação em
-  // andamento, já que urlQuery só muda quando a navegação de fato acontece.
+  // Keeps the field reflecting the URL's term: landing directly on
+  // /busca?q=..., navigating with the back/forward button, etc. Doesn't
+  // interfere with ongoing typing, since urlQuery only changes when
+  // navigation actually happens.
   useEffect(() => {
     setValue(urlQuery)
   }, [urlQuery])

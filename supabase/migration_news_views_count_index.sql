@@ -1,10 +1,10 @@
 -- ============================================================================
--- Índice de performance para a seção "Mais Lidas": a query ordena
--- news publicadas por views_count desc, e não havia índice cobrindo isso —
--- funcionaria bem com poucas dezenas/centenas de notícias, mas viraria
--- sequential scan + sort conforme o volume crescesse (item de performance
--- pedido explicitamente na Parte 5/Etapa 6).
--- Execute no SQL Editor do Supabase.
+-- Performance index for the "Most Read" section: the query orders
+-- published news by views_count desc, and there was no index covering
+-- this — it would work fine with a few dozen/hundred articles, but would
+-- turn into a sequential scan + sort as volume grew (performance item
+-- explicitly requested in Part 5/Stage 6).
+-- Run in the Supabase SQL Editor.
 -- ============================================================================
 
 create index news_status_views_count_idx on public.news (status, views_count desc)

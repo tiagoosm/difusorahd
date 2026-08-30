@@ -16,9 +16,10 @@ function EditNews() {
   async function handleUpdate(values) {
     const payload = { ...values }
 
-    // Só mexe em published_at quando o status realmente muda de estado — publicar
-    // pela primeira vez grava a data agora; despublicar limpa; manter publicada
-    // não deve "empurrar" a data original a cada edição de texto.
+    // Only touches published_at when the status actually changes state —
+    // publishing for the first time records the date now; unpublishing
+    // clears it; staying published shouldn't "push" the original date on
+    // every text edit.
     if (values.status === 'published' && news.status !== 'published') {
       payload.published_at = new Date().toISOString()
     } else if (values.status === 'draft') {
@@ -36,10 +37,10 @@ function EditNews() {
       return
     }
 
-    // Só limpa o arquivo antigo depois que a troca já está salva — limpar
-    // antes (ex: assim que o admin escolhe um novo arquivo no formulário)
-    // arriscaria apagar um arquivo que a notícia publicada ainda usa, caso a
-    // edição seja abandonada sem salvar.
+    // Only cleans up the old file after the swap is already saved —
+    // cleaning up earlier (e.g. as soon as the admin picks a new file in
+    // the form) would risk deleting a file the published article still
+    // uses, in case the edit is abandoned without saving.
     if (news.cover_image_url && news.cover_image_url !== payload.cover_image_url) {
       removeFile('news-media', news.cover_image_url)
     }

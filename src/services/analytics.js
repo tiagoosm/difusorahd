@@ -11,9 +11,9 @@ function getUtmParams(search) {
   }
 }
 
-// Fire-and-forget: uma falha aqui (rede, function fora do ar, etc.) nunca
-// deve afetar a navegação do leitor — por isso não retorna a Promise nem
-// propaga erro.
+// Fire-and-forget: a failure here (network, function down, etc.) should
+// never affect the reader's navigation — that's why it doesn't return the
+// Promise or propagate errors.
 export function trackPageView({ page, pageType, newsId, categoryId }) {
   const payload = {
     page,
@@ -32,7 +32,7 @@ export function trackPageView({ page, pageType, newsId, categoryId }) {
   }).catch(() => {})
 }
 
-// Views + visitantes únicos num intervalo, para os cards do dashboard admin.
+// Views + unique visitors in a range, for the admin dashboard cards.
 export async function fetchAnalyticsSummary(start, end) {
   const { data, error } = await supabase.rpc('analytics_summary', {
     p_start: start.toISOString(),
@@ -49,8 +49,9 @@ export async function fetchRealtimeVisitors() {
   return data ?? 0
 }
 
-// bucket: 'day' | 'hour' — 'hour' faz sentido só para períodos de 1-2 dias
-// (Hoje/Ontem); para o resto, agrupar por hora geraria um gráfico ilegível.
+// bucket: 'day' | 'hour' — 'hour' only makes sense for 1-2 day periods
+// (Today/Yesterday); for anything longer, grouping by hour would produce
+// an unreadable chart.
 export async function fetchAnalyticsTimeseries(start, end, bucket = 'day') {
   const { data, error } = await supabase.rpc('analytics_timeseries', {
     p_start: start.toISOString(),

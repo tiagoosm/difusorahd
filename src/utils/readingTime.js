@@ -1,5 +1,5 @@
-// Estimativa simples de tempo de leitura a partir do HTML do corpo da
-// notícia — 200 palavras/min é a média usual para leitura em português.
+// Simple reading-time estimate from the article body's HTML — 200
+// words/min is the usual average for reading in Portuguese.
 const WORDS_PER_MINUTE = 200
 
 export function estimateReadingTime(html) {

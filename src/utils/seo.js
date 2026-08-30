@@ -2,9 +2,9 @@ export const SITE_NAME = 'Difusora HD'
 export const SITE_DESCRIPTION =
   'Acompanhe as principais notícias de política, economia, tecnologia, esportes e cultura.'
 
-// Sem content, remove a tag em vez de só ignorar — numa SPA, sem isso uma
-// og:image de uma notícia ficava "grudada" ao navegar pra uma página sem
-// imagem (Home, Busca), porque a tag antiga nunca era limpa.
+// With no content, remove the tag instead of just skipping it — in an SPA,
+// without this an article's og:image would stay "stuck" when navigating to
+// a page without an image (Home, Search), because the old tag was never cleared.
 function upsertMetaTag(attr, key, content) {
   const element = document.querySelector(`meta[${attr}="${key}"]`)
 
@@ -26,9 +26,9 @@ function upsertMetaTag(attr, key, content) {
 
 const JSON_LD_ELEMENT_ID = 'page-json-ld'
 
-// Injeta/atualiza o JSON-LD específico da página (ex: NewsArticle). Sem
-// jsonLd, remove qualquer script deixado por uma página anterior — evita
-// uma notícia "herdar" o schema de outra ao navegar dentro da SPA.
+// Injects/updates the page-specific JSON-LD (e.g. NewsArticle). With no
+// jsonLd, removes any script left over from a previous page — avoids one
+// article "inheriting" another one's schema when navigating within the SPA.
 function upsertJsonLd(jsonLd) {
   const existing = document.getElementById(JSON_LD_ELEMENT_ID)
 
@@ -44,9 +44,9 @@ function upsertJsonLd(jsonLd) {
   if (!existing) document.head.appendChild(script)
 }
 
-// Schema.org NewsArticle para a página de notícia — ajuda elegibilidade em
-// rich results e Google News. Campos opcionais (imagem, autor) só entram no
-// objeto quando existem, em vez de mandar valores vazios/inválidos.
+// Schema.org NewsArticle for the article page — helps eligibility for rich
+// results and Google News. Optional fields (image, author) are only added
+// to the object when they exist, instead of sending empty/invalid values.
 export function buildNewsArticleJsonLd(news, url) {
   const jsonLd = {
     '@context': 'https://schema.org',

@@ -1,13 +1,14 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigationType } from 'react-router-dom'
 
-// Navegações SPA trocam a árvore de componentes via History API, sem o reload
-// completo que faria o navegador resetar a rolagem sozinho — por isso cada
-// troca de rota via push precisa disparar isso manualmente. Navegações POP
-// (botão voltar/avançar) ficam de fora: o navegador já restaura a posição de
-// rolagem original sozinho, e forçar o topo quebraria essa expectativa.
+// SPA navigations swap the component tree via the History API, without
+// the full reload that would make the browser reset scroll on its own —
+// that's why every push route change needs to trigger this manually. POP
+// navigations (back/forward button) are left out: the browser already
+// restores the original scroll position on its own, and forcing the top
+// would break that expectation.
 //
-// Para preservar a rolagem em algum caso futuro, navegue passando
+// To preserve scroll in some future case, navigate passing
 // `state: { preserveScroll: true }`.
 function ScrollToTop() {
   const location = useLocation()

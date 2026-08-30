@@ -1,9 +1,10 @@
-// sessionStorage: não repete o pop-up na mesma sessão do navegador depois
-// que o usuário já viu/fechou uma vez, mas volta a aparecer numa sessão
-// nova. localStorage: depois de um cadastro bem-sucedido, o pop-up nunca
-// mais aparece automaticamente (nem em sessões futuras) — quem já se
-// cadastrou não precisa ser convidado de novo. Ambos em try/catch: alguns
-// navegadores em modo privado lançam erro ao gravar em storage.
+// sessionStorage: doesn't repeat the pop-up in the same browser session
+// after the user has already seen/closed it once, but shows up again in a
+// new session. localStorage: after a successful registration, the pop-up
+// never shows up automatically again (not even in future sessions) —
+// someone who already registered doesn't need to be invited again. Both
+// wrapped in try/catch: some browsers in private mode throw when writing
+// to storage.
 const POPUP_SEEN_KEY = 'difusora_sweepstakes_popup_seen'
 const REGISTERED_KEY = 'difusora_sweepstakes_registered'
 
@@ -19,7 +20,7 @@ export function markSweepstakesPopupSeen() {
   try {
     sessionStorage.setItem(POPUP_SEEN_KEY, '1')
   } catch {
-    // Ignorado de propósito: na pior hipótese o pop-up aparece de novo.
+    // Ignored on purpose: worst case, the pop-up shows up again.
   }
 }
 
@@ -35,6 +36,6 @@ export function markRegisteredForSweepstakes() {
   try {
     localStorage.setItem(REGISTERED_KEY, '1')
   } catch {
-    // Ignorado de propósito: na pior hipótese o pop-up aparece de novo.
+    // Ignored on purpose: worst case, the pop-up shows up again.
   }
 }

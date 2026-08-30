@@ -1,7 +1,7 @@
 -- ============================================================================
--- Anúncios de exemplo, só para validação visual do módulo de anúncios.
--- Pode apagar depois pelo próprio painel admin (/admin/anuncios).
--- Execute no SQL Editor do Supabase.
+-- Sample ads, just for visually validating the ads module.
+-- Can be deleted later through the admin panel itself (/admin/anuncios).
+-- Run in the Supabase SQL Editor.
 -- ============================================================================
 
 insert into public.ads (title, image_url, link_url, position, active, start_date, end_date, priority) values

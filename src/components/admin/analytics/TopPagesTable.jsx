@@ -1,9 +1,9 @@
 import { formatNumber } from '../../../utils/formatNumber'
 import EmptyState from '../../ui/EmptyState'
 
-// "Tempo médio na página" não é coletado hoje (exigiria medir o momento de
-// saída de cada visita, fora do escopo desta etapa) — a coluna existe só
-// para deixar essa limitação explícita, em vez de inventar um valor.
+// "Average time on page" isn't collected today (it would require measuring
+// each visit's exit moment, out of scope for this stage) — the column
+// exists just to make that limitation explicit, instead of making up a value.
 function TopPagesTable({ pages, loading }) {
   if (loading) {
     return <div className="h-64 w-full animate-pulse rounded-lg bg-ink-100" />

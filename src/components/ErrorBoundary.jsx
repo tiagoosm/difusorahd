@@ -1,10 +1,10 @@
 import { Component } from 'react'
 
-// Precisa ser um componente de classe: é o único jeito de implementar
-// componentDidCatch/getDerivedStateFromError no React — não existe hook
-// equivalente. Sem isto, um erro de render em qualquer componente (um campo
-// inesperado vindo do Supabase, por exemplo) derrubava a página inteira numa
-// tela branca, sem nenhuma explicação pro visitante.
+// Needs to be a class component: it's the only way to implement
+// componentDidCatch/getDerivedStateFromError in React — there's no
+// equivalent hook. Without this, a render error in any component (an
+// unexpected field coming from Supabase, for example) took down the
+// entire page into a blank white screen, with no explanation for the visitor.
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props)
@@ -16,7 +16,7 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, info) {
-    console.error('Erro não tratado na interface:', error, info.componentStack)
+    console.error('Unhandled UI error:', error, info.componentStack)
   }
 
   render() {
@@ -35,9 +35,9 @@ class ErrorBoundary extends Component {
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-3">
-          {/* window.location (não react-router) de propósito: depois de um
-              erro de render não dá pra confiar que o estado do app segue
-              consistente, então o reset precisa recarregar tudo do zero. */}
+          {/* window.location (not react-router) on purpose: after a render
+              error you can't trust that the app's state is still
+              consistent, so the reset needs to reload everything from scratch. */}
           <button
             type="button"
             onClick={() => window.location.reload()}

@@ -1,10 +1,10 @@
 import { WifiOff } from 'lucide-react'
 import EmptyState from './EmptyState'
 
-// Estado de falha de carregamento — deliberadamente diferente do EmptyState
-// "não há nada aqui". Antes, qualquer erro de rede caía no estado vazio e o
-// site dizia "nenhuma notícia publicada" / "categoria não encontrada", que é
-// informação errada: o conteúdo existe, só não pôde ser carregado.
+// Loading-failure state — deliberately different from EmptyState's
+// "there's nothing here". Before, any network error fell into the empty
+// state and the site said "no articles published" / "category not found",
+// which is wrong information: the content exists, it just couldn't be loaded.
 function ErrorState({
   title = 'Não foi possível carregar o conteúdo',
   description = 'Verifique sua conexão e tente novamente. Se o problema continuar, o serviço pode estar temporariamente indisponível.',

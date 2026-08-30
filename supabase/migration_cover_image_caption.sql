@@ -1,7 +1,7 @@
 -- ============================================================================
--- Migração: Legenda da imagem de capa (Etapa 1 — refatoração do portal)
--- Execute este arquivo no SQL Editor do Supabase (projeto já existente).
+-- Migration: Cover image caption (Stage 1 — portal refactor)
+-- Run this file in the Supabase SQL Editor (existing project).
 -- ============================================================================
 
--- Legenda opcional exibida abaixo da imagem de capa na página da notícia.
+-- Optional caption shown below the cover image on the article page.
 alter table public.news add column if not exists cover_image_caption text;

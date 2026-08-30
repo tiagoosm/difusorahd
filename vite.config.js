@@ -8,13 +8,14 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        // Sem isso, o chunking automático do Rollup agrupa o recharts (usado
-        // só pelos gráficos do admin) com módulos triviais compartilhados
-        // entre Dashboard e Analytics — o chunk final acaba com o nome de um
-        // componente pequeno qualquer (ex: "DashboardCard-*.js" pesando
-        // 300+ kB), escondendo de onde o peso realmente vem. Isolar recharts
-        // num chunk próprio também ajuda o cache do navegador entre deploys,
-        // já que essa dependência muda bem menos que o código da aplicação.
+        // Without this, Rollup's automatic chunking groups recharts (used
+        // only by the admin's charts) with trivial modules shared between
+        // Dashboard and Analytics — the final chunk ends up named after
+        // some small component (e.g. "DashboardCard-*.js" weighing
+        // 300+ kB), hiding where the weight actually comes from. Isolating
+        // recharts into its own chunk also helps the browser's cache
+        // across deploys, since this dependency changes a lot less often
+        // than the application code.
         manualChunks(id) {
           if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
             return 'charts-vendor'

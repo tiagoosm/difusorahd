@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Servida só para bots (ver o rewrite condicional em vercel.json) — visitantes
-// reais continuam recebendo a SPA normalmente. Existe porque bots de preview
-// de link (WhatsApp, Facebook, Telegram...) não executam JavaScript: sem
-// isso, eles só veem as meta tags genéricas e estáticas do index.html em vez
-// do título/imagem reais da notícia, mesmo o site já atualizando essas tags
-// corretamente via JS para quem abre no navegador.
+// Served only to bots (see the conditional rewrite in vercel.json) — real
+// visitors keep getting the SPA normally. Exists because link-preview bots
+// (WhatsApp, Facebook, Telegram...) don't execute JavaScript: without
+// this, they'd only see index.html's generic, static meta tags instead of
+// the article's real title/image, even though the site already updates
+// those tags correctly via JS for anyone opening it in a browser.
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>"']/g, (char) => {
     switch (char) {
@@ -23,9 +23,9 @@ function escapeHtml(value = '') {
   })
 }
 
-// JSON.stringify não escapa "<" — um "</script" dentro de um valor (ex: um
-// título de notícia) fecharia a tag prematuramente quando o HTML é
-// parseado pelo navegador/bot, cortando o resto do documento.
+// JSON.stringify doesn't escape "<" — a "</script" inside a value (e.g. an
+// article title) would close the tag prematurely when the HTML gets
+// parsed by the browser/bot, cutting off the rest of the document.
 function safeJsonLd(jsonLd) {
   return JSON.stringify(jsonLd).replace(/</g, '\\u003c')
 }

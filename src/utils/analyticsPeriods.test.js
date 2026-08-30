@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { getPeriodRange } from './analyticsPeriods'
 
-// Fixa "agora" para que os testes não dependam do dia em que rodam.
+// Pins "now" so the tests don't depend on the day they run.
 const FIXED_NOW = new Date('2026-08-16T15:30:00')
 
 beforeEach(() => {

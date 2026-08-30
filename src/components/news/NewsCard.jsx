@@ -4,16 +4,16 @@ import { formatDate } from '../../utils/formatDate'
 import { buildSrcSet } from '../../utils/imageUrl'
 import Eyebrow from '../ui/Eyebrow'
 
-// Mesma <img> serve os dois formatos (miniatura 80px abaixo de sm, card de
-// até 800px em sm+) — um único srcset/sizes cobrindo as duas larguras reais.
+// The same <img> serves both formats (80px thumbnail below sm, card up to
+// 800px at sm+) — a single srcset/sizes covering both real widths.
 const IMAGE_WIDTHS = [80, 160, 400, 600, 800]
 const IMAGE_SIZES = '(min-width: 1024px) 360px, (min-width: 640px) 45vw, 80px'
 
-// Abaixo de sm (640px — o mesmo breakpoint em que a grade que usa este card
-// vira 2+ colunas, ver Category.jsx/Search.jsx/CategorySection.jsx): linha
-// compacta (miniatura + texto), sem borda/sombra de card — uma lista de
-// notícias secundárias não precisa de uma "caixa" por item. sm+ (inalterado):
-// card vertical com imagem em cima, igual antes.
+// Below sm (640px — the same breakpoint where the grid using this card
+// turns into 2+ columns, see Category.jsx/Search.jsx/CategorySection.jsx):
+// compact row (thumbnail + text), no card border/shadow — a list of
+// secondary articles doesn't need a "box" per item. sm+ (unchanged):
+// vertical card with the image on top, same as before.
 function NewsCard({ news }) {
   return (
     <Link
@@ -21,7 +21,7 @@ function NewsCard({ news }) {
       className="group flex min-w-0 gap-3 border-b border-ink-100 pb-4 last:border-b-0 last:pb-0 sm:flex-col sm:overflow-hidden sm:rounded-xl sm:border sm:border-ink-200 sm:bg-white sm:pb-0 sm:shadow-card sm:transition-shadow sm:hover:shadow-card-hover"
     >
       <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-ink-100 sm:h-auto sm:w-full sm:aspect-video sm:rounded-none">
-        {/* Decorativa: o título vem logo ao lado/abaixo no mesmo link. */}
+        {/* Decorative: the title comes right next to/below it in the same link. */}
         <img
           src={news.cover_image_url}
           srcSet={buildSrcSet(news.cover_image_url, IMAGE_WIDTHS)}

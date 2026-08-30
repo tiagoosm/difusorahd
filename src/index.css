@@ -4,16 +4,16 @@
 
 /* ============================================================================
    Design system — Difusora HD
-   Um único lugar para cor, tipografia e sombra. Componentes devem consumir
-   estes tokens (ou os utilitários gray, green e red padrão do Tailwind para
-   casos pontuais) em vez de inventar valores soltos.
+   A single place for color, typography and shadow. Components should
+   consume these tokens (or Tailwind's standard gray/green/red utilities
+   for one-off cases) instead of inventing loose values.
    ============================================================================ */
 @theme {
   --font-sans: "Inter Variable", system-ui, sans-serif;
-  /* Fonte editorial para manchetes: dá peso e personalidade a título grande
-     sem depender de um segundo arquivo de fonte (mesma família variável,
-     só um corte mais condensado/expressivo via font-stretch não é suportado
-     em todo browser — por isso o peso/tracking fazem esse trabalho abaixo). */
+  /* Editorial font for headlines: gives weight and personality to large
+     titles without depending on a second font file (same variable
+     family — a more condensed/expressive cut via font-stretch isn't
+     supported in every browser, which is why weight/tracking do that job below). */
 
   --color-brand-50: #faf4f4;
   --color-brand-100: #f2e4e4;
@@ -26,9 +26,9 @@
   --color-brand-800: #691618;
   --color-brand-900: #531113;
 
-  /* Tinta neutra com leve calor (não é um cinza puro de dashboard) — reforça
-     a identidade editorial junto do vermelho da marca. Usada para texto e
-     superfícies em vez do gray-* neutro do Tailwind nos lugares redesenhados. */
+  /* Neutral ink with a slight warmth (not a plain dashboard gray) —
+     reinforces the editorial identity alongside the brand red. Used for
+     text and surfaces instead of Tailwind's neutral gray-* in the redesigned areas. */
   --color-ink-50: #faf9f8;
   --color-ink-100: #f2f0ee;
   --color-ink-200: #e4e0dd;
@@ -52,9 +52,8 @@ body {
   margin: 0;
 }
 
-/* Ritmo de leitura do corpo de notícia — um pouco mais folgado que o
-   padrão do plugin typography, pensado para leitura confortável em texto
-   longo (item 6 do redesign). */
+/* Reading rhythm for an article's body — a bit looser than the typography
+   plugin's default, meant for comfortable reading on long text (redesign item 6). */
 .article-prose {
   --tw-prose-body: var(--color-ink-700);
   --tw-prose-headings: var(--color-ink-900);
@@ -62,7 +61,7 @@ body {
   line-height: 1.85;
 }
 
-/* Placeholder do editor Tiptap: exige seletor CSS custom, não expressável em utilitários Tailwind. */
+/* Tiptap editor placeholder: requires a custom CSS selector, not expressible via Tailwind utilities. */
 .tiptap p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;

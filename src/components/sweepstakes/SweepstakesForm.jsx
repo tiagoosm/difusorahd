@@ -27,11 +27,10 @@ const EMPTY_VALUES = {
   consentAccepted: false,
 }
 
-// Regulamento/privacidade: o projeto ainda não tem uma página de Política
-// de Privacidade nem de Regulamento (verificado antes de implementar — ver
-// relatório da tarefa). O texto de consentimento abaixo não referencia
-// nenhuma delas por link até essas páginas existirem, pra não linkar pra
-// algo inexistente.
+// Rules/privacy: the project doesn't have a Privacy Policy or Rules page
+// yet (checked before implementing — see the task's report). The consent
+// text below doesn't link to either of them until those pages exist, so
+// as not to link to something that doesn't exist.
 function SweepstakesForm({ onSuccess, privacyPolicyHref }) {
   const [protocolId, setProtocolId] = useState(null)
   const [formError, setFormError] = useState(null)
@@ -62,8 +61,8 @@ function SweepstakesForm({ onSuccess, privacyPolicyHref }) {
     })
 
     if (error) {
-      // Mostrado próximo ao botão de envio (não é um erro de campo
-      // específico, ex: "já cadastrado" ou falha de rede).
+      // Shown near the submit button (not a specific field error, e.g.
+      // "already registered" or a network failure).
       setFormError(describeSweepstakesError(error))
       return
     }

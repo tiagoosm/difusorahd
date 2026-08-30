@@ -4,10 +4,10 @@ import { formatDate } from '../../utils/formatDate'
 import { buildSrcSet } from '../../utils/imageUrl'
 import Eyebrow from '../ui/Eyebrow'
 
-// Hero ocupa 2/3 do container de 1152px no desktop, largura cheia no mobile.
+// Hero takes up 2/3 of the 1152px container on desktop, full width on mobile.
 const HERO_WIDTHS = [640, 960, 1280, 1600]
 const HERO_SIZES = '(min-width: 1024px) 760px, 100vw'
-// Miniatura quadrada fixa (h-20 w-20 = 80px) da lista secundária.
+// Fixed square thumbnail (h-20 w-20 = 80px) for the secondary list.
 const THUMB_WIDTHS = [80, 160]
 
 function FeaturedNews({ items }) {
@@ -22,8 +22,8 @@ function FeaturedNews({ items }) {
           to={buildPath.news(main.slug)}
           className="group relative flex min-h-[24rem] min-w-0 flex-col justify-end overflow-hidden rounded-2xl bg-ink-900 shadow-card transition-shadow hover:shadow-card-hover lg:col-span-2 lg:min-h-[28rem]"
         >
-          {/* Imagem do LCP da Home: eager (sem lazy) + fetchPriority alta para
-              o browser buscá-la antes das demais. */}
+          {/* Home page's LCP image: eager (no lazy) + high fetchPriority so
+              the browser fetches it before the others. */}
           <img
             src={main.cover_image_url}
             srcSet={buildSrcSet(main.cover_image_url, HERO_WIDTHS)}
@@ -35,8 +35,8 @@ function FeaturedNews({ items }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
           <div className="relative flex flex-col gap-3.5 p-6 md:p-8 lg:p-10">
             {main.category?.name && <Eyebrow tone="light">{main.category.name}</Eyebrow>}
-            {/* h1 da Home: a manchete principal é o título da página. Antes a
-                Home não tinha nenhum h1 — falha de semântica e de SEO. */}
+            {/* Home page's h1: the main headline is the page's title. The
+                Home page used to have no h1 at all — a semantics/SEO gap. */}
             <h1 className="text-2xl leading-[1.1] font-bold tracking-tight text-white md:text-4xl lg:text-5xl">
               {main.title}
             </h1>
@@ -65,7 +65,7 @@ function FeaturedListItem({ news }) {
   return (
     <Link to={buildPath.news(news.slug)} className="group flex min-w-0 items-center gap-3.5 p-4">
       <div className="aspect-square h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-ink-100">
-        {/* Decorativa: o título vem ao lado no mesmo link. */}
+        {/* Decorative: the title comes right next to it in the same link. */}
         <img
           src={news.cover_image_url}
           srcSet={buildSrcSet(news.cover_image_url, THUMB_WIDTHS)}

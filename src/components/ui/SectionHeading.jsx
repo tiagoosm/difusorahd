@@ -5,9 +5,9 @@ const TITLE_SIZE = {
   lg: 'text-2xl sm:text-3xl',
 }
 
-// Cabeçalho padrão de seção (Destaques, Últimas notícias, Relacionadas...),
-// reutilizado em vez de cada seção montar seu próprio título — dá consistência
-// de hierarquia (mesmo peso/divisor) em qualquer lugar do site.
+// Standard section heading (Featured, Latest News, Related...), reused
+// instead of every section building its own title — gives consistent
+// hierarchy (same weight/divider) everywhere on the site.
 function SectionHeading({ eyebrow, title, description, viewAllHref, viewAllLabel = 'Ver todas', size = 'md' }) {
   return (
     <div className="flex flex-col gap-1 border-b-2 border-ink-900 pb-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">

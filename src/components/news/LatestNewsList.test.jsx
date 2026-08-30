@@ -31,8 +31,8 @@ describe('LatestNewsList', () => {
     expect(screen.getAllByRole('link')).toHaveLength(ITEMS.length)
   })
 
-  // Regra da seção: 9 notícias juntas em sequência (mobile: lista contínua;
-  // lg+: grade 3x3) — nunca uma grade quebrada com itens escondidos.
+  // Section rule: 9 articles together in sequence (mobile: continuous
+  // list; lg+: 3x3 grid) — never a broken grid with hidden items.
   it('lays out items as a single grid (lg:grid-cols-3), with none hidden at any breakpoint', () => {
     const { container } = renderWithRouter(<LatestNewsList title="Últimas notícias" items={ITEMS} />)
 
@@ -45,7 +45,7 @@ describe('LatestNewsList', () => {
     }
   })
 
-  describe('títulos sempre completos', () => {
+  describe('titles are always shown in full', () => {
     it('renders the full title text for short, medium and very long headlines', () => {
       renderWithRouter(<LatestNewsList title="Últimas notícias" items={ITEMS} />)
 

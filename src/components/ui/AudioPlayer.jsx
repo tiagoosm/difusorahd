@@ -8,10 +8,11 @@ function formatTime(seconds) {
   return `${mins}:${String(secs).padStart(2, '0')}`
 }
 
-// Player custom (sem biblioteca — só a <audio> nativa por trás) com cara de
-// player de podcast/rádio, para o áudio fazer parte da experiência editorial
-// em vez do <audio controls> genérico do navegador, que varia de aparência
-// entre Chrome/Firefox/Safari e não carrega nenhuma identidade do portal.
+// Custom player (no library — just the native <audio> underneath) styled
+// like a podcast/radio player, so the audio feels like part of the
+// editorial experience instead of the browser's generic <audio controls>,
+// which looks different across Chrome/Firefox/Safari and carries none of
+// the portal's identity.
 function AudioPlayer({ src }) {
   const audioRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)

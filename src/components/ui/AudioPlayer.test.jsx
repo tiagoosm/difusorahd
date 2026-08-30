@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import AudioPlayer from './AudioPlayer'
 
-// jsdom não implementa reprodução de mídia de verdade — sem isso, play()
-// rejeita com "not implemented" e o componente cairia no estado de erro.
+// jsdom doesn't implement real media playback — without this, play()
+// rejects with "not implemented" and the component would fall into the error state.
 beforeEach(() => {
   window.HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined)
   window.HTMLMediaElement.prototype.pause = vi.fn()

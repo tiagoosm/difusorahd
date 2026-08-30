@@ -16,9 +16,9 @@ export function updateCategory(id, { name, slug, description }) {
   return supabase.from('categories').update({ name, slug, description }).eq('id', id).select().single()
 }
 
-// Mesmo cuidado de deleteNews/deleteAd: PostgREST não retorna erro quando o
-// DELETE é silenciosamente esvaziado pela RLS (ex: sessão expirou) — só
-// pedindo a linha de volta dá pra distinguir isso de uma exclusão real.
+// Same care as deleteNews/deleteAd: PostgREST doesn't return an error when
+// the DELETE is silently emptied out by RLS (e.g. session expired) — only
+// asking for the row back can tell this apart from a real deletion.
 export async function deleteCategory(id) {
   const { data, error } = await supabase.from('categories').delete().eq('id', id).select()
 

@@ -3,15 +3,16 @@ import { fetchCategories } from '../services/categories'
 
 async function fetchCategoriesData() {
   const { data, error } = await fetchCategories()
-  // Navegação por categoria é conteúdo de apoio, não crítico: falha aqui
-  // degrada para lista vazia em vez de travar Navbar/Footer com um erro.
+  // Category navigation is supporting content, not critical: a failure
+  // here degrades to an empty list instead of breaking Navbar/Footer with
+  // an error.
   if (error) return []
   return data ?? []
 }
 
-// Navbar, Footer e NewsForm usam este hook na mesma página — o cache do
-// React Query (chave 'categories' compartilhada) garante uma única
-// requisição de rede por sessão em vez de uma por componente montado.
+// Navbar, Footer and NewsForm use this hook on the same page — React
+// Query's cache (shared 'categories' key) guarantees a single network
+// request per session instead of one per mounted component.
 export function useCategories() {
   const { data, isLoading } = useQuery({
     queryKey: ['categories'],

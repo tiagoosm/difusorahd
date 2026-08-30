@@ -6,8 +6,8 @@ import FooterColumn from './FooterColumn'
 const LINKS = [
   { label: 'Início', to: ROUTES.home },
   { label: 'Buscar notícias', to: ROUTES.search },
-  // Acesso permanente ao cadastro do sorteio, pra quem fechou o pop-up e
-  // quer participar depois.
+  // Permanent access to the sweepstakes sign-up, for anyone who closed the
+  // pop-up and wants to join later.
   { label: 'Participe do sorteio', to: ROUTES.sweepstakes },
 ]
 
@@ -19,8 +19,8 @@ function FooterNavigation() {
           <Link
             key={link.to}
             to={link.to}
-            // py-1.5 leva a área clicável a 26px de altura — abaixo disso o
-            // link falhava o mínimo de 24px do WCAG 2.2 (SC 2.5.8).
+            // py-1.5 brings the clickable area to 26px tall — below that
+            // the link failed WCAG 2.2's 24px minimum (SC 2.5.8).
             className="group flex items-center gap-1.5 py-1.5 text-sm text-white/85 transition-colors hover:text-white"
           >
             <ChevronRight className="h-3.5 w-3.5 text-white opacity-0 transition-all -translate-x-1 group-hover:translate-x-0 group-hover:opacity-100" />

@@ -1,11 +1,11 @@
 -- ============================================================================
--- Migração: aumentar o limite de tamanho do bucket de mídia das notícias
--- Execute este arquivo no SQL Editor do Supabase (projeto já existente).
+-- Migration: increase the news media bucket's file size limit
+-- Run this file in the Supabase SQL Editor (existing project).
 -- ============================================================================
 
--- O limite de 20 MB (compartilhado com o bucket de imagem) era baixo demais
--- para áudio de narração: um arquivo WAV/FLAC sem compressão passa dos 20 MB
--- em poucos minutos de gravação.
+-- The 20 MB limit (shared with the image bucket) was too low for narration
+-- audio: an uncompressed WAV/FLAC file passes 20 MB within a few minutes
+-- of recording.
 update storage.buckets
 set file_size_limit = 52428800 -- 50 MB
 where id = 'news-media';

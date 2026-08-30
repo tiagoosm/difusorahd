@@ -15,8 +15,9 @@ function CategoryForm({ defaultValues, onSubmit, submitLabel = 'Salvar' }) {
 
   const name = watch('name')
 
-  // Auto-gera o slug a partir do nome apenas ao criar; ao editar, o slug existente
-  // não muda sozinho (evita quebrar links já publicados por causa de um ajuste no nome).
+  // Auto-generates the slug from the name only when creating; when
+  // editing, the existing slug doesn't change on its own (avoids breaking
+  // already-published links because of a tweak to the name).
   useEffect(() => {
     if (!defaultValues) {
       setValue('slug', slugify(name || ''))

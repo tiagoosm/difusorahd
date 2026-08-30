@@ -34,8 +34,9 @@ function NewsForm({ defaultValues, onSubmit, submitLabel = 'Salvar' }) {
 
   const title = watch('title')
 
-  // Auto-gera o slug a partir do título apenas ao criar; ao editar, o slug existente
-  // não muda sozinho (evita quebrar o link público por causa de um ajuste no título).
+  // Auto-generates the slug from the title only when creating; when editing,
+  // the existing slug doesn't change on its own (avoids breaking the public
+  // link because of a tweak to the title).
   useEffect(() => {
     if (!defaultValues) {
       setValue('slug', slugify(title || ''))

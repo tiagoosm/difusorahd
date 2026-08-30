@@ -1,8 +1,7 @@
-// Redimensiona imagens do Supabase Storage sob demanda via o endpoint de
-// transformação (/render/image/ em vez de /object/), evitando servir o
-// arquivo original (às vezes vários MB) pra um card de 300px de largura.
-// Confirmado que a transformação está habilitada neste projeto antes de
-// usar isso em produção.
+// Resizes Supabase Storage images on demand via the transform endpoint
+// (/render/image/ instead of /object/), avoiding serving the original file
+// (sometimes several MB) for a 300px-wide card. Confirmed the transform
+// is enabled on this project before using this in production.
 const OBJECT_PATH = '/storage/v1/object/public/'
 const RENDER_PATH = '/storage/v1/render/image/public/'
 
@@ -16,8 +15,8 @@ export function optimizedImageUrl(url, { width, quality = 75 } = {}) {
   return `${transformed}?${params}`
 }
 
-// Gera o atributo srcset com uma variante por largura, para o navegador
-// escolher a menor imagem suficiente pra tela/densidade do visitante.
+// Builds the srcset attribute with one variant per width, so the browser
+// can pick the smallest image that's enough for the visitor's screen/density.
 export function buildSrcSet(url, widths) {
   if (!url || !url.includes(OBJECT_PATH)) return undefined
   return widths.map((width) => `${optimizedImageUrl(url, { width })} ${width}w`).join(', ')

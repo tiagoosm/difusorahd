@@ -32,8 +32,8 @@ function EditAd() {
       return
     }
 
-    // Mesmo cuidado do EditNews: só limpa a imagem antiga depois que a troca
-    // já está salva, nunca antes.
+    // Same care as EditNews: only cleans up the old image after the swap
+    // is already saved, never before.
     if (ad.image_url && ad.image_url !== payload.image_url) {
       removeFile('ads-images', ad.image_url)
     }

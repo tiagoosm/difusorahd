@@ -26,8 +26,8 @@ ${lastmod ? `    <lastmod>${lastmod}</lastmod>\n` : ''}    <changefreq>${changef
 }
 
 export default async function handler(req, res) {
-  // SITE_URL não está configurada no Vercel — sem esse fallback, o sitemap
-  // gerava URLs em example.com em vez do domínio real.
+  // SITE_URL isn't configured on Vercel — without this fallback, the
+  // sitemap generated example.com URLs instead of the real domain.
   const siteUrl = (process.env.SITE_URL || 'https://difusorahd.com.br').replace(/\/$/, '')
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY)
 
