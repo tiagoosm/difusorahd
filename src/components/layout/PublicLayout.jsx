@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom'
+import { SWEEPSTAKES_ENABLED } from '../../config/features'
 import Navbar from './navbar/Navbar'
 import Footer from './footer/Footer'
 import SweepstakesPopup from '../sweepstakes/SweepstakesPopup'
@@ -22,7 +23,7 @@ function PublicLayout() {
         <Outlet />
       </main>
       <Footer />
-      <SweepstakesPopup />
+      {SWEEPSTAKES_ENABLED && <SweepstakesPopup />}
       <RadioBar />
     </div>
   )

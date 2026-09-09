@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { ROUTES } from './paths'
+import { SWEEPSTAKES_ENABLED } from '../config/features'
 import ProtectedRoute from './ProtectedRoute'
 import PublicLayout from '../components/layout/PublicLayout'
 import AdminLayout from '../components/layout/AdminLayout'
@@ -46,7 +47,7 @@ function AppRoutes() {
         <Route path={ROUTES.newsDetail} element={<NewsDetail />} />
         <Route path={ROUTES.category} element={<Category />} />
         <Route path={ROUTES.search} element={<Search />} />
-        <Route path={ROUTES.sweepstakes} element={<Sweepstakes />} />
+        {SWEEPSTAKES_ENABLED && <Route path={ROUTES.sweepstakes} element={<Sweepstakes />} />}
       </Route>
 
       {/* Login (outside the protected layout) */}
@@ -79,7 +80,7 @@ function AppRoutes() {
         <Route path={ROUTES.adminAds} element={<ManageAds />} />
         <Route path={ROUTES.adminAdsNew} element={<NewAd />} />
         <Route path={ROUTES.adminAdsEdit} element={<EditAd />} />
-        <Route path={ROUTES.adminSweepstakes} element={<ManageSweepstakes />} />
+        {SWEEPSTAKES_ENABLED && <Route path={ROUTES.adminSweepstakes} element={<ManageSweepstakes />} />}
         <Route path={ROUTES.adminProfile} element={<Profile />} />
       </Route>
 

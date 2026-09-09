@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { signOut } from '../../services/auth'
 import { ROUTES } from '../../routes/paths'
+import { SWEEPSTAKES_ENABLED } from '../../config/features'
 
 const NAV_ITEMS = [
   { to: ROUTES.adminDashboard, label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -24,7 +25,8 @@ const NAV_ITEMS = [
   { to: ROUTES.adminFeatured, label: 'Destaques', icon: Star },
   { to: ROUTES.adminCategories, label: 'Categorias', icon: FolderKanban },
   { to: ROUTES.adminAds, label: 'Anúncios', icon: Megaphone },
-  { to: ROUTES.adminSweepstakes, label: 'Sorteio', icon: Gift },
+  // Hidden while SWEEPSTAKES_ENABLED is off (src/config/features.js).
+  ...(SWEEPSTAKES_ENABLED ? [{ to: ROUTES.adminSweepstakes, label: 'Sorteio', icon: Gift }] : []),
   { to: ROUTES.adminProfile, label: 'Perfil', icon: UserCircle },
 ]
 

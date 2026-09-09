@@ -1,14 +1,15 @@
 import { Link } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
+import { SWEEPSTAKES_ENABLED } from '../../../config/features'
 import FooterColumn from './FooterColumn'
 
 const LINKS = [
   { label: 'Início', to: ROUTES.home },
   { label: 'Buscar notícias', to: ROUTES.search },
   // Permanent access to the sweepstakes sign-up, for anyone who closed the
-  // pop-up and wants to join later.
-  { label: 'Participe do sorteio', to: ROUTES.sweepstakes },
+  // pop-up and wants to join later. Hidden while SWEEPSTAKES_ENABLED is off.
+  ...(SWEEPSTAKES_ENABLED ? [{ label: 'Participe do sorteio', to: ROUTES.sweepstakes }] : []),
 ]
 
 function FooterNavigation() {
