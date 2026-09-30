@@ -31,15 +31,18 @@ function NewsCard({ news }) {
           loading="lazy"
         />
       </div>
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 sm:flex-1 sm:justify-start sm:gap-2.5 sm:p-5">
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 sm:flex-1 sm:justify-start sm:gap-2 sm:p-4">
         {news.category?.name && <Eyebrow>{news.category.name}</Eyebrow>}
         <h3 className="text-sm leading-snug font-semibold break-words text-ink-900 transition-colors group-hover:text-brand-700 sm:text-base">
           {news.title}
         </h3>
+        {/* line-clamp-2 (não corta o título, só a descrição): com 3 cards
+            numa única fileira (Relacionadas) e items-stretch no grid pai,
+            um resumo sem limite esticava o card inteiro na vertical. */}
         {news.excerpt && (
           <p className="hidden text-sm text-ink-500 sm:line-clamp-2 sm:block">{news.excerpt}</p>
         )}
-        <span className="text-xs text-ink-500 sm:mt-auto sm:pt-3">{formatDate(news.published_at)}</span>
+        <span className="text-xs text-ink-500 sm:mt-auto sm:pt-2">{formatDate(news.published_at)}</span>
       </div>
     </Link>
   )

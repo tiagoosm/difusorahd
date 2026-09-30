@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { ROUTES } from '../../../routes/paths'
 import { useCategories } from '../../../hooks/useCategories'
+import { useScrollDirectionVisibility } from '../../../hooks/useScrollDirectionVisibility'
 import logo from '../../../assets/logo-difusora-hd.png'
 import NavbarSearch from './NavbarSearch'
 import CategoryStrip from './CategoryStrip'
@@ -21,8 +22,11 @@ function Navbar() {
   // and vanished instantly on close.
   const [isMobileMenuMounted, setIsMobileMenuMounted] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
   const { categories, loading } = useCategories()
+  // Desktop only in effect: the category strip below is already `hidden`
+  // under md, so this never has anything visible to act on there (see
+  // MobileMenu — categories live in the hamburger menu on mobile instead).
+  const showCategories = useScrollDirectionVisibility()
 
   function openMobileMenu() {
     setIsMobileMenuMounted(true)
@@ -34,25 +38,8 @@ function Navbar() {
     setTimeout(() => setIsMobileMenuMounted(false), MOBILE_MENU_TRANSITION_MS)
   }
 
-  // Subtly compacts on scroll — doesn't change the structure, just
-  // reduces vertical breathing room, so the navbar takes up less screen
-  // during a long read without ever disappearing (keeps search and
-  // categories always at hand).
-  useEffect(() => {
-    function handleScroll() {
-      setIsScrolled(window.scrollY > 8)
-    }
-    handleScroll()
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
   return (
-    <header
-      className={`sticky top-0 z-40 bg-brand-600 transition-shadow duration-200 ${
-        isScrolled ? 'shadow-lg shadow-black/20' : 'shadow-md shadow-black/10'
-      }`}
-    >
+    <header className="sticky top-0 z-40 bg-brand-600 shadow-md shadow-black/10">
       {/* relative z-40: without this, the mobile menu's fixed backdrop
           (positioned, z-30) paints over this entire row even with the
           <header> at z-40 — z-index only compares between positioned
@@ -60,20 +47,12 @@ function Navbar() {
           a position until now. Without this layer, the close button (the
           very icon that opened the menu) ended up "behind" the backdrop, unclickable. */}
       <div className="relative z-40 border-b border-white/10">
-        <div
-          className={`mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 transition-[padding] duration-200 ${
-            isScrolled ? 'py-2.5' : 'py-3.5'
-          }`}
-        >
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5">
           <Link
             to={ROUTES.home}
             className="flex shrink-0 items-center rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none"
           >
-            <img
-              src={logo}
-              alt="Difusora HD"
-              className={`w-auto transition-[height] duration-200 ${isScrolled ? 'h-7 sm:h-8' : 'h-8 sm:h-10'}`}
-            />
+            <img src={logo} alt="Difusora HD" className="h-8 w-auto sm:h-10" />
           </Link>
 
           {/* Search takes up the center space — the main navigation
@@ -104,10 +83,29 @@ function Navbar() {
         </div>
       </div>
 
-      {/* Always-visible category strip — only from md up. Below that,
-          navigation lives in the menu (button above). */}
+      {/* Category strip — only from md up (below that, navigation lives in
+          the menu opened by the button above, untouched by any of this).
+          The outer hidden/md:block is the existing responsive gate; the
+          inner grid-rows is the scroll-direction show/hide: 1fr/0fr
+          animates the row's height itself (via grid-template-rows,
+          animatable and GPU-friendly) instead of sliding with
+          translate/absolute positioning, so collapsing never leaves a
+          gap and never causes a layout jump when it returns. `inert`
+          while collapsed keeps its links out of the tab order — without
+          it, keyboard users could tab into a strip that's not visibly there.
+          (Scroll anchoring is disabled site-wide in index.css specifically
+          because of this element — see the comment there.) */}
       <div className="hidden md:block">
-        <CategoryStrip categories={categories} loading={loading} />
+        <div
+          className={`grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none ${
+            showCategories ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+          }`}
+          inert={!showCategories}
+        >
+          <div className="overflow-hidden">
+            <CategoryStrip categories={categories} loading={loading} />
+          </div>
+        </div>
       </div>
 
       {isMobileMenuMounted && (

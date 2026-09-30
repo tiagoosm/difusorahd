@@ -48,8 +48,38 @@
   box-sizing: border-box;
 }
 
+@layer base {
+  /* Tailwind v4 dropped the old default `cursor: pointer` on native
+     buttons/selects (matches the plain browser default instead) — this
+     restores it project-wide, the single origin for every button/select
+     on the site, instead of adding `cursor-pointer` by hand to each one.
+     `@layer base` (not a plain rule): keeps it below Tailwind's utilities
+     layer, so an explicit `disabled:cursor-not-allowed` still wins over
+     this on its own — but :not(:disabled) already excludes the common
+     case regardless. */
+  button:not(:disabled),
+  select:not(:disabled),
+  [role="button"] {
+    cursor: pointer;
+  }
+}
+
 body {
   margin: 0;
+}
+
+/* Scroll anchoring off site-wide: the Navbar's category strip (see
+   Navbar.jsx) animates its own height on scroll, and the browser's
+   default scroll anchoring "corrected" window.scrollY to keep whatever
+   sat at the top of the viewport visually still while that happened —
+   which then looked exactly like the user scrolling, feeding straight
+   back into the hook driving that same animation and corrupting its
+   state. The site already avoids layout shift the structural way (fixed
+   aspect-ratio boxes reserving space before images load, e.g.
+   NewsDetail's cover image), so nothing here actually depends on
+   anchoring to begin with. */
+html {
+  overflow-anchor: none;
 }
 
 /* Reading rhythm for an article's body — a bit looser than the typography
