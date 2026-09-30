@@ -3,17 +3,17 @@ import { Newspaper } from 'lucide-react'
 import { useCategoryNews } from '../hooks/useCategoryNews'
 import { useSEO } from '../hooks/useSEO'
 import { SITE_NAME } from '../utils/seo'
-import { ROUTES } from '../routes/paths'
+import { ROUTES, buildPath } from '../routes/paths'
 import NewsCard from '../components/news/NewsCard'
 import NewsRow from '../components/news/NewsRow'
-import Pagination from '../components/ui/Pagination'
+import CategoryPagination from '../components/ui/CategoryPagination'
 import EmptyState from '../components/ui/EmptyState'
 import ErrorState from '../components/ui/ErrorState'
 import CardGridSkeleton from '../components/news/CardGridSkeleton'
 
 function Category() {
   const { slug } = useParams()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
 
   const { category, news, totalCount, pageSize, loading, notFound, error, retry } = useCategoryNews(slug, page)
@@ -24,9 +24,10 @@ function Category() {
     description: category?.description || `Notícias sobre ${category?.name}.`,
   })
 
-  function handlePageChange(nextPage) {
-    setSearchParams(nextPage === 1 ? {} : { page: String(nextPage) })
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+  // Page 1 has no `?page=` at all — keeps the canonical/most-shared URL clean.
+  function buildPageHref(pageNumber) {
+    const base = buildPath.category(slug)
+    return pageNumber <= 1 ? base : `${base}?page=${pageNumber}`
   }
 
   if (loading) {
@@ -61,11 +62,12 @@ function Category() {
     )
   }
 
-  // Only the first page opens with a featured item (bigger image+text) —
-  // on later pages that wouldn't be "what's happening now", just
-  // pagination, so everything goes into the normal grid.
-  const featuredItem = page === 1 ? news[0] : null
-  const gridItems = page === 1 ? news.slice(1) : news
+  // Every page follows the same 1 featured + up to 15 grid shape (16 per
+  // page — see PAGE_SIZE in useCategoryNews.js), not just the first one:
+  // the featured slot is "this page's top story", not "the newest story
+  // site-wide", so it stays meaningful on page 2, 3, etc. too.
+  const featuredItem = news[0] ?? null
+  const gridItems = news.slice(1)
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:py-10 lg:py-12">
@@ -101,7 +103,7 @@ function Category() {
             </div>
           )}
 
-          <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
+          <CategoryPagination page={page} totalPages={totalPages} buildHref={buildPageHref} />
         </>
       )}
     </div>

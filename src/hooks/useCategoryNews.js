@@ -4,7 +4,9 @@ import { fetchCategoryBySlug } from '../services/categories'
 import { fetchNewsByCategory } from '../services/news'
 import { trackPageView } from '../services/analytics'
 
-const PAGE_SIZE = 9
+// 1 featured item + 15 grid cards (3×5, no leftover empty cell — 15 is
+// evenly divisible by 3) = 16 per page.
+const PAGE_SIZE = 16
 
 async function fetchCategoryData(slug) {
   const { data, error } = await fetchCategoryBySlug(slug)
