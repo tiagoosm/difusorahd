@@ -16,8 +16,10 @@ const IMAGE_SIZES = '(min-width: 1024px) 360px, (min-width: 640px) 45vw, 80px'
 // vertical card with the image on top, same as before.
 //
 // `compact` (sm+ only, e.g. NewsDetail's "Notícias relacionadas"): shorter
-// image, tighter padding, 1-line excerpt — same column width as a regular
-// card, just a lighter/shorter card in it.
+// image and tighter padding — same column width as a regular card, just a
+// lighter/shorter card in it. Pair with items-start (not items-stretch) on
+// the parent grid so the card keeps this natural height instead of being
+// stretched to match a taller sibling in the same row.
 function NewsCard({ news, compact = false }) {
   return (
     <Link
@@ -44,15 +46,10 @@ function NewsCard({ news, compact = false }) {
         <h3 className="text-sm leading-snug font-semibold break-words text-ink-900 transition-colors group-hover:text-brand-700 sm:text-base">
           {news.title}
         </h3>
-        {/* line-clamp (não corta o título, só a descrição): com cards numa
-            única fileira e items-stretch no grid pai, um resumo sem limite
-            esticava o card inteiro na vertical. */}
+        {/* line-clamp-2 (não corta o título, só a descrição): sem isso um
+            resumo longo por si só já estica o card verticalmente. */}
         {news.excerpt && (
-          <p
-            className={`hidden text-sm text-ink-500 sm:block ${compact ? 'sm:line-clamp-1' : 'sm:line-clamp-2'}`}
-          >
-            {news.excerpt}
-          </p>
+          <p className="hidden text-sm text-ink-500 sm:line-clamp-2 sm:block">{news.excerpt}</p>
         )}
         <span className="text-xs text-ink-500 sm:mt-auto sm:pt-2">{formatDate(news.published_at)}</span>
       </div>

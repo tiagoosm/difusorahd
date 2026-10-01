@@ -65,4 +65,16 @@ describe('CategorySection', () => {
       expect(imageWrapper.className).toMatch(/sm:aspect-\[2\/1\]/)
     })
   })
+
+  it('uses items-start (natural height) when compact, items-stretch (equal row height) otherwise', () => {
+    const { container: regular } = renderWithRouter(<CategorySection title="Últimas notícias" items={ITEMS} />)
+    expect(regular.querySelector('.grid')).toHaveClass('items-stretch')
+    expect(regular.querySelector('.grid')).not.toHaveClass('items-start')
+
+    const { container: related } = renderWithRouter(
+      <CategorySection title="Relacionadas" items={ITEMS} compact />,
+    )
+    expect(related.querySelector('.grid')).toHaveClass('items-start')
+    expect(related.querySelector('.grid')).not.toHaveClass('items-stretch')
+  })
 })

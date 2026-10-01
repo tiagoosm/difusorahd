@@ -21,8 +21,13 @@ function CategorySection({ title, items, viewAllHref, columns = 3, compact = fal
           up the same height — NewsCard is already built for this (text
           grows with flex-1, date pinned to the bottom with mt-auto),
           without cutting off any title; it just avoids differently-sized
-          boxes side by side when titles wrap to a different number of lines. */}
-      <div className={`grid items-stretch gap-1 sm:gap-6 ${GRID_COLUMNS[columns]}`}>
+          boxes side by side when titles wrap to a different number of lines.
+          compact (Related): the opposite trade-off — items-start, so each
+          card keeps its own natural height instead of being stretched to
+          match the tallest card in the row. */}
+      <div
+        className={`grid gap-1 sm:gap-6 ${compact ? 'items-start' : 'items-stretch'} ${GRID_COLUMNS[columns]}`}
+      >
         {items.map((item) => (
           <NewsCard key={item.id} news={item} compact={compact} />
         ))}

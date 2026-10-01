@@ -41,7 +41,7 @@ describe('NewsCard — título nunca é cortado (usado em Categoria, Busca e Rel
 })
 
 describe('NewsCard — compact (used by "Notícias relacionadas")', () => {
-  it('uses a shorter image and a 1-line excerpt instead of the regular 2-line one', () => {
+  it('uses a shorter image aspect ratio than the regular card', () => {
     const { container } = render(
       <MemoryRouter>
         <NewsCard news={NEWS} compact />
@@ -51,10 +51,9 @@ describe('NewsCard — compact (used by "Notícias relacionadas")', () => {
     const imageWrapper = container.querySelector('img').parentElement
     expect(imageWrapper.className).toMatch(/sm:aspect-\[2\/1\]/)
     expect(imageWrapper.className).not.toMatch(/sm:aspect-video/)
-    expect(screen.getByText('Resumo').className).toMatch(/sm:line-clamp-1/)
   })
 
-  it('defaults to the regular (non-compact) image and 2-line excerpt', () => {
+  it('defaults to the regular (non-compact) 16:9 image', () => {
     const { container } = render(
       <MemoryRouter>
         <NewsCard news={NEWS} />
@@ -63,6 +62,15 @@ describe('NewsCard — compact (used by "Notícias relacionadas")', () => {
 
     const imageWrapper = container.querySelector('img').parentElement
     expect(imageWrapper.className).toMatch(/sm:aspect-video/)
+  })
+
+  it('clamps the excerpt to 2 lines either way — only the image/padding change', () => {
+    render(
+      <MemoryRouter>
+        <NewsCard news={NEWS} compact />
+      </MemoryRouter>,
+    )
+
     expect(screen.getByText('Resumo').className).toMatch(/sm:line-clamp-2/)
   })
 })
