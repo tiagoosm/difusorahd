@@ -62,105 +62,107 @@ function NewsDetail() {
   const readingMinutes = estimateReadingTime(news.content)
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:py-10 lg:py-12">
-      <AdBanner position="ARTICLE_TOP" className="mb-8" />
+    <>
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:py-10 lg:py-12">
+        <AdBanner position="ARTICLE_TOP" className="mb-8" />
 
-      <article>
-        <header className="flex flex-col gap-4">
-          {news.category?.name && (
-            <Eyebrow to={buildPath.category(news.category.slug)}>{news.category.name}</Eyebrow>
-          )}
-
-          <h1 className="text-3xl leading-[1.08] font-bold tracking-tight text-ink-900 sm:text-4xl lg:text-5xl">
-            {news.title}
-          </h1>
-
-          {news.excerpt && (
-            <p className="text-lg leading-relaxed font-normal text-ink-600 sm:text-xl">{news.excerpt}</p>
-          )}
-
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-500">
-            {news.author?.full_name && (
-              <span className="flex items-center gap-1.5">
-                <User className="h-3.5 w-3.5" />
-                {news.author.full_name}
-              </span>
+        <article>
+          <header className="flex flex-col gap-4">
+            {news.category?.name && (
+              <Eyebrow to={buildPath.category(news.category.slug)}>{news.category.name}</Eyebrow>
             )}
-            <span className="flex items-center gap-1.5">
-              <span className="h-1 w-1 rounded-full bg-ink-300" aria-hidden="true" />
-              {formatDate(news.published_at)}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-1 w-1 rounded-full bg-ink-300" aria-hidden="true" />
-              <Clock className="h-3.5 w-3.5" />
-              {readingMinutes} min de leitura
-            </span>
-          </div>
 
-          {/* No mobile o compartilhar sai daqui e vai pro fim da matéria
-              (depois do texto) — deixa o usuário ler primeiro, e o cabeçalho
-              da matéria fica mais enxuto numa tela pequena. Desktop mantém a
-              posição original. */}
-          <div className="hidden border-t border-ink-100 pt-4 sm:block">
+            <h1 className="text-3xl leading-[1.08] font-bold tracking-tight text-ink-900 sm:text-4xl lg:text-5xl">
+              {news.title}
+            </h1>
+
+            {news.excerpt && (
+              <p className="text-lg leading-relaxed font-normal text-ink-600 sm:text-xl">{news.excerpt}</p>
+            )}
+
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-500">
+              {news.author?.full_name && (
+                <span className="flex items-center gap-1.5">
+                  <User className="h-3.5 w-3.5" />
+                  {news.author.full_name}
+                </span>
+              )}
+              <span className="flex items-center gap-1.5">
+                <span className="h-1 w-1 rounded-full bg-ink-300" aria-hidden="true" />
+                {formatDate(news.published_at)}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-1 w-1 rounded-full bg-ink-300" aria-hidden="true" />
+                <Clock className="h-3.5 w-3.5" />
+                {readingMinutes} min de leitura
+              </span>
+            </div>
+
+            {/* No mobile o compartilhar sai daqui e vai pro fim da matéria
+                (depois do texto) — deixa o usuário ler primeiro, e o cabeçalho
+                da matéria fica mais enxuto numa tela pequena. Desktop mantém a
+                posição original. */}
+            <div className="hidden border-t border-ink-100 pt-4 sm:block">
+              <ShareButtons title={news.title} url={window.location.href} />
+            </div>
+          </header>
+
+          {news.cover_image_url && (
+            <figure className="mt-8">
+              {/* aspect-ratio fixo reserva o espaço antes da imagem carregar —
+                  sem isso o corpo da matéria "pulava" para baixo quando a capa
+                  chegava (era o maior deslocamento de layout do site). */}
+              <div className="aspect-[16/9] overflow-hidden rounded-2xl bg-ink-100 shadow-card">
+                <img
+                  src={news.cover_image_url}
+                  srcSet={buildSrcSet(news.cover_image_url, [768, 1152, 1536])}
+                  sizes="(min-width: 768px) 768px, 100vw"
+                  alt={news.title}
+                  fetchPriority="high"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              {news.cover_image_caption && (
+                <figcaption className="mt-2 text-xs text-ink-500 italic">
+                  {news.cover_image_caption}
+                </figcaption>
+              )}
+            </figure>
+          )}
+
+          {news.audio_url && (
+            <div className="mt-8 flex flex-col gap-3">
+              <span className="flex items-center gap-1.5 text-xs font-bold tracking-wide text-ink-500 uppercase">
+                <Headphones className="h-3.5 w-3.5" />
+                Ouça esta notícia
+              </span>
+              <AudioPlayer src={news.audio_url} />
+            </div>
+          )}
+
+          <div
+            className="article-prose prose prose-lg mt-10 max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl"
+            dangerouslySetInnerHTML={{ __html: news.content }}
+          />
+
+          <div className="mt-10 border-t border-ink-100 pt-6 sm:hidden">
             <ShareButtons title={news.title} url={window.location.href} />
           </div>
-        </header>
 
-        {news.cover_image_url && (
-          <figure className="mt-8">
-            {/* aspect-ratio fixo reserva o espaço antes da imagem carregar —
-                sem isso o corpo da matéria "pulava" para baixo quando a capa
-                chegava (era o maior deslocamento de layout do site). */}
-            <div className="aspect-[16/9] overflow-hidden rounded-2xl bg-ink-100 shadow-card">
-              <img
-                src={news.cover_image_url}
-                srcSet={buildSrcSet(news.cover_image_url, [768, 1152, 1536])}
-                sizes="(min-width: 768px) 768px, 100vw"
-                alt={news.title}
-                fetchPriority="high"
-                className="h-full w-full object-cover"
-              />
-            </div>
-            {news.cover_image_caption && (
-              <figcaption className="mt-2 text-xs text-ink-500 italic">
-                {news.cover_image_caption}
-              </figcaption>
-            )}
-          </figure>
-        )}
+          <AdBanner position="ARTICLE_BOTTOM" className="mt-10" />
+        </article>
+      </div>
 
-        {news.audio_url && (
-          <div className="mt-8 flex flex-col gap-3">
-            <span className="flex items-center gap-1.5 text-xs font-bold tracking-wide text-ink-500 uppercase">
-              <Headphones className="h-3.5 w-3.5" />
-              Ouça esta notícia
-            </span>
-            <AudioPlayer src={news.audio_url} />
-          </div>
-        )}
-
-        <div
-          className="article-prose prose prose-lg mt-10 max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl"
-          dangerouslySetInnerHTML={{ __html: news.content }}
-        />
-
-        <div className="mt-10 border-t border-ink-100 pt-6 sm:hidden">
-          <ShareButtons title={news.title} url={window.location.href} />
+      {related.length > 0 && (
+        // Wider than the article column (max-w-3xl) on purpose: at 3
+        // columns, the article's own width left each card too narrow and
+        // titles (never clamped, see NewsCard) wrapped to several lines,
+        // stretching the cards tall.
+        <div className="mx-auto max-w-6xl border-t border-ink-100 px-4 pt-10 pb-12">
+          <CategorySection title="Notícias relacionadas" items={related} />
         </div>
-
-        <AdBanner position="ARTICLE_BOTTOM" className="mt-10" />
-
-        {related.length > 0 && (
-          <div className="mt-16 border-t border-ink-100 pt-10">
-            {/* columns=2 (not the default 3): this page's container is only
-                max-w-3xl, so 3 columns would make each card narrow enough
-                that titles (never clamped, see NewsCard) wrap to several
-                lines and stretch the card tall. */}
-            <CategorySection title="Notícias relacionadas" items={related} columns={2} />
-          </div>
-        )}
-      </article>
-    </div>
+      )}
+    </>
   )
 }
 
