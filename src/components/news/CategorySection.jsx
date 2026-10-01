@@ -9,7 +9,7 @@ const GRID_COLUMNS = {
   3: 'sm:grid-cols-2 lg:grid-cols-3',
 }
 
-function CategorySection({ title, items, viewAllHref, columns = 3 }) {
+function CategorySection({ title, items, viewAllHref, columns = 3, compact = false }) {
   if (!items.length) return null
 
   return (
@@ -24,7 +24,7 @@ function CategorySection({ title, items, viewAllHref, columns = 3 }) {
           boxes side by side when titles wrap to a different number of lines. */}
       <div className={`grid items-stretch gap-1 sm:gap-6 ${GRID_COLUMNS[columns]}`}>
         {items.map((item) => (
-          <NewsCard key={item.id} news={item} />
+          <NewsCard key={item.id} news={item} compact={compact} />
         ))}
       </div>
     </section>

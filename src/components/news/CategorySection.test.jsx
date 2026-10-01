@@ -54,4 +54,15 @@ describe('CategorySection', () => {
     expect(twoColContainer.querySelector('.grid')).not.toHaveClass('lg:grid-cols-3')
     expect(twoColContainer.querySelector('.grid')).toHaveClass('sm:grid-cols-2')
   })
+
+  it('passes compact down to every card (NewsDetail "Notícias relacionadas")', () => {
+    const { container } = renderWithRouter(<CategorySection title="Relacionadas" items={ITEMS} compact />)
+
+    const cards = container.querySelectorAll('a.group')
+    expect(cards).toHaveLength(ITEMS.length)
+    cards.forEach((card) => {
+      const imageWrapper = card.querySelector('img').parentElement
+      expect(imageWrapper.className).toMatch(/sm:aspect-\[2\/1\]/)
+    })
+  })
 })

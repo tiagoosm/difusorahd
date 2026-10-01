@@ -154,12 +154,12 @@ function NewsDetail() {
       </div>
 
       {related.length > 0 && (
-        // Wider than the article column (max-w-3xl) on purpose: at 3
-        // columns, the article's own width left each card too narrow and
-        // titles (never clamped, see NewsCard) wrapped to several lines,
-        // stretching the cards tall.
+        // Wider than the article column (max-w-3xl) on purpose, matching
+        // the navbar/footer width (max-w-6xl) instead. compact: the cards
+        // stay the same column width but get a shorter image and tighter
+        // text so they don't look oversized at that width.
         <div className="mx-auto max-w-6xl border-t border-ink-100 px-4 pt-10 pb-12">
-          <CategorySection title="Notícias relacionadas" items={related} />
+          <CategorySection title="Notícias relacionadas" items={related} compact />
         </div>
       )}
     </>
