@@ -129,3 +129,39 @@ describe('Search — error state vs. empty state', () => {
     expect(screen.queryByText('Não foi possível realizar a busca')).toBeNull()
   })
 })
+
+describe('Search — numbered pagination', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders no pagination when everything fits on one page', async () => {
+    searchNews.mockResolvedValue({ data: [{ id: '1', slug: 'a', title: 'Matéria' }], count: 1, error: null })
+
+    renderSearch()
+
+    await waitFor(() => expect(screen.getByText('Matéria')).toBeInTheDocument())
+    expect(screen.queryByRole('navigation', { name: 'Paginação' })).not.toBeInTheDocument()
+  })
+
+  it('renders clickable page links, built from the same query + page size as the fetch', async () => {
+    const items = Array.from({ length: 9 }).map((_, i) => ({
+      id: String(i),
+      slug: `n${i}`,
+      title: `Matéria ${i}`,
+    }))
+    searchNews.mockResolvedValue({ data: items, count: 25, error: null })
+
+    renderSearch('minas')
+
+    await waitFor(() => {
+      expect(screen.getByRole('navigation', { name: 'Paginação' })).toBeInTheDocument()
+    })
+
+    // ceil(25/9) = 3 pages.
+    const page1Link = screen.getAllByRole('link', { name: 'Página 1' })[0]
+    const page3Link = screen.getAllByRole('link', { name: 'Página 3' })[0]
+    expect(page1Link).toHaveAttribute('href', '/busca?q=minas')
+    expect(page3Link).toHaveAttribute('href', '/busca?q=minas&page=3')
+  })
+})

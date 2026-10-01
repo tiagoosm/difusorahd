@@ -3,13 +3,14 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { getPageItems, ELLIPSIS } from '../../utils/pagination'
 
 // Numbered pagination (page a reader can jump straight into, not just
-// step through) for category listings. Real <Link>s, not onClick-only
+// step through) for multi-page listings (category pages, search results).
+// Real <Link>s, not onClick-only
 // buttons — the page number is a genuine distinct URL, so it needs to be
 // a normal link (middle-click/new-tab, crawlable, works without JS).
 // Two independent rendered lists (desktop/mobile) instead of one dynamic
 // one: the sibling count differs, and the codebase already prefers a pure
 // CSS breakpoint switch over a JS matchMedia hook for this kind of thing.
-function CategoryPagination({ page, totalPages, buildHref }) {
+function NumberedPagination({ page, totalPages, buildHref }) {
   if (totalPages <= 1) return null
 
   return (
@@ -106,4 +107,4 @@ function PageLink({ type, number, current, disabled, href }) {
   )
 }
 
-export default CategoryPagination
+export default NumberedPagination

@@ -6,7 +6,7 @@ import { SITE_NAME } from '../utils/seo'
 import { ROUTES, buildPath } from '../routes/paths'
 import NewsCard from '../components/news/NewsCard'
 import NewsRow from '../components/news/NewsRow'
-import CategoryPagination from '../components/ui/CategoryPagination'
+import NumberedPagination from '../components/ui/NumberedPagination'
 import EmptyState from '../components/ui/EmptyState'
 import ErrorState from '../components/ui/ErrorState'
 import CardGridSkeleton from '../components/news/CardGridSkeleton'
@@ -16,8 +16,7 @@ function Category() {
   const [searchParams] = useSearchParams()
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
 
-  const { category, news, totalCount, pageSize, loading, notFound, error, retry } = useCategoryNews(slug, page)
-  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
+  const { category, news, totalPages, loading, notFound, error, retry } = useCategoryNews(slug, page)
 
   useSEO({
     title: category ? `${category.name} — ${SITE_NAME}` : undefined,
@@ -62,12 +61,12 @@ function Category() {
     )
   }
 
-  // Every page follows the same 1 featured + up to 15 grid shape (16 per
-  // page — see PAGE_SIZE in useCategoryNews.js), not just the first one:
-  // the featured slot is "this page's top story", not "the newest story
-  // site-wide", so it stays meaningful on page 2, 3, etc. too.
-  const featuredItem = news[0] ?? null
-  const gridItems = news.slice(1)
+  // Only the first page opens with a featured item — it's "this
+  // category's current top story", which only makes sense once, not once
+  // per page (see useCategoryNews.js for how page 1's extra row and the
+  // 15-per-page grid afterward both avoid a trailing empty grid cell).
+  const featuredItem = page === 1 ? news[0] : null
+  const gridItems = page === 1 ? news.slice(1) : news
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:py-10 lg:py-12">
@@ -103,7 +102,7 @@ function Category() {
             </div>
           )}
 
-          <CategoryPagination page={page} totalPages={totalPages} buildHref={buildPageHref} />
+          <NumberedPagination page={page} totalPages={totalPages} buildHref={buildPageHref} />
         </>
       )}
     </div>

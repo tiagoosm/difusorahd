@@ -3,14 +3,15 @@ import { Search as SearchIcon, SearchX } from 'lucide-react'
 import { useSearchNews } from '../hooks/useSearchNews'
 import { useSEO } from '../hooks/useSEO'
 import { SITE_NAME } from '../utils/seo'
+import { ROUTES } from '../routes/paths'
 import NewsCard from '../components/news/NewsCard'
-import Pagination from '../components/ui/Pagination'
+import NumberedPagination from '../components/ui/NumberedPagination'
 import EmptyState from '../components/ui/EmptyState'
 import ErrorState from '../components/ui/ErrorState'
 import CardGridSkeleton from '../components/news/CardGridSkeleton'
 
 function Search() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const query = searchParams.get('q') ?? ''
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
 
@@ -22,9 +23,11 @@ function Search() {
     noindex: true,
   })
 
-  function handlePageChange(nextPage) {
-    setSearchParams(nextPage === 1 ? { q: query } : { q: query, page: String(nextPage) })
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+  // Page 1 has no `?page=` at all — keeps the canonical/most-shared URL clean.
+  function buildPageHref(pageNumber) {
+    const params = new URLSearchParams({ q: query })
+    if (pageNumber > 1) params.set('page', String(pageNumber))
+    return `${ROUTES.search}?${params}`
   }
 
   return (
@@ -71,7 +74,7 @@ function Search() {
               <NewsCard key={item.id} news={item} />
             ))}
           </div>
-          <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
+          <NumberedPagination page={page} totalPages={totalPages} buildHref={buildPageHref} />
         </>
       )}
     </div>

@@ -134,10 +134,10 @@ export function incrementNewsViews(slug) {
   return supabase.rpc('increment_news_views', { news_slug: slug })
 }
 
-export function fetchNewsByCategory({ categoryId, page = 1, pageSize = 9 }) {
-  const from = (page - 1) * pageSize
-  const to = from + pageSize - 1
-
+// Takes a raw row range (not page/pageSize): the category page's featured
+// item makes page 1 one row bigger than every other page, so the caller
+// (useCategoryNews) owns that math and just asks for the rows it needs.
+export function fetchNewsByCategory({ categoryId, from = 0, to = 8 }) {
   return supabase
     .from('news')
     .select(CARD_FIELDS, { count: 'exact' })

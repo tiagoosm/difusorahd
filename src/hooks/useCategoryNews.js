@@ -4,9 +4,28 @@ import { fetchCategoryBySlug } from '../services/categories'
 import { fetchNewsByCategory } from '../services/news'
 import { trackPageView } from '../services/analytics'
 
-// 1 featured item + 15 grid cards (3×5, no leftover empty cell — 15 is
-// evenly divisible by 3) = 16 per page.
-const PAGE_SIZE = 16
+// Page 1: 1 featured item + 15 grid cards (16 rows fetched). Pages 2+: no
+// featured item (that slot is "this category's current top story", which
+// only makes sense once, not once per page) — just a 15-card grid, kept
+// at 15 rather than reusing page 1's 16 specifically so it still divides
+// evenly into the 3-column desktop grid (15 / 3 = 5 full rows) with no
+// trailing empty cell, the same reasoning page 1's size already followed.
+const FEATURED_COUNT = 1
+const GRID_PAGE_SIZE = 15
+const FIRST_PAGE_SIZE = FEATURED_COUNT + GRID_PAGE_SIZE
+
+function getRangeForPage(page) {
+  if (page <= 1) return { from: 0, to: FIRST_PAGE_SIZE - 1 }
+  const from = FIRST_PAGE_SIZE + (page - 2) * GRID_PAGE_SIZE
+  return { from, to: from + GRID_PAGE_SIZE - 1 }
+}
+
+// Not a plain ceil(total/pageSize): page 1 holds one more row than the
+// rest, so it "uses up" the featured slot for every page after it.
+export function getCategoryTotalPages(totalCount) {
+  if (totalCount <= FIRST_PAGE_SIZE) return 1
+  return 1 + Math.ceil((totalCount - FIRST_PAGE_SIZE) / GRID_PAGE_SIZE)
+}
 
 async function fetchCategoryData(slug) {
   const { data, error } = await fetchCategoryBySlug(slug)
@@ -15,7 +34,8 @@ async function fetchCategoryData(slug) {
 }
 
 async function fetchCategoryNewsData(categoryId, page) {
-  const { data, count, error } = await fetchNewsByCategory({ categoryId, page, pageSize: PAGE_SIZE })
+  const { from, to } = getRangeForPage(page)
+  const { data, count, error } = await fetchNewsByCategory({ categoryId, from, to })
   if (error) throw error
   return { news: data ?? [], totalCount: count ?? 0 }
 }
@@ -57,7 +77,7 @@ export function useCategoryNews(slug, page) {
     category,
     news: newsQuery.data?.news ?? [],
     totalCount: newsQuery.data?.totalCount ?? 0,
-    pageSize: PAGE_SIZE,
+    totalPages: getCategoryTotalPages(newsQuery.data?.totalCount ?? 0),
     loading,
     notFound,
     error,

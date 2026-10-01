@@ -47,8 +47,8 @@ beforeEach(() => {
   fetchCategoryBySlug.mockResolvedValue({ data: CATEGORY, error: null })
 })
 
-describe('Category — 16 per page (1 featured + 15 grid)', () => {
-  it('renders exactly 1 featured item + 15 grid cards for a full page, with no pagination for a single page', async () => {
+describe('Category — page 1 (1 featured + 15 grid = 16)', () => {
+  it('renders exactly 1 featured item + 15 grid cards, with no pagination for a single page', async () => {
     fetchNewsByCategory.mockResolvedValue({ data: makeNews(16), count: 16, error: null })
 
     renderCategory()
@@ -56,43 +56,17 @@ describe('Category — 16 per page (1 featured + 15 grid)', () => {
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Esportes', level: 1 })).toBeInTheDocument()
     })
+    expect(fetchNewsByCategory).toHaveBeenCalledWith(
+      expect.objectContaining({ categoryId: 'cat-1', from: 0, to: 15 }),
+    )
 
-    // The featured item renders as a size="lg" NewsRow heading (h3, not clamped);
-    // every one of the 16 fetched articles should appear exactly once.
     for (let n = 1; n <= 16; n++) {
       expect(screen.getByText(`Notícia ${n}`)).toBeInTheDocument()
     }
+    // The featured item renders as the large NewsRow heading.
+    const featured = screen.getByText('Notícia 1')
+    expect(featured.className).toMatch(/text-2xl|text-lg/)
     expect(screen.queryByRole('navigation', { name: 'Paginação' })).not.toBeInTheDocument()
-  })
-
-  it('still shows a featured item on page 2 (not just page 1)', async () => {
-    fetchNewsByCategory.mockResolvedValue({ data: makeNews(16, 17), count: 32, error: null })
-
-    renderCategory('/categoria/esportes?page=2')
-
-    await waitFor(() => {
-      expect(screen.getByText('Notícia 17')).toBeInTheDocument()
-    })
-
-    // Notícia 17 (the first item of page 2's fetch) gets the large featured
-    // treatment — same NewsRow component/heading level the real page-1
-    // featured item uses.
-    const heading = screen.getByText('Notícia 17')
-    expect(heading.tagName).toBe('H3')
-    expect(heading.className).toMatch(/text-2xl|text-lg/)
-  })
-
-  it('a partial last page (1 remaining article) shows it as the featured item with no empty grid', async () => {
-    fetchNewsByCategory.mockResolvedValue({ data: makeNews(1, 17), count: 17, error: null })
-
-    renderCategory('/categoria/esportes?page=2')
-
-    await waitFor(() => {
-      expect(screen.getByText('Notícia 17')).toBeInTheDocument()
-    })
-    expect(screen.getAllByRole('link').filter((a) => a.getAttribute('href')?.includes('noticia-17'))).not.toHaveLength(
-      0,
-    )
   })
 
   it('does not render fake/placeholder cards to pad out an incomplete page', async () => {
@@ -108,27 +82,71 @@ describe('Category — 16 per page (1 featured + 15 grid)', () => {
   })
 })
 
-describe('Category — pagination wiring', () => {
-  it('computes totalPages from totalCount/16 and renders numbered pagination', async () => {
-    fetchNewsByCategory.mockResolvedValue({ data: makeNews(16), count: 50, error: null })
+describe('Category — pages after the first (no featured item, 15-card grid)', () => {
+  it('page 2 has no featured item — every article is a plain grid card', async () => {
+    fetchNewsByCategory.mockResolvedValue({ data: makeNews(15, 17), count: 31, error: null })
+
+    renderCategory('/categoria/esportes?page=2')
+
+    await waitFor(() => {
+      expect(screen.getByText('Notícia 17')).toBeInTheDocument()
+    })
+    expect(fetchNewsByCategory).toHaveBeenCalledWith(
+      expect.objectContaining({ categoryId: 'cat-1', from: 16, to: 30 }),
+    )
+
+    // Notícia 17 is the first item of page 2's fetch, but — unlike page
+    // 1 — it must NOT get the large featured treatment.
+    const heading = screen.getByText('Notícia 17')
+    expect(heading.className).not.toMatch(/text-2xl|text-lg/)
+    expect(screen.getAllByRole('link', { name: /Notícia \d/ })).toHaveLength(15)
+  })
+
+  it('a single remaining article on a later page renders as a plain grid card, not a featured item', async () => {
+    fetchNewsByCategory.mockResolvedValue({ data: makeNews(1, 32), count: 32, error: null })
+
+    renderCategory('/categoria/esportes?page=3')
+
+    await waitFor(() => {
+      expect(screen.getByText('Notícia 32')).toBeInTheDocument()
+    })
+    expect(screen.getByText('Notícia 32').className).not.toMatch(/text-2xl|text-lg/)
+  })
+})
+
+describe('Category — pagination math (page 1 has 16 rows, every later page has 15)', () => {
+  it.each([
+    [16, 1],
+    [17, 2],
+    [31, 2],
+    [32, 3],
+    [46, 3],
+    [50, 4],
+  ])('%i total articles -> %i pages', async (totalCount, expectedPages) => {
+    fetchNewsByCategory.mockResolvedValue({ data: makeNews(Math.min(totalCount, 16)), count: totalCount, error: null })
 
     renderCategory()
 
     await waitFor(() => {
-      expect(screen.getByRole('navigation', { name: 'Paginação' })).toBeInTheDocument()
+      expect(screen.getByText('Notícia 1')).toBeInTheDocument()
     })
-    // ceil(50/16) = 4 pages.
-    expect(screen.getAllByRole('link', { name: 'Página 4' })[0]).toBeInTheDocument()
+
+    if (expectedPages <= 1) {
+      expect(screen.queryByRole('navigation', { name: 'Paginação' })).not.toBeInTheDocument()
+    } else {
+      const nav = screen.getByRole('navigation', { name: 'Paginação' })
+      expect(nav.querySelectorAll(`a[aria-label="Página ${expectedPages}"]`).length).toBeGreaterThan(0)
+    }
   })
 
   it('requests the page from the URL (?page=2) via fetchNewsByCategory', async () => {
-    fetchNewsByCategory.mockResolvedValue({ data: makeNews(16, 17), count: 50, error: null })
+    fetchNewsByCategory.mockResolvedValue({ data: makeNews(15, 17), count: 50, error: null })
 
     renderCategory('/categoria/esportes?page=2')
 
     await waitFor(() => {
       expect(fetchNewsByCategory).toHaveBeenCalledWith(
-        expect.objectContaining({ categoryId: 'cat-1', page: 2, pageSize: 16 }),
+        expect.objectContaining({ categoryId: 'cat-1', from: 16, to: 30 }),
       )
     })
   })
