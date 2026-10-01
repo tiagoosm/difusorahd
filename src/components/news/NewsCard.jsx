@@ -47,10 +47,13 @@ function NewsCard({ news, compact = false }) {
           {news.title}
         </h3>
         {/* line-clamp-2 (não corta o título, só a descrição): sem isso um
-            resumo longo por si só já estica o card verticalmente. */}
-        {news.excerpt && (
-          <p className="hidden text-sm text-ink-500 sm:line-clamp-2 sm:block">{news.excerpt}</p>
-        )}
+            resumo longo por si só já estica o card verticalmente. Sem
+            "sm:block" aqui — line-clamp já define seu próprio display
+            (-webkit-box); "sm:block" na mesma classe competia com ele pelo
+            "display" e, dependendo da ordem do CSS gerado, vencia a
+            cascata e desativava o clamp, deixando resumos longos sem
+            cortar (card ficava mais alto que os outros da linha). */}
+        {news.excerpt && <p className="hidden text-sm text-ink-500 sm:line-clamp-2">{news.excerpt}</p>}
         <span className="text-xs text-ink-500 sm:mt-auto sm:pt-2">{formatDate(news.published_at)}</span>
       </div>
     </Link>
