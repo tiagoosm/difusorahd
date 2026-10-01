@@ -152,7 +152,11 @@ function NewsDetail() {
 
         {related.length > 0 && (
           <div className="mt-16 border-t border-ink-100 pt-10">
-            <CategorySection title="Notícias relacionadas" items={related} />
+            {/* columns=2 (not the default 3): this page's container is only
+                max-w-3xl, so 3 columns would make each card narrow enough
+                that titles (never clamped, see NewsCard) wrap to several
+                lines and stretch the card tall. */}
+            <CategorySection title="Notícias relacionadas" items={related} columns={2} />
           </div>
         )}
       </article>
