@@ -1,36 +1,7 @@
 import { useRef, useState } from 'react'
 import { UploadCloud, X, Loader2, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { uploadFile } from '../../services/storage'
-
-const MAX_SIZE_MB = { image: 5, audio: 50 }
-
-const FORMAT_HINT = {
-  image: 'JPG, PNG, WEBP ou GIF',
-  audio: 'MP3, WAV, OGG, M4A, AAC, WEBM ou FLAC',
-}
-
-// Translates the raw Supabase Storage error into a message that explains
-// the real cause (unsupported format, file too large, unauthorized
-// session) instead of a generic "couldn't upload".
-function describeUploadError(error, kind) {
-  const message = error?.message || ''
-
-  if (/exceeded the maximum allowed size|payload too large/i.test(message)) {
-    return `O arquivo excede o limite de ${MAX_SIZE_MB[kind]} MB.`
-  }
-  if (/mime type .* is not supported/i.test(message)) {
-    return `Formato não suportado. Envie um arquivo em ${FORMAT_HINT[kind]}.`
-  }
-  if (/row-level security|not authorized|jwt/i.test(message)) {
-    return 'Sem permissão para enviar arquivos. Faça login novamente.'
-  }
-  if (/network|failed to fetch/i.test(message)) {
-    return 'Falha de conexão durante o envio. Verifique sua internet e tente novamente.'
-  }
-
-  return message ? `Não foi possível enviar o arquivo: ${message}` : 'Não foi possível enviar o arquivo.'
-}
+import { uploadFile, MAX_SIZE_MB, describeUploadError } from '../../services/storage'
 
 function FileUpload({ value, onChange, bucket, folder, accept, kind = 'image', label }) {
   const inputRef = useRef(null)

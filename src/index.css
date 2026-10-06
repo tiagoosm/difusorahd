@@ -91,6 +91,36 @@ html {
   line-height: 1.85;
 }
 
+/* In-body media blocks (image/video/audio inserted via the Editor's
+   Inserir imagem/vídeo/áudio buttons, see components/editor/mediaNodes.jsx)
+   on the public article page — the <figure data-content-block="..."> markup
+   those nodes serialize to. Width/border-radius here (not the typography
+   plugin's own img/figure defaults) is what keeps media filling the
+   article column without overflowing it. */
+.article-prose .content-media {
+  margin: 1.75em 0;
+}
+.article-prose .content-image img {
+  width: 100%;
+  border-radius: 1rem;
+}
+.article-prose .content-video video,
+.article-prose .content-video-frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 1rem;
+  border: 0;
+}
+.article-prose .content-audio audio {
+  width: 100%;
+}
+.article-prose .content-media figcaption {
+  margin-top: 0.5em;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--color-ink-500);
+}
+
 /* Tiptap editor placeholder: requires a custom CSS selector, not expressible via Tailwind utilities. */
 .tiptap p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);

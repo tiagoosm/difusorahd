@@ -28,5 +28,10 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
     css: false,
+    // Individual tests run in well under 1s — this only matters when every
+    // file runs in parallel and CPU contention (not slow test logic) pushes
+    // some past the 5s default, which started showing up once the Editor
+    // tests added real ProseMirror/ReactNodeViewRenderer mounts to the suite.
+    testTimeout: 15000,
   },
 })

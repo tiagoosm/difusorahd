@@ -1,8 +1,25 @@
+import { useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
-import { Bold, Italic, Heading2, List, ListOrdered, Link as LinkIcon, Undo, Redo } from 'lucide-react'
+import {
+  Bold,
+  Italic,
+  Heading2,
+  List,
+  ListOrdered,
+  Link as LinkIcon,
+  Undo,
+  Redo,
+  Image as ImageIcon,
+  Video,
+  Music,
+} from 'lucide-react'
+import { MediaImage, MediaAudio, MediaVideo } from '../editor/mediaNodes'
+import InsertMediaModal from '../editor/InsertMediaModal'
+
+const NODE_TYPE_BY_KIND = { image: 'mediaImage', audio: 'mediaAudio', video: 'mediaVideo' }
 
 function ToolbarButton({ onClick, isActive, disabled, label, children }) {
   return (
@@ -21,7 +38,7 @@ function ToolbarButton({ onClick, isActive, disabled, label, children }) {
   )
 }
 
-function EditorToolbar({ editor }) {
+function EditorToolbar({ editor, onInsertMedia }) {
   if (!editor) return null
 
   function setLink() {
@@ -81,6 +98,18 @@ function EditorToolbar({ editor }) {
 
       <div className="mx-1 h-5 w-px bg-ink-200" />
 
+      <ToolbarButton label="Inserir imagem" onClick={() => onInsertMedia('image')}>
+        <ImageIcon className="h-4 w-4" />
+      </ToolbarButton>
+      <ToolbarButton label="Inserir vídeo" onClick={() => onInsertMedia('video')}>
+        <Video className="h-4 w-4" />
+      </ToolbarButton>
+      <ToolbarButton label="Inserir áudio" onClick={() => onInsertMedia('audio')}>
+        <Music className="h-4 w-4" />
+      </ToolbarButton>
+
+      <div className="mx-1 h-5 w-px bg-ink-200" />
+
       <ToolbarButton
         label="Desfazer"
         onClick={() => editor.chain().focus().undo().run()}
@@ -100,11 +129,16 @@ function EditorToolbar({ editor }) {
 }
 
 function Editor({ value, onChange, placeholder = 'Escreva o conteúdo da notícia...' }) {
+  const [mediaModalKind, setMediaModalKind] = useState(null)
+
   const editor = useEditor({
     extensions: [
       StarterKit,
       Link.configure({ openOnClick: false, HTMLAttributes: { class: 'text-brand-600 underline' } }),
       Placeholder.configure({ placeholder }),
+      MediaImage,
+      MediaAudio,
+      MediaVideo,
     ],
     content: value || '',
     editorProps: {
@@ -117,10 +151,37 @@ function Editor({ value, onChange, placeholder = 'Escreva o conteúdo da notíci
     },
   })
 
+  // Inserts the media block at wherever the cursor currently is (the
+  // admin positions it by clicking in the text first, then picks a type).
+  // If that leaves the block as the very last node, a trailing empty
+  // paragraph is appended too — otherwise there'd be no way to click past
+  // an atom node to keep writing below it.
+  function handleInsertMedia(attrs) {
+    if (!editor) return
+    const type = NODE_TYPE_BY_KIND[mediaModalKind]
+
+    editor.chain().focus().insertContent({ type, attrs }).run()
+
+    const { state } = editor
+    const lastChild = state.doc.lastChild
+    if (lastChild && lastChild.type.name === type) {
+      editor.chain().insertContentAt(state.doc.content.size, { type: 'paragraph' }).run()
+    }
+
+    setMediaModalKind(null)
+  }
+
   return (
     <div className="overflow-hidden rounded-lg border border-ink-300 bg-white focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/30">
-      <EditorToolbar editor={editor} />
+      <EditorToolbar editor={editor} onInsertMedia={setMediaModalKind} />
       <EditorContent editor={editor} />
+
+      <InsertMediaModal
+        kind={mediaModalKind}
+        isOpen={Boolean(mediaModalKind)}
+        onClose={() => setMediaModalKind(null)}
+        onInsert={handleInsertMedia}
+      />
     </div>
   )
 }
