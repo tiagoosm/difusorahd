@@ -5,8 +5,12 @@ import { coverPositionStyle } from '../../utils/coverFocalPoint'
 import Eyebrow from '../ui/Eyebrow'
 import SectionHeading from '../ui/SectionHeading'
 
-// Fixed thumbnail (h-14 w-14 = 56px).
-const THUMB_WIDTHS = [56, 112]
+// h-14 (56px) with a 3:2 aspect ratio -> 84px wide. Less square than the
+// original 56x56: a tighter box forces a tighter default crop (zoom=1 still
+// has to fill it edge-to-edge, see utils/coverFocalPoint.js), so widening it
+// is what actually reduces how much of a typical (wider) photo gets cut —
+// an admin-set zoom can only ever crop tighter than this floor, not looser.
+const THUMB_WIDTHS = [84, 168]
 const COLUMN_SIZE = 5
 
 // Editorial list, no longer a ranking in cards: numbering is deliberately
@@ -48,11 +52,11 @@ function MostReadRow({ item, rank }) {
         {/* No image on mobile: the list stays more compact and focused on
             the title — the focus is what's being read, not the photo. It
             reappears from sm (tablet+) up, where 2 columns already fit. */}
-        <div className="hidden h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-ink-100 sm:block">
+        <div className="hidden h-14 aspect-[3/2] shrink-0 overflow-hidden rounded-lg bg-ink-100 sm:block">
           <img
             src={item.cover_image_url}
             srcSet={buildSrcSet(item.cover_image_url, THUMB_WIDTHS)}
-            sizes="56px"
+            sizes="84px"
             alt=""
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             style={coverPositionStyle(item.cover_focal_points, 'most_read')}

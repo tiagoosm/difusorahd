@@ -39,9 +39,9 @@ describe('CoverFocalPointEditor — "mesmo enquadramento" default', () => {
     fireEvent.pointerDown(box, { clientX: 150, clientY: 25 }) // 75%, 25%
 
     expect(onChange).toHaveBeenCalledWith({
-      featured: { x: 75, y: 25 },
-      card: { x: 75, y: 25 },
-      most_read: { x: 75, y: 25 },
+      featured: { x: 75, y: 25, zoom: 1 },
+      card: { x: 75, y: 25, zoom: 1 },
+      most_read: { x: 75, y: 25, zoom: 1 },
     })
   })
 })
@@ -58,13 +58,13 @@ describe('CoverFocalPointEditor — independent contexts', () => {
     fireEvent.pointerDown(box, { clientX: 0, clientY: 0 }) // 0%, 0%
 
     expect(onChange).toHaveBeenCalledWith({
-      featured: { x: 20, y: 20 },
-      card: { x: 40, y: 40 },
-      most_read: { x: 0, y: 0 },
+      featured: { x: 20, y: 20, zoom: 1 },
+      card: { x: 40, y: 40, zoom: 1 },
+      most_read: { x: 0, y: 0, zoom: 1 },
     })
   })
 
-  it('"Restaurar padrão" resets only the active context to {x:50,y:50}', () => {
+  it('"Restaurar padrão" resets only the active context to {x:50,y:50,zoom:1}', () => {
     const value = { featured: { x: 20, y: 20 }, card: { x: 40, y: 40 }, most_read: { x: 60, y: 60 } }
     const onChange = vi.fn()
     render(<CoverFocalPointEditor imageUrl={IMAGE_URL} value={value} onChange={onChange} />)
@@ -73,9 +73,9 @@ describe('CoverFocalPointEditor — independent contexts', () => {
     fireEvent.click(screen.getByRole('button', { name: /restaurar padrão/i }))
 
     expect(onChange).toHaveBeenCalledWith({
-      featured: { x: 20, y: 20 },
-      card: { x: 50, y: 50 },
-      most_read: { x: 60, y: 60 },
+      featured: { x: 20, y: 20, zoom: 1 },
+      card: { x: 50, y: 50, zoom: 1 },
+      most_read: { x: 60, y: 60, zoom: 1 },
     })
   })
 
@@ -88,9 +88,9 @@ describe('CoverFocalPointEditor — independent contexts', () => {
     fireEvent.keyDown(box, { key: 'ArrowRight' })
 
     expect(onChange).toHaveBeenCalledWith({
-      featured: { x: 22, y: 20 },
-      card: { x: 40, y: 40 },
-      most_read: { x: 60, y: 60 },
+      featured: { x: 22, y: 20, zoom: 1 },
+      card: { x: 40, y: 40, zoom: 1 },
+      most_read: { x: 60, y: 60, zoom: 1 },
     })
   })
 
@@ -103,9 +103,61 @@ describe('CoverFocalPointEditor — independent contexts', () => {
     fireEvent.keyDown(box, { key: 'ArrowDown', shiftKey: true })
 
     expect(onChange).toHaveBeenCalledWith({
-      featured: { x: 20, y: 30 },
-      card: { x: 40, y: 40 },
-      most_read: { x: 60, y: 60 },
+      featured: { x: 20, y: 30, zoom: 1 },
+      card: { x: 40, y: 40, zoom: 1 },
+      most_read: { x: 60, y: 60, zoom: 1 },
+    })
+  })
+})
+
+describe('CoverFocalPointEditor — zoom', () => {
+  it('the zoom slider starts at 1 (today\'s default, no cropping beyond fill) and never goes below it', () => {
+    render(<CoverFocalPointEditor imageUrl={IMAGE_URL} value={null} onChange={vi.fn()} />)
+    const slider = screen.getByRole('slider', { name: 'Zoom' })
+    expect(slider).toHaveValue('1')
+    expect(slider).toHaveAttribute('min', '1')
+  })
+
+  it('moving the zoom slider updates only zoom, keeping x/y', () => {
+    const value = { featured: { x: 30, y: 70, zoom: 1 }, card: { x: 50, y: 50 }, most_read: { x: 50, y: 50 } }
+    const onChange = vi.fn()
+    render(<CoverFocalPointEditor imageUrl={IMAGE_URL} value={value} onChange={onChange} />)
+
+    fireEvent.change(screen.getByRole('slider', { name: 'Zoom' }), { target: { value: '1.8' } })
+
+    expect(onChange).toHaveBeenCalledWith({
+      featured: { x: 30, y: 70, zoom: 1.8 },
+      card: { x: 50, y: 50, zoom: 1 },
+      most_read: { x: 50, y: 50, zoom: 1 },
+    })
+  })
+
+  it('mouse wheel on the box zooms in/out, clamped to [1, 2.5]', () => {
+    const value = { featured: { x: 50, y: 50, zoom: 1.2 }, card: { x: 50, y: 50 }, most_read: { x: 50, y: 50 } }
+    const onChange = vi.fn()
+    render(<CoverFocalPointEditor imageUrl={IMAGE_URL} value={value} onChange={onChange} />)
+
+    const box = screen.getByRole('slider', { name: 'Enquadramento da imagem' })
+    fireEvent.wheel(box, { deltaY: -100 }) // scroll up = zoom in
+
+    expect(onChange).toHaveBeenCalledWith({
+      featured: { x: 50, y: 50, zoom: 1.3 },
+      card: { x: 50, y: 50, zoom: 1 },
+      most_read: { x: 50, y: 50, zoom: 1 },
+    })
+  })
+
+  it('"Restaurar padrão" also resets zoom back to 1', () => {
+    const value = { featured: { x: 20, y: 20, zoom: 2 }, card: { x: 50, y: 50 }, most_read: { x: 50, y: 50 } }
+    const onChange = vi.fn()
+    render(<CoverFocalPointEditor imageUrl={IMAGE_URL} value={value} onChange={onChange} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /restaurar padrão/i }))
+
+    expect(onChange).toHaveBeenCalledWith({
+      featured: { x: 50, y: 50, zoom: 1 },
+      card: { x: 50, y: 50, zoom: 1 },
+      most_read: { x: 50, y: 50, zoom: 1 },
     })
   })
 })

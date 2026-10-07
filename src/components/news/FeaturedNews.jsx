@@ -8,8 +8,11 @@ import Eyebrow from '../ui/Eyebrow'
 // Hero takes up 2/3 of the 1152px container on desktop, full width on mobile.
 const HERO_WIDTHS = [640, 960, 1280, 1600]
 const HERO_SIZES = '(min-width: 1024px) 760px, 100vw'
-// Fixed square thumbnail (h-20 w-20 = 80px) for the secondary list.
-const THUMB_WIDTHS = [80, 160]
+// h-20 (80px) with a 3:2 aspect ratio -> 120px wide for the secondary list.
+// Less square than the original 80x80 — see MostReadNews.jsx for why: a
+// tighter box forces a tighter default crop regardless of zoom, since zoom
+// never goes below "fills the box" (utils/coverFocalPoint.js).
+const THUMB_WIDTHS = [120, 240]
 
 function FeaturedNews({ items }) {
   if (!items.length) return null
@@ -66,12 +69,12 @@ function FeaturedNews({ items }) {
 function FeaturedListItem({ news }) {
   return (
     <Link to={buildPath.news(news.slug)} className="group flex min-w-0 items-center gap-3.5 p-4">
-      <div className="aspect-square h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-ink-100">
+      <div className="h-20 aspect-[3/2] shrink-0 overflow-hidden rounded-xl bg-ink-100">
         {/* Decorative: the title comes right next to it in the same link. */}
         <img
           src={news.cover_image_url}
           srcSet={buildSrcSet(news.cover_image_url, THUMB_WIDTHS)}
-          sizes="80px"
+          sizes="120px"
           alt=""
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           style={coverPositionStyle(news.cover_focal_points, 'featured')}
