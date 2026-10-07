@@ -2,11 +2,11 @@ import { supabase } from './supabase'
 import { removeFile } from './storage'
 
 export const CARD_FIELDS =
-  'id, title, slug, excerpt, cover_image_url, published_at, category:categories(id, name, slug)'
+  'id, title, slug, excerpt, cover_image_url, cover_focal_points, published_at, category:categories(id, name, slug)'
 
 
 const DETAIL_FIELDS = `
-  id, title, slug, excerpt, content, cover_image_url, cover_image_caption, audio_url, published_at, updated_at,
+  id, title, slug, excerpt, content, cover_image_url, cover_image_caption, cover_focal_points, audio_url, published_at, updated_at,
   category:categories(id, name, slug),
   author:profiles(full_name)
 `
@@ -107,6 +107,7 @@ export async function fetchWeeklyTopNews(limit = 20) {
     title: row.title,
     slug: row.slug,
     cover_image_url: row.cover_image_url,
+    cover_focal_points: row.cover_focal_points,
     category: row.category_name
       ? { id: row.category_id, name: row.category_name, slug: row.category_slug }
       : null,
@@ -293,7 +294,7 @@ export function fetchNewsById(id) {
   return supabase
     .from('news')
     .select(
-      'id, title, slug, excerpt, content, cover_image_url, cover_image_caption, audio_url, category_id, status, is_featured',
+      'id, title, slug, excerpt, content, cover_image_url, cover_image_caption, cover_focal_points, audio_url, category_id, status, is_featured',
     )
     .eq('id', id)
     .maybeSingle()

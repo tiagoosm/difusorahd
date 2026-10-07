@@ -74,3 +74,26 @@ describe('NewsCard — compact (used by "Notícias relacionadas")', () => {
     expect(screen.getByText('Resumo').className).toMatch(/sm:line-clamp-2/)
   })
 })
+
+describe('NewsCard — cover focal point ("card" context)', () => {
+  it('applies the saved "card" focal point as the image object-position', () => {
+    const news = { ...NEWS, cover_focal_points: { card: { x: 20, y: 80 }, featured: { x: 0, y: 0 } } }
+    const { container } = render(
+      <MemoryRouter>
+        <NewsCard news={news} />
+      </MemoryRouter>,
+    )
+
+    expect(container.querySelector('img').style.objectPosition).toBe('20% 80%')
+  })
+
+  it('defaults to centered (50% 50%) when there is no saved focal point (old articles)', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <NewsCard news={NEWS} />
+      </MemoryRouter>,
+    )
+
+    expect(container.querySelector('img').style.objectPosition).toBe('50% 50%')
+  })
+})

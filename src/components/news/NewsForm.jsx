@@ -7,6 +7,7 @@ import Select from '../ui/Select'
 import Editor from '../ui/Editor'
 import Button from '../ui/Button'
 import FileUpload from '../ui/FileUpload'
+import CoverFocalPointEditor from './CoverFocalPointEditor'
 
 const EMPTY_VALUES = {
   title: '',
@@ -15,6 +16,7 @@ const EMPTY_VALUES = {
   content: '',
   cover_image_url: '',
   cover_image_caption: null,
+  cover_focal_points: null,
   audio_url: null,
   category_id: '',
   status: 'draft',
@@ -33,6 +35,7 @@ function NewsForm({ defaultValues, onSubmit, submitLabel = 'Salvar' }) {
   } = useForm({ defaultValues: defaultValues ?? EMPTY_VALUES })
 
   const title = watch('title')
+  const coverImageUrl = watch('cover_image_url')
 
   // Auto-generates the slug from the title only when creating; when editing,
   // the existing slug doesn't change on its own (avoids breaking the public
@@ -95,6 +98,16 @@ function NewsForm({ defaultValues, onSubmit, submitLabel = 'Salvar' }) {
         placeholder="Ex: Foto: Divulgação"
         {...register('cover_image_caption')}
       />
+
+      {coverImageUrl && (
+        <Controller
+          name="cover_focal_points"
+          control={control}
+          render={({ field }) => (
+            <CoverFocalPointEditor imageUrl={coverImageUrl} value={field.value} onChange={field.onChange} />
+          )}
+        />
+      )}
 
       <Controller
         name="audio_url"

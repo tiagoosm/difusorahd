@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { buildPath } from '../../routes/paths'
 import { formatDate } from '../../utils/formatDate'
 import { buildSrcSet } from '../../utils/imageUrl'
+import { coverPositionStyle } from '../../utils/coverFocalPoint'
 import Eyebrow from '../ui/Eyebrow'
 
 // The same <img> serves both formats (80px thumbnail below lg, card up to
@@ -35,6 +36,7 @@ function LatestNewsCard({ news }) {
           alt=""
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          style={coverPositionStyle(news.cover_focal_points, 'card')}
         />
       </div>
 

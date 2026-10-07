@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { buildPath } from '../../routes/paths'
 import { formatDate } from '../../utils/formatDate'
 import { buildSrcSet } from '../../utils/imageUrl'
+import { coverPositionStyle } from '../../utils/coverFocalPoint'
 import Eyebrow from '../ui/Eyebrow'
 
 // Hero takes up 2/3 of the 1152px container on desktop, full width on mobile.
@@ -31,6 +32,7 @@ function FeaturedNews({ items }) {
             alt=""
             fetchPriority="high"
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            style={coverPositionStyle(main.cover_focal_points, 'featured')}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
           <div className="relative flex flex-col gap-3.5 p-6 md:p-8 lg:p-10">
@@ -72,6 +74,7 @@ function FeaturedListItem({ news }) {
           sizes="80px"
           alt=""
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          style={coverPositionStyle(news.cover_focal_points, 'featured')}
           loading="lazy"
         />
       </div>

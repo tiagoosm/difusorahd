@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { buildPath } from '../../routes/paths'
 import { buildSrcSet } from '../../utils/imageUrl'
+import { coverPositionStyle } from '../../utils/coverFocalPoint'
 import Eyebrow from '../ui/Eyebrow'
 import SectionHeading from '../ui/SectionHeading'
 
@@ -54,6 +55,7 @@ function MostReadRow({ item, rank }) {
             sizes="56px"
             alt=""
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            style={coverPositionStyle(item.cover_focal_points, 'most_read')}
             loading="lazy"
           />
         </div>

@@ -6,6 +6,7 @@ import { buildNewsArticleJsonLd } from '../utils/seo'
 import { formatDate } from '../utils/formatDate'
 import { estimateReadingTime } from '../utils/readingTime'
 import { buildSrcSet } from '../utils/imageUrl'
+import { coverPositionStyle } from '../utils/coverFocalPoint'
 import { ROUTES, buildPath } from '../routes/paths'
 import Eyebrow from '../components/ui/Eyebrow'
 import AudioPlayer from '../components/ui/AudioPlayer'
@@ -120,6 +121,7 @@ function NewsDetail() {
                   alt={news.title}
                   fetchPriority="high"
                   className="h-full w-full object-cover"
+                  style={coverPositionStyle(news.cover_focal_points, 'card')}
                 />
               </div>
               {news.cover_image_caption && (

@@ -92,4 +92,13 @@ describe('MostReadNews', () => {
     const heading = screen.getByText(longTitle)
     expect(heading.className).not.toMatch(/line-clamp/)
   })
+
+  it('applies the saved "most_read" focal point as the thumbnail object-position', () => {
+    const items = [
+      { id: '1', slug: 'a', title: 'Matéria 1', cover_image_url: 'https://example.com/1.png', cover_focal_points: { most_read: { x: 70, y: 40 } } },
+    ]
+    const { container } = renderWithRouter(<MostReadNews items={items} />)
+
+    expect(container.querySelector('img').style.objectPosition).toBe('70% 40%')
+  })
 })
