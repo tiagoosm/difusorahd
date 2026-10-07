@@ -1,6 +1,7 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { formatNumber } from '../../../utils/formatNumber'
 import { CHART_GRID_COLOR, CHART_AXIS_COLOR } from '../../../utils/chartColors'
+import ErrorState from '../../ui/ErrorState'
 
 function formatBucketLabel(isoValue, bucket) {
   const date = new Date(isoValue)
@@ -23,15 +24,34 @@ function TooltipContent({ active, payload, bucket }) {
   )
 }
 
-function EvolutionChart({ data, bucket, loading }) {
+function EvolutionChart({ data, bucket, loading, error, onRetry }) {
   if (loading) {
     return <div className="h-72 w-full animate-pulse rounded-lg bg-ink-100" />
   }
 
-  if (data.length === 0) {
+  if (error) {
+    return (
+      <div className="flex h-72 items-center">
+        <ErrorState
+          title="Não foi possível carregar o gráfico"
+          description="Verifique sua conexão e tente novamente."
+          onRetry={onRetry}
+        />
+      </div>
+    )
+  }
+
+  // Not data.length === 0: analytics_timeseries always returns one row per
+  // bucket in the range, zero-filled (see the Supabase function) — an
+  // all-zero period still has exactly as many rows as a busy one. Checking
+  // the actual total is what distinguishes "no activity" from "activity,
+  // rendered" (an all-zero chart would otherwise draw a flat line against
+  // a meaningless 0-4 axis instead of this message).
+  const hasAnyViews = data.some((point) => point.views > 0)
+  if (!hasAnyViews) {
     return (
       <div className="flex h-72 items-center justify-center text-sm text-ink-500">
-        Sem dados de acesso no período selecionado.
+        Nenhuma visualização registrada neste período.
       </div>
     )
   }

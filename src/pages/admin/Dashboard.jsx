@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Newspaper, FileText, FileStack, Eye, Users } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
@@ -25,7 +25,12 @@ function Dashboard() {
   const { profile } = useAuth()
   const { newsStats, today, yesterday, last7, previous7, recentNews, loading } = useDashboardStats()
   const [chartPeriod, setChartPeriod] = useState('last7')
-  const chartRange = getPeriodRange(chartPeriod)
+  // getPeriodRange returns new Date instances every call — without this
+  // memo, useAnalyticsTimeseries (which depends on range.start/range.end by
+  // reference) re-fetches on every Dashboard re-render, not just when the
+  // period actually changes (e.g. once more, pointlessly, the moment
+  // useDashboardStats' own data finishes loading).
+  const chartRange = useMemo(() => getPeriodRange(chartPeriod), [chartPeriod])
   const timeseries = useAnalyticsTimeseries(chartRange)
 
   return (
@@ -104,7 +109,13 @@ function Dashboard() {
           </div>
         }
       >
-        <EvolutionChart data={timeseries.data} bucket={timeseries.bucket} loading={timeseries.loading} />
+        <EvolutionChart
+          data={timeseries.data}
+          bucket={timeseries.bucket}
+          loading={timeseries.loading}
+          error={timeseries.error}
+          onRetry={timeseries.retry}
+        />
       </DashboardCard>
 
       <DashboardCard

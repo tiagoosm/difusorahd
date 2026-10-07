@@ -102,7 +102,11 @@ export default async function handler(req, res) {
 
     // Daily (non-reversible) hash: identifies "the same visitor today"
     // without storing the IP anywhere, and without a cookie/browser storage.
-    const today = new Date().toISOString().slice(0, 10)
+    // Boundary is Brazil's calendar day (the site's only audience), not
+    // UTC's — otherwise the hash (and so "unique visitor") flips over at
+    // 21h BRT instead of midnight, splitting one real visitor's evening
+    // session into two "different" visitors in the analytics.
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })
     const visitorHash = crypto
       .createHash('sha256')
       .update(`${ip}:${userAgent}:${today}:${process.env.ANALYTICS_SALT || ''}`)

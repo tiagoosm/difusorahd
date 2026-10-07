@@ -93,7 +93,13 @@ function Analytics() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <DashboardCard title="Evolução dos acessos" className="lg:col-span-2">
-          <EvolutionChart data={timeseries.data} bucket={timeseries.bucket} loading={timeseries.loading} />
+          <EvolutionChart
+            data={timeseries.data}
+            bucket={timeseries.bucket}
+            loading={timeseries.loading}
+            error={timeseries.error}
+            onRetry={timeseries.retry}
+          />
         </DashboardCard>
 
         <DashboardCard title="Origem do tráfego">
